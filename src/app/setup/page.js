@@ -6,7 +6,7 @@ import { Save, Building2, Upload, User, Lock, Mail } from "lucide-react";
 
 export default function SetupPage() {
   const router = useRouter();
-  const { addToast } = useToast();
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isFirstRun, setIsFirstRun] = useState(false);
