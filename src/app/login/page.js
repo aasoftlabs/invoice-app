@@ -1,11 +1,17 @@
 "use client";
 
-import { useFormStatus, useFormState } from "react-dom";
+import { useState } from "react";
+import { useFormStatus } from "react-dom";
+import { useActionState } from "react";
 import { authenticate } from "@/lib/actions";
-import { FileText } from "lucide-react";
+import { FileText, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
-  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+  const [errorMessage, dispatch, isPending] = useActionState(
+    authenticate,
+    undefined,
+  );
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -41,14 +47,27 @@ export default function LoginPage() {
             >
               Password
             </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
-              type="password"
-              name="password"
-              placeholder="admin123"
-              required
-            />
+            <div className="relative">
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                id="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="admin123"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
           <div className="flex items-center justify-between">
             <LoginButton />
@@ -63,9 +82,7 @@ export default function LoginPage() {
             )}
           </div>
         </form>
-        <div className="mt-4 text-center text-xs text-gray-500">
-          Demo: admin@aasoftlabs.com / admin123
-        </div>
+        
       </div>
     </div>
   );

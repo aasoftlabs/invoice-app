@@ -9,10 +9,19 @@ import Navbar from "@/components/Navbar";
 import DashboardStats from "@/components/DashboardStats";
 
 export default async function Dashboard() {
+  await connectDB();
+
+  // 1. Check if ANY users exist (First Run Check)
+  // We do this BEFORE auth check because if no users exist, no one can login.
+  // Using .estimatedDocumentCount() is faster but .countDocuments() is safer for small sets.
+  const userCount = await Invoice.db.collection("users").countDocuments();
+  if (userCount === 0) {
+    redirect("/setup");
+  }
+
+  // 2. Now check authentication
   const session = await auth();
   if (!session) redirect("/login");
-
-  await connectDB();
 
   // Parallel fetch for performance using .lean()
   const [profile, invoices] = await Promise.all([

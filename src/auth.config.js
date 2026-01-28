@@ -6,8 +6,13 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith("/");
-      // Allow access to login page
-      if (nextUrl.pathname.startsWith("/login")) return true;
+      // Allow access to login page, but redirect if already logged in
+      if (nextUrl.pathname.startsWith("/login")) {
+        if (isLoggedIn) return Response.redirect(new URL("/", nextUrl));
+        return true;
+      }
+      // Allow access to setup page (for first run)
+      if (nextUrl.pathname.startsWith("/setup")) return true;
 
       // For now, let's just allow everything to keep dev speed up,
       // or STRICT: Redirect to login if not logged in.

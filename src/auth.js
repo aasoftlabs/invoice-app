@@ -6,7 +6,7 @@ import connectDB from "@/lib/mongoose";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
-export const { auth, signIn, signOut } = NextAuth({
+const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -19,12 +19,20 @@ export const { auth, signIn, signOut } = NextAuth({
           const { email, password } = parsedCredentials.data;
 
           await connectDB();
-          const user = await User.findOne({ email });
+          const user = await User.findOne({ email }).lean();
 
           if (!user) return null;
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
-          if (passwordsMatch) return user;
+          if (passwordsMatch) {
+            return {
+              id: user._id.toString(),
+              name: user.name,
+              email: user.email,
+              role: user.role,
+              avatar: user.avatar,
+            };
+          }
         }
 
         console.log("Invalid credentials");
@@ -37,7 +45,7 @@ export const { auth, signIn, signOut } = NextAuth({
       if (user) {
         token.role = user.role;
         token.id = user.id;
-        token.picture = user.avatar; // Map avatar to picture
+        token.picture = user.avatar;
       }
       return token;
     },
@@ -45,9 +53,11 @@ export const { auth, signIn, signOut } = NextAuth({
       if (token) {
         session.user.role = token.role;
         session.user.id = token.id;
-        session.user.image = token.picture; // Ensure image is passed
+        session.user.image = token.picture;
       }
       return session;
     },
   },
 });
+
+export { handlers, auth, signIn, signOut };
