@@ -333,7 +333,7 @@ export default function SetupPage() {
             </div>
           </div>
 
-          {/* Section 2: Contact & Tax */}
+       
           <div>
             <h2 className="text-lg font-semibold text-gray-700 mb-4">
               Contact & Tax Details
