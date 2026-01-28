@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import DashboardStats from "@/components/DashboardStats";
+import InvoiceRow from "@/components/InvoiceRow";
 
 export default async function Dashboard() {
   await connectDB();
@@ -39,6 +40,7 @@ export default async function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
+      {/* Rebuild Trigger */}
       {/* Navbar with User & Company Info */}
       <Navbar user={serializedUser} profile={serializedProfile} />
 
@@ -92,47 +94,7 @@ export default async function Dashboard() {
                 </tr>
               ) : (
                 serializedInvoices.map((inv) => (
-                  <tr
-                    key={inv._id}
-                    className="hover:bg-blue-50/50 transition-colors group cursor-pointer"
-                  >
-                    <td className="px-6 py-4 font-medium text-gray-900">
-                      {inv.invoiceNo}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 text-sm">
-                      {new Date(inv.date).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 text-gray-800">
-                      <div className="font-medium text-sm">
-                        {inv.client.name}
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        {inv.client.company}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right font-bold text-gray-800">
-                      ₹ {inv.totalAmount?.toLocaleString("en-IN")}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          inv.status === "Paid"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {inv.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <Link
-                        href={`/invoices/${inv._id}`}
-                        className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Preview <ArrowRight className="w-3 h-3" />
-                      </Link>
-                    </td>
-                  </tr>
+                  <InvoiceRow key={inv._id} invoice={inv} />
                 ))
               )}
             </tbody>

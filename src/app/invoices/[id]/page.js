@@ -19,7 +19,7 @@ export default async function InvoicePage({ params }) {
   if (!session) redirect("/login");
 
   await connectDB();
-  const { id } = params;
+  const { id } = await params;
 
   // Parallel data fetching
   const [invoice, profile] = await Promise.all([
@@ -67,10 +67,10 @@ export default async function InvoicePage({ params }) {
 
   const serializedProfile = profile
     ? {
-        ...profile,
-        _id: profile._id.toString(),
-        updatedAt: profile.updatedAt ? profile.updatedAt.toISOString() : null,
-      }
+      ...profile,
+      _id: profile._id.toString(),
+      updatedAt: profile.updatedAt ? profile.updatedAt.toISOString() : null,
+    }
     : null;
 
   return (

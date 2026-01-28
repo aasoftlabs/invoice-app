@@ -11,6 +11,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import BrandName from "./BrandName";
 
 export default function Navbar({ user, profile }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,11 +32,17 @@ export default function Navbar({ user, profile }) {
           </div>
         )}
         <div className="leading-tight">
-          <h1 className="font-bold text-lg text-gray-900">
-            {profile?.name || "Company Name"}
-          </h1>
-          {profile?.slogan && (
-            <p className="text-xs text-gray-500">{profile.slogan}</p>
+          <BrandName
+            name={profile?.name}
+            color={profile?.formatting?.color}
+          />
+          {profile?.tagline && (
+            <p
+              className="text-[10px] font-bold uppercase mt-0.5"
+              style={{ color: profile?.formatting?.color || "#1d4ed8" }}
+            >
+              {profile.tagline}
+            </p>
           )}
         </div>
       </div>

@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 const CompanyProfileSchema = new mongoose.Schema({
   name: { type: String, required: true }, // Company Name
+  billingName: { type: String }, // Optional: Name to use in "Bill From" if different
   slogan: { type: String }, // Baseline/Slogan below name
+  tagline: { type: String }, // Extra tagline (e.g. Next-Gen Web...)
   logo: { type: String }, // Base64 string or URL
   address: { type: String, required: true },
   email: { type: String },

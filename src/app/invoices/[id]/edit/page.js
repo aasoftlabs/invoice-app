@@ -9,7 +9,7 @@ export default async function EditInvoicePage({ params }) {
   if (!session) redirect("/login");
 
   await connectDB();
-  const { id } = params;
+  const { id } = await params;
 
   const invoice = await Invoice.findById(id).lean();
   if (!invoice) notFound();
@@ -18,7 +18,7 @@ export default async function EditInvoicePage({ params }) {
     ...invoice,
     _id: invoice._id.toString(),
     date: invoice.date.toISOString(),
-    dueDate: invoice.dueDate ? invoice.dueDate.toISOString() : null,
+    // dueDate removed
     createdAt: invoice.createdAt ? invoice.createdAt.toISOString() : null,
     items: invoice.items.map((i) => ({
       ...i,

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import connectDB from "@/lib/mongoose";
 import Invoice from "@/models/Invoice";
 import { auth } from "@/auth";
+import { generateNextInvoiceNumber } from "@/lib/invoiceUtils";
 
 export async function POST(req) {
   try {
@@ -14,10 +15,10 @@ export async function POST(req) {
     await connectDB();
     const data = await req.json();
 
-    // Auto-generate Invoice No if not provided?
-    // User snippet has manual input but "INV-2026-001" as default.
-    // Ideally we check uniqueness or auto-increment.
-    // For now trust the client or if it fails (unique index), return error.
+    // Auto-generate if missing
+    if (!data.invoiceNo) {
+      data.invoiceNo = await generateNextInvoiceNumber(Invoice);
+    }
 
     const newInvoice = await Invoice.create(data);
     return NextResponse.json(

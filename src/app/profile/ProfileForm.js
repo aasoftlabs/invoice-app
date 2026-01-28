@@ -29,9 +29,9 @@ export default function ProfileForm({ user }) {
         name,
         ...(passwordData.new
           ? {
-              password: passwordData.current,
-              newPassword: passwordData.new,
-            }
+            password: passwordData.current,
+            newPassword: passwordData.new,
+          }
           : {}),
       };
 
@@ -80,7 +80,7 @@ export default function ProfileForm({ user }) {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
           />
         </div>
 
@@ -99,7 +99,7 @@ export default function ProfileForm({ user }) {
                 onChange={(e) =>
                   setPasswordData({ ...passwordData, current: e.target.value })
                 }
-                className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -113,7 +113,7 @@ export default function ProfileForm({ user }) {
                   onChange={(e) =>
                     setPasswordData({ ...passwordData, new: e.target.value })
                   }
-                  className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -129,7 +129,7 @@ export default function ProfileForm({ user }) {
                       confirm: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
                 />
               </div>
             </div>

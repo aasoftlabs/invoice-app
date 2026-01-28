@@ -11,7 +11,8 @@ export async function PUT(req, { params }) {
 
   try {
     await connectDB();
-    const { id } = params;
+    await connectDB();
+    const { id } = await params;
     const data = await req.json();
 
     const invoice = await Invoice.findByIdAndUpdate(id, data, { new: true });

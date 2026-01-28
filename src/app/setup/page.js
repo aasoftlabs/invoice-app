@@ -6,13 +6,16 @@ import { Save, Building2, Upload, User, Lock, Mail } from "lucide-react";
 
 export default function SetupPage() {
   const router = useRouter();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isFirstRun, setIsFirstRun] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
+    billingName: "",
     slogan: "",
+    tagline: "",
     address: "",
     email: "",
     phone: "",
@@ -92,11 +95,11 @@ export default function SetupPage() {
 
     if (isFirstRun) {
       if (adminData.password !== adminData.confirmPassword) {
-        alert("Passwords do not match!");
+        addToast("Passwords do not match!", "error");
         return;
       }
       if (adminData.password.length < 6) {
-        alert("Password must be at least 6 characters");
+        addToast("Password must be at least 6 characters", "error");
         return;
       }
     }
@@ -114,15 +117,15 @@ export default function SetupPage() {
         body: JSON.stringify(payload),
       });
       if (res.ok) {
-        alert("Setup Complete! Please login.");
-        router.push("/login"); // Redirect to login as session won't be active immediately usually
+        addToast(isFirstRun ? "Setup Complete! Please login." : "Company Profile Saved Successfully!", "success");
+        if (isFirstRun) router.push("/login");
       } else {
         const err = await res.json();
-        alert("Failed: " + err.error);
+        addToast("Failed: " + err.error, "error");
       }
     } catch (err) {
       console.error(err);
-      alert("Error saving profile");
+      addToast("Error saving profile", "error");
     } finally {
       setSaving(false);
     }
@@ -159,7 +162,7 @@ export default function SetupPage() {
                     name="name"
                     value={adminData.name}
                     onChange={handleAdminChange}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border rounded text-gray-900 bg-white"
                     placeholder="Admin Name"
                   />
                 </div>
@@ -173,7 +176,7 @@ export default function SetupPage() {
                     name="email"
                     value={adminData.email}
                     onChange={handleAdminChange}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border rounded text-gray-900 bg-white"
                     placeholder="admin@company.com"
                   />
                 </div>
@@ -187,7 +190,7 @@ export default function SetupPage() {
                     name="password"
                     value={adminData.password}
                     onChange={handleAdminChange}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border rounded text-gray-900 bg-white"
                     placeholder="******"
                   />
                 </div>
@@ -201,7 +204,7 @@ export default function SetupPage() {
                     name="confirmPassword"
                     value={adminData.confirmPassword}
                     onChange={handleAdminChange}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border rounded text-gray-900 bg-white"
                     placeholder="******"
                   />
                 </div>
@@ -224,7 +227,7 @@ export default function SetupPage() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
                   placeholder="e.g. AA SoftLabs"
                 />
               </div>
@@ -236,8 +239,57 @@ export default function SetupPage() {
                   name="slogan"
                   value={formData.slogan}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
                   placeholder="e.g. Next-Gen Web Engineering"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 mb-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={!!formData.billingName}
+                    onChange={(e) => {
+                      if (!e.target.checked) {
+                        setFormData((prev) => ({ ...prev, billingName: "" }));
+                      } else {
+                        // Initialize with current name if empty to avoid confusion, or leave blank
+                        setFormData((prev) => ({ ...prev, billingName: prev.name }));
+                      }
+                    }}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    Use a different name for Billing? (Bill From)
+                  </span>
+                </label>
+                {formData.billingName !== "" && ( // Check against undefined/null too if needed, but logic above sets it
+                  <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Billing Name
+                    </label>
+                    <input
+                      name="billingName"
+                      value={formData.billingName}
+                      onChange={handleChange}
+                      className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
+                      placeholder="Legal Entity Name for Billing"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      This name will appear in the "Bill From" section instead of the Company Name.
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Extra Tagline (Optional)
+                </label>
+                <input
+                  name="tagline"
+                  value={formData.tagline}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
+                  placeholder="e.g. Next-Gen Web & Mobile Engineering"
                 />
               </div>
               <div className="md:col-span-2">
@@ -250,7 +302,7 @@ export default function SetupPage() {
                   value={formData.address}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
                   placeholder="Full Business Address"
                 />
               </div>
@@ -262,7 +314,7 @@ export default function SetupPage() {
                   name="registrationNo"
                   value={formData.registrationNo}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                   placeholder="UDYAM-XX-XX..."
                 />
               </div>
@@ -274,7 +326,7 @@ export default function SetupPage() {
                   name="registrationType"
                   value={formData.registrationType}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                   placeholder="e.g. UDYAM"
                 />
               </div>
@@ -296,7 +348,7 @@ export default function SetupPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -308,7 +360,7 @@ export default function SetupPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -319,7 +371,7 @@ export default function SetupPage() {
                   name="pan"
                   value={formData.pan}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                   placeholder="ABCDE1234F"
                 />
               </div>
@@ -331,7 +383,7 @@ export default function SetupPage() {
                   name="gstIn"
                   value={formData.gstIn}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                 />
               </div>
             </div>
@@ -351,7 +403,7 @@ export default function SetupPage() {
                   name="bankDetails.bankName"
                   value={formData.bankDetails.bankName}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -362,7 +414,7 @@ export default function SetupPage() {
                   name="bankDetails.accountName"
                   value={formData.bankDetails.accountName}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -373,7 +425,7 @@ export default function SetupPage() {
                   name="bankDetails.accountNumber"
                   value={formData.bankDetails.accountNumber}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -384,7 +436,7 @@ export default function SetupPage() {
                   name="bankDetails.ifscCode"
                   value={formData.bankDetails.ifscCode}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded text-gray-900 bg-white"
                 />
               </div>
             </div>
@@ -460,7 +512,7 @@ export default function SetupPage() {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

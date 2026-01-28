@@ -3,7 +3,14 @@ import mongoose from "mongoose";
 const InvoiceSchema = new mongoose.Schema({
   invoiceNo: { type: String, required: true, unique: true },
   date: { type: Date, required: true },
-  dueDate: Date,
+  dueDate: { type: Date },
+  type: {
+    type: String,
+    enum: ["Standard", "Digital"],
+    default: "Digital",
+  },
+  showQrCode: { type: Boolean, default: false },
+
   client: {
     name: String,
     company: String,
@@ -13,10 +20,13 @@ const InvoiceSchema = new mongoose.Schema({
   items: [
     {
       description: String,
+      subDescription: String, // Optional detailed description
       rate: Number,
       qty: Number,
+      amount: Number,
     },
   ],
+  taxRate: { type: Number, default: 0 },
   totalAmount: Number,
   status: { type: String, default: "Pending" }, // Pending, Paid
   createdAt: { type: Date, default: Date.now },
