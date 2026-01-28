@@ -212,7 +212,7 @@ export default function SetupPage() {
             </div>
           )}
 
-          {/* Section 1: Basic Info */}
+        
           <div>
             <h2 className="text-lg font-semibold text-gray-700 mb-4">
               Company Basic Information
