@@ -68,38 +68,39 @@ export default function InvoiceViewer({ invoice, profile }) {
             style={{ borderColor: profile?.formatting?.color || "#1d4ed8" }}
           >
             <div className="w-1/2">
-              <div className="flex items-center gap-4 mb-2">
-                {profile?.logo ? (
-                  <img
-                    src={profile.logo}
-                    className="h-16 w-auto object-contain max-w-[150px]"
-                    alt="Logo"
-                  />
-                ) : (
-                  <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">
-                    Logo
-                  </div>
-                )}
-                <div>
-                  <BrandName
-                    name={profile?.name}
-                    color={profile?.formatting?.color}
-                  />
-                  {profile?.tagline && (
-                    <div
-                      className="text-[10px] font-bold uppercase mt-1"
-                      style={{ color: profile?.formatting?.color || "#1d4ed8" }}
-                    >
-                      {profile.tagline}
-                    </div>
-                  )}
-                  {profile?.slogan && (
-                    <div className="text-[10px] text-gray-500 uppercase mt-1">
-                      {profile.slogan}
-                    </div>
-                  )}
-                </div>
-              </div>
+                 <div className="flex items-center gap-4 mb-2">
+                           {profile.logo ? (
+                             <img
+                               src={profile.logo}
+                               className="h-16 w-auto object-contain max-w-[150px]"
+                               alt="Logo"
+                             />
+                           ) : (
+                             <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">
+                               Logo
+                             </div>
+                           )}
+                           <div>
+                             <BrandName
+                               name={profile.name}
+                               color={profile.formatting?.color}
+                             />
+                             {profile.slogan && (
+                               <div className="text-[8px] text-gray-500 uppercase mt-1">
+                                 {profile.slogan}
+                               </div>
+                             )}
+                             {profile.tagline && (
+                               <div
+                                 className="text-[10px] uppercase font-bold mt-1"
+                                 style={{ color: profile.formatting?.color || "#1d4ed8" }}
+                               >
+                                 {profile.tagline}
+                               </div>
+                             )}
+           
+                           </div>
+                         </div>
             </div>
 
             <div className="w-1/2 flex flex-col items-end text-right">

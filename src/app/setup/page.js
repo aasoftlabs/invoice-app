@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Save, Building2, Upload, User, Lock, Mail } from "lucide-react";
+import { useToast } from "@/contexts/ToastContext";
 
 export default function SetupPage() {
   const router = useRouter();
+  const { addToast } = useToast();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -212,7 +214,7 @@ export default function SetupPage() {
             </div>
           )}
 
-        
+
           <div>
             <h2 className="text-lg font-semibold text-gray-700 mb-4">
               Company Basic Information
@@ -333,7 +335,7 @@ export default function SetupPage() {
             </div>
           </div>
 
-       
+
           <div>
             <h2 className="text-lg font-semibold text-gray-700 mb-4">
               Contact & Tax Details

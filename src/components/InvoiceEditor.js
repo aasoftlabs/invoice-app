@@ -498,19 +498,20 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
                     name={profile.name}
                     color={profile.formatting?.color}
                   />
+                  {profile.slogan && (
+                    <div className="text-[8px] text-gray-500 uppercase mt-1">
+                      {profile.slogan}
+                    </div>
+                  )}
                   {profile.tagline && (
                     <div
-                      className="text-[10px] font-bold uppercase mt-1"
+                      className="text-[10px] uppercase font-bold mt-1"
                       style={{ color: profile.formatting?.color || "#1d4ed8" }}
                     >
                       {profile.tagline}
                     </div>
                   )}
-                  {profile.slogan && (
-                    <div className="text-[10px] text-gray-500 uppercase mt-1">
-                      {profile.slogan}
-                    </div>
-                  )}
+
                 </div>
               </div>
             </div>
@@ -764,7 +765,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
           {/* Page Footer */}
           <div className="mt-auto text-center text-xs text-gray-500 border-t border-gray-100 pt-6">
             <p className="font-semibold text-gray-700 mb-1">Thank you for your business!</p>
-            <p className="mb-2">For any enquiries, please email {profile.email} or call {profile.phone}</p>
+            <p className="mb-2">For any enquiries, please email {profile.email}</p>
 
             {invoiceData.type === 'Digital' && (
               <p className="text-[10px] text-gray-400 italic mt-2">
