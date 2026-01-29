@@ -475,10 +475,10 @@ export default function LetterheadView({ profile }) {
         clipboard: {
             matchVisual: false,
             matchers: [
-                [Node.TEXT_NODE, (node, delta) => {
+                [3, (node, delta) => { // 3 = Node.TEXT_NODE constant (avoiding SSR issues)
                     delta.ops = delta.ops.map(op => {
                         return {
-                            insert: op.insert.replace(/  +/g, (match) => '&nbsp;'.repeat(match.length))
+                            insert: op.insert.replace(/  +/g, (match) => '\u00A0'.repeat(match.length))
                         }
                     })
                     return delta
