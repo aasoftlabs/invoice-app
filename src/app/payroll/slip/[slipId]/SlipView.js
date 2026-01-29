@@ -7,6 +7,8 @@ import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import BrandName from "@/components/BrandName";
 
+import { api } from "@/lib/api";
+
 export default function SlipView({ slipId }) {
     // ... (rest of state) ...
     const router = useRouter();
@@ -21,21 +23,22 @@ export default function SlipView({ slipId }) {
         fetchData();
     }, [slipId]);
 
+    // ...
+
     const fetchData = async () => {
         try {
             // Fetch slip
-            const res = await fetch(`/api/payroll/slips/${slipId}`);
-            if (res.ok) {
-                const data = await res.json();
+            const data = await api.payroll.getSlip(slipId);
+            if (data.slip) {
                 setSlip(data.slip);
             }
 
             // Fetch company details (for header)
-            const compRes = await fetch("/api/company");
-            if (compRes.ok) {
-                const compData = await compRes.json();
-                // compData is { success: true, data: { ... } }
-                setCompany(compData.data || null);
+            const compData = await api.setup.getProfile();
+            if (compData.profile) {
+                // compData is { success: true, profile: { ... } } or similar. Verification needed on api/setup response structure.
+                // Assuming api.setup.getProfile returns the json.
+                setCompany(compData.profile || compData.data || null);
             }
         } catch (error) {
             console.error("Error fetching data:", error);
