@@ -40,11 +40,18 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
+    // Set permissions - admin gets all, regular user gets provided permissions
+    const userPermissions = data.role === "admin"
+      ? ["invoices", "letterhead", "project", "users", "profile"]
+      : (data.permissions || ["invoices", "letterhead", "project", "profile"]);
+
     const newUser = await User.create({
       name: data.name,
+      designation: data.designation || "",
       email: data.email,
       password: hashedPassword,
       role: data.role || "user",
+      permissions: userPermissions,
       avatar: data.avatar || "",
     });
 

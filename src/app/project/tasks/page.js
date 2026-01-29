@@ -1,0 +1,177 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import StatusBadge from "@/components/project/StatusBadge";
+import { ListTodo, Search, Plus } from "lucide-react";
+import AddTaskModal from "@/components/project/AddTaskModal";
+
+export default function TasksPage() {
+    const { data: session, status } = useSession();
+    const [tasks, setTasks] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filters, setFilters] = useState({ projectId: "", status: "" });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (session) {
+            fetchProjects();
+            fetchTasks();
+            fetchUsers();
+        }
+    }, [filters, session]);
+
+    const fetchProjects = async () => {
+        try {
+            const res = await fetch("/api/projects");
+            const data = await res.json();
+            if (data.success) setProjects(data.data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
+    const fetchTasks = async () => {
+        try {
+            setLoading(true);
+            const params = new URLSearchParams(filters);
+            const res = await fetch(`/api/tasks?${params}`);
+            const data = await res.json();
+            if (data.success) setTasks(data.data);
+        } catch (error) {
+            console.error("Error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchUsers = async () => {
+        try {
+            const res = await fetch("/api/users");
+            const data = await res.json();
+            if (data.success) setUsers(data.data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
+    const filteredTasks = tasks.filter(task =>
+        task.taskName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const formatDate = (date) => date ? new Date(date).toLocaleDateString('en-IN') : '-';
+
+    if (status === "loading" || !session) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading...</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-full bg-gray-50 p-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                        <ListTodo className="w-8 h-8 text-purple-600" />
+                        Tasks
+                    </h1>
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Add Task
+                    </button>
+                </div>
+
+                {/* Filters */}
+                <div className="bg-white rounded-lg shadow p-4 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="relative">
+                            <Search className="w-5 h-5 absolute left-3 top-3 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search tasks..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                        </div>
+                        <select
+                            value={filters.projectId}
+                            onChange={(e) => setFilters({ ...filters, projectId: e.target.value })}
+                            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900"
+                        >
+                            <option value="">All Projects</option>
+                            {projects.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
+                        </select>
+                        <select
+                            value={filters.status}
+                            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900"
+                        >
+                            <option value="">All Statuses</option>
+                            <option value="Completed">Completed</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Follow-up">Follow-up</option>
+                            <option value="Not Started">Not Started</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* Tasks Table */}
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Project</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Task</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Start Date</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completed</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completed By</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {loading ? (
+                                <tr><td colSpan="7" className="px-6 py-4 text-center text-gray-500">Loading...</td></tr>
+                            ) : filteredTasks.length === 0 ? (
+                                <tr><td colSpan="7" className="px-6 py-4 text-center text-gray-500">No tasks found</td></tr>
+                            ) : (
+                                filteredTasks.map((task) => (
+                                    <tr key={task._id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 text-sm text-gray-900">{task.projectId?.name}</td>
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{task.taskName}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-600">{task.description || '-'}</td>
+                                        <td className="px-6 py-4"><StatusBadge status={task.status} /></td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">{formatDate(task.startDate)}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">{formatDate(task.completedDate)}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">{task.completedBy?.name || '-'}</td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <AddTaskModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={fetchTasks}
+                projects={projects}
+                users={users}
+            />
+        </div>
+    );
+}

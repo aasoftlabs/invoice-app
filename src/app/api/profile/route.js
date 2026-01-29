@@ -1,8 +1,23 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoose";
 import User from "@/models/User";
+import CompanyProfile from "@/models/CompanyProfile";
 import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
+
+export async function GET() {
+  try {
+    await connectDB();
+    const profile = await CompanyProfile.findOne({}).lean();
+
+    return NextResponse.json({
+      success: true,
+      data: profile
+    });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+}
 
 export async function PUT(req) {
   const session = await auth();

@@ -31,6 +31,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
               email: user.email,
               role: user.role,
               avatar: user.avatar,
+              permissions: user.permissions || [],
             };
           }
         }
@@ -46,6 +47,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         token.role = user.role;
         token.id = user.id;
         token.picture = user.avatar;
+        token.permissions = user.permissions;
       }
       return token;
     },
@@ -54,6 +56,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.role = token.role;
         session.user.id = token.id;
         session.user.image = token.picture;
+        session.user.permissions = token.permissions;
       }
       return session;
     },

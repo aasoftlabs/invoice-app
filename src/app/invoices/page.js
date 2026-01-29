@@ -5,7 +5,6 @@ import Invoice from "@/models/Invoice";
 import CompanyProfile from "@/models/CompanyProfile";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import DashboardStats from "@/components/DashboardStats";
 import InvoiceRow from "@/components/InvoiceRow";
 
@@ -24,6 +23,11 @@ export default async function Dashboard() {
     const session = await auth();
     if (!session) redirect("/login");
 
+    // 3. Check permissions
+    if (session.user.role !== "admin" && !session.user.permissions?.includes("invoices")) {
+        redirect("/"); // Redirect to home if no access
+    }
+
     // Parallel fetch for performance using .lean()
     const [profile, invoices] = await Promise.all([
         CompanyProfile.findOne({}).lean(),
@@ -41,9 +45,6 @@ export default async function Dashboard() {
     return (
         <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
             {/* Rebuild Trigger */}
-            {/* Navbar with User & Company Info */}
-            <Navbar user={serializedUser} profile={serializedProfile} />
-
             <div className="max-w-6xl mx-auto p-8">
                 {/* Dashboard Stats */}
                 <DashboardStats invoices={serializedInvoices} />
