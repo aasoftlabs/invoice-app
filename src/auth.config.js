@@ -13,6 +13,8 @@ export const authConfig = {
       }
       // Allow access to setup page (for first run)
       if (nextUrl.pathname.startsWith("/setup")) return true;
+      // Allow access to API routes
+      if (nextUrl.pathname.startsWith("/api")) return true;
 
       // For now, let's just allow everything to keep dev speed up,
       // or STRICT: Redirect to login if not logged in.

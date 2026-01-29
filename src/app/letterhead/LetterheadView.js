@@ -59,7 +59,7 @@ export default function LetterheadView({ profile }) {
             <div className="max-w-[210mm] min-h-[297mm] mx-auto bg-white shadow-2xl print:shadow-none print:w-full print:max-w-none print:m-0 flex flex-col px-12 py-10 relative box-border">
 
                 {/* Header / Letterhead Top */}
-                <header className="flex justify-between items-start border-b-2 border-gray-100 pb-8 mb-8">
+                <header className="flex justify-between items-start border-b-2 border-blue-500 pb-2 mb-5">
                     <div className="flex items-center gap-4 mb-2">
                         {profile.logo ? (
                             <img
@@ -107,7 +107,7 @@ export default function LetterheadView({ profile }) {
                 <div className="flex-grow relative group">
                     {/* Invisible Textarea for Editing, visible styling wrapper */}
                     <textarea
-                        className="w-full h-full min-h-[500px] resize-none border-none outline-none bg-transparent text-gray-800 font-serif leading-relaxed text-base whitespace-pre-wrap p-2 focus:ring-1 focus:ring-blue-100 rounded"
+                        className="w-full h-full min-h-[850px] resize-none border-none outline-none bg-transparent text-gray-800 font-serif leading-relaxed text-base whitespace-pre-wrap p-1 focus:ring-1 focus:ring-blue-100 rounded"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Type your document content here..."
@@ -118,19 +118,17 @@ export default function LetterheadView({ profile }) {
                 </div>
 
                 {/* Footer with Company Details */}
-                <footer className="mt-auto pt-8 border-t-2 border-gray-100 text-xs text-gray-500 text-center">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 text-left">
+                <footer className="mt-auto pt-4 border-t-2 border-blue-500 text-xs text-gray-500 text-center">
+                    <div className="flex justify-between gap-4 mb-4 text-left">
                         {/* Registered Office */}
                         <div>
-                            <h4 className="font-bold text-gray-800 mb-1">Registered Office</h4>
+                            <h4 className="font-bold text-gray-800 mb-1" style={{ color: profile.formatting?.color }}>Registered Office</h4>
                             <p className="whitespace-pre-line leading-relaxed">{profile?.address}</p>
                         </div>
-<div>
-
-</div>
+                     
                         {/* Registration Details */}
                         <div>
-                            <h4 className="font-bold text-gray-800 mb-1">Registration</h4>
+                            <h4 className="font-bold text-gray-800 mb-1" style={{ color: profile.formatting?.color}}>Registration</h4>
                             {profile?.registrationNo && (
                                 <p>
                                     <span className="font-medium">{`${profile?.registrationType} No:`}</span> {profile?.registrationNo}
@@ -149,7 +147,7 @@ export default function LetterheadView({ profile }) {
                         </div>
                     </div>
 
-                  
+
                 </footer>
 
             </div>
