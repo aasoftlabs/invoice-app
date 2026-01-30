@@ -17,10 +17,6 @@ export default function GeneratePayroll() {
   const [lopData, setLopData] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -53,6 +49,10 @@ export default function GeneratePayroll() {
       setLoading(false);
     }
   }, [selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleGenerate = async (userId) => {
     setProcessing(userId);

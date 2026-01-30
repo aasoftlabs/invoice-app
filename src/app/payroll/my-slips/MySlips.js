@@ -9,10 +9,6 @@ export default function MySlips({ userId }) {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [actionLoading, setActionLoading] = useState(null);
 
-    useEffect(() => {
-        fetchSlips();
-    }, [fetchSlips]);
-
     const fetchSlips = useCallback(async () => {
         try {
             const res = await fetch(
@@ -28,6 +24,10 @@ export default function MySlips({ userId }) {
             setLoading(false);
         }
     }, [userId, selectedYear]);
+
+    useEffect(() => {
+        fetchSlips();
+    }, [fetchSlips]);
 
     const handleDelete = async (slipId) => {
         if (!confirm("Are you sure you want to delete this salary slip?")) return;

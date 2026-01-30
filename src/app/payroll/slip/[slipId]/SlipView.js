@@ -18,10 +18,6 @@ export default function SlipView({ slipId }) {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const slipRef = useRef(null);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = useCallback(async () => {
     try {
       // Fetch slip
@@ -41,6 +37,10 @@ export default function SlipView({ slipId }) {
       setLoading(false);
     }
   }, [slipId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handlePaySuccess = () => {
     // Refresh data to show paid status

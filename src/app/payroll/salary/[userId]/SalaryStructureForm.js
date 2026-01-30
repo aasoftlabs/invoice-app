@@ -36,10 +36,6 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
         taxRegime: "new",
     });
 
-    useEffect(() => {
-        fetchData();
-    }, [fetchData]);
-
     const fetchData = useCallback(async () => {
         try {
             const res = await fetch(`/api/payroll/salary/${userId}`);
@@ -74,6 +70,10 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
             setLoading(false);
         }
     }, [userId]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
