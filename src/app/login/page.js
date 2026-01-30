@@ -5,13 +5,25 @@ import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
 import { authenticate } from "@/lib/actions";
 import { FileText, Eye, EyeOff } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "@/lib/schemas/loginSchema";
 
 export default function LoginPage() {
   const [errorMessage, dispatch, isPending] = useActionState(
     authenticate,
     undefined,
   );
+
   const [showPassword, setShowPassword] = useState(false);
+
+  const {
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+    mode: "onBlur" // Validate on blur for immediate feedback
+  });
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -23,6 +35,15 @@ export default function LoginPage() {
         <h2 className="text-xl font-semibold mb-6 text-center text-gray-700">
           Login
         </h2>
+
+        {/* We keep the form action={dispatch} for the server action connection 
+            but rely on browser/hook-form to prevent submit if invalid 
+            Note: react-hook-form's handleSubmit isn't strictly needed if we just want inline error messages
+            but "best practice" suggests validating before network request.
+            Since useActionState expects formData, we can just use the action directly 
+            and let react-hook-form handle the UI errors via 'register'.
+            HTML5 'required' attribute is also removed to let Zod handle it if we want custom messages.
+         */}
         <form action={dispatch}>
           <div className="mb-4">
             <label
@@ -32,13 +53,13 @@ export default function LoginPage() {
               Email
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.email ? 'border-red-500' : ''}`}
               id="email"
-              type="email"
-              name="email"
+              type="text"
               placeholder="admin@aasoftlabs.com"
-              required
+              {...register("email")}
             />
+            {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
           </div>
           <div className="mb-6">
             <label
@@ -49,12 +70,11 @@ export default function LoginPage() {
             </label>
             <div className="relative">
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10 ${errors.password ? 'border-red-500' : ''}`}
                 id="password"
                 type={showPassword ? "text" : "password"}
-                name="password"
                 placeholder="admin123"
-                required
+                {...register("password")}
               />
               <button
                 type="button"
@@ -68,6 +88,7 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
+            {errors.password && <p className="text-xs text-red-500 -mt-2">{errors.password.message}</p>}
           </div>
           <div className="flex items-center justify-between">
             <LoginButton />
@@ -82,7 +103,7 @@ export default function LoginPage() {
             )}
           </div>
         </form>
-        
+
       </div>
     </div>
   );

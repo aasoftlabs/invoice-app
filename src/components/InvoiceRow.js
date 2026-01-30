@@ -62,13 +62,19 @@ export default function InvoiceRow({ invoice }) {
           maximumFractionDigits: 2,
         })}
       </td>
+      <td className="px-6 py-4 text-right text-gray-600 font-medium">
+        ₹{" "}
+        {(invoice.amountPaid || 0).toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </td>
       <td className="px-6 py-4">
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            invoice.status === "Paid"
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${invoice.status === "Paid"
               ? "bg-green-100 text-green-800"
               : "bg-yellow-100 text-yellow-800"
-          }`}
+            }`}
         >
           {invoice.status}
         </span>

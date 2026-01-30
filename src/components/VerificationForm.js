@@ -3,37 +3,48 @@
 import { useState } from "react";
 import { verifyInvoice } from "@/app/actions/verifyInvoice";
 import { CheckCircle, AlertTriangle, Search, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { verifySchema } from "@/lib/schemas/verifySchema";
 
 export default function VerificationForm({ invoiceId }) {
     const [step, setStep] = useState("input"); // input | result
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-
-    const [inputData, setInputData] = useState({
-        invoiceNo: "",
-        amount: ""
-    });
-
+    const [serverError, setServerError] = useState("");
     const [result, setResult] = useState(null);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError("");
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        reset
+    } = useForm({
+        resolver: zodResolver(verifySchema),
+        defaultValues: {
+            invoiceNo: "",
+            amount: ""
+        }
+    });
 
+    const onSubmit = async (data) => {
+        setServerError("");
         try {
-            const response = await verifyInvoice(invoiceId, inputData.invoiceNo, inputData.amount);
+            const response = await verifyInvoice(invoiceId, data.invoiceNo, data.amount);
             if (response.success) {
                 setResult(response);
                 setStep("result");
             } else {
-                setError(response.error || "Verification failed");
+                setServerError(response.error || "Verification failed");
             }
         } catch (err) {
-            setError("An unexpected error occurred.");
-        } finally {
-            setLoading(false);
+            setServerError("An unexpected error occurred.");
         }
+    };
+
+    const handleRetry = () => {
+        setStep("input");
+        reset();
+        setServerError("");
+        setResult(null);
     };
 
     if (step === "input") {
@@ -49,44 +60,42 @@ export default function VerificationForm({ invoiceId }) {
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">Invoice Number</label>
                         <input
                             type="text"
-                            required
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white placeholder-gray-400"
                             placeholder="e.g. AASL/2025-26/001"
-                            value={inputData.invoiceNo}
-                            onChange={(e) => setInputData({ ...inputData, invoiceNo: e.target.value })}
+                            {...register("invoiceNo")}
+                            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white placeholder-gray-400 ${errors.invoiceNo ? 'border-red-500' : 'border-gray-300'}`}
                         />
+                        {errors.invoiceNo && <p className="text-xs text-red-500 mt-1">{errors.invoiceNo.message}</p>}
                     </div>
 
                     <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">Total Amount</label>
                         <input
                             type="number"
-                            required
                             step="0.01"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white placeholder-gray-400"
                             placeholder="e.g. 50000.00"
-                            value={inputData.amount}
-                            onChange={(e) => setInputData({ ...inputData, amount: e.target.value })}
+                            {...register("amount")}
+                            className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white placeholder-gray-400 ${errors.amount ? 'border-red-500' : 'border-gray-300'}`}
                         />
+                        {errors.amount && <p className="text-xs text-red-500 mt-1">{errors.amount.message}</p>}
                     </div>
 
-                    {error && (
+                    {serverError && (
                         <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2">
-                            <AlertTriangle className="w-4 h-4" /> {error}
+                            <AlertTriangle className="w-4 h-4" /> {serverError}
                         </div>
                     )}
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={isSubmitting}
                         className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition flex justify-center items-center gap-2 disabled:opacity-70"
                     >
-                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify Now"}
+                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify Now"}
                     </button>
                 </form>
             </div>
@@ -117,7 +126,7 @@ export default function VerificationForm({ invoiceId }) {
                     </div>
 
                     <button
-                        onClick={() => { setStep("input"); setInputData({ invoiceNo: "", amount: "" }); }}
+                        onClick={handleRetry}
                         className="w-full py-3 bg-gray-100 text-gray-700 rounded-lg font-bold hover:bg-gray-200 transition"
                     >
                         Try Again
@@ -176,8 +185,6 @@ export default function VerificationForm({ invoiceId }) {
                             : "This is a Standard Invoice record."}
                     </p>
                 </div>
-
-
             </div>
         </div>
     );

@@ -1,36 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Loader2, User, Lock } from "lucide-react";
+import { Save, Loader2, User, Lock, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { profileSchema } from "@/lib/schemas/profileSchema";
 
 export default function ProfileForm({ user }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState(user.name);
 
-  const [passwordData, setPasswordData] = useState({
-    current: "",
-    new: "",
-    confirm: "",
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    watch,
+    formState: { errors, isDirty },
+  } = useForm({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: user.name || "",
+      currentPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    },
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (passwordData.new && passwordData.new !== passwordData.confirm) {
-      alert("New passwords do not match");
-      return;
-    }
-
+  const onSubmit = async (data) => {
     setLoading(true);
     try {
+      // Prepare Payload
       const payload = {
-        name,
-        ...(passwordData.new
+        name: data.name,
+        ...(data.newPassword
           ? {
-            password: passwordData.current,
-            newPassword: passwordData.new,
+            password: data.currentPassword,
+            newPassword: data.newPassword,
           }
           : {}),
       };
@@ -43,7 +50,13 @@ export default function ProfileForm({ user }) {
 
       if (res.ok) {
         alert("Profile updated successfully");
-        setPasswordData({ current: "", new: "", confirm: "" });
+        // Reset password fields but keep name
+        reset({
+          name: data.name,
+          currentPassword: "",
+          newPassword: "",
+          confirmNewPassword: "",
+        });
         router.refresh();
       } else {
         const err = await res.json();
@@ -72,36 +85,47 @@ export default function ProfileForm({ user }) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Name Field */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             <User className="inline w-4 h-4 mr-1" /> Full Name
           </label>
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
+            {...register("name")}
+            className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white ${errors.name ? "border-red-500" : "border-gray-300"
+              }`}
           />
+          {errors.name && (
+            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+          )}
         </div>
 
+        {/* Change Password Section */}
         <div className="pt-6 border-t border-gray-100">
           <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
             <Lock className="w-4 h-4" /> Change Password
           </h3>
           <div className="space-y-4">
+            {/* Current Password */}
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">
                 Current Password (Required to change)
               </label>
               <input
                 type="password"
-                value={passwordData.current}
-                onChange={(e) =>
-                  setPasswordData({ ...passwordData, current: e.target.value })
-                }
-                className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
+                {...register("currentPassword")}
+                className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white ${errors.currentPassword ? "border-red-500" : "border-gray-300"
+                  }`}
               />
+              {errors.currentPassword && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.currentPassword.message}
+                </p>
+              )}
             </div>
+
+            {/* New Passwords */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">
@@ -109,12 +133,15 @@ export default function ProfileForm({ user }) {
                 </label>
                 <input
                   type="password"
-                  value={passwordData.new}
-                  onChange={(e) =>
-                    setPasswordData({ ...passwordData, new: e.target.value })
-                  }
-                  className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
+                  {...register("newPassword")}
+                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white ${errors.newPassword ? "border-red-500" : "border-gray-300"
+                    }`}
                 />
+                {errors.newPassword && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.newPassword.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">
@@ -122,25 +149,28 @@ export default function ProfileForm({ user }) {
                 </label>
                 <input
                   type="password"
-                  value={passwordData.confirm}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      confirm: e.target.value,
-                    })
-                  }
-                  className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
+                  {...register("confirmNewPassword")}
+                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white ${errors.confirmNewPassword
+                      ? "border-red-500"
+                      : "border-gray-300"
+                    }`}
                 />
+                {errors.confirmNewPassword && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.confirmNewPassword.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
         </div>
 
+        {/* Submit Button */}
         <div className="pt-6 flex justify-end">
           <button
             type="submit"
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-70"
+            disabled={loading || !isDirty}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />

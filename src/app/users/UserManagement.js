@@ -8,6 +8,7 @@ const AVAILABLE_PERMISSIONS = [
     { id: "invoices", label: "Invoices", description: "Access to all invoice pages" },
     { id: "letterhead", label: "Letterhead", description: "Access to letterhead editor" },
     { id: "project", label: "Project Tracker", description: "Access to all project pages" },
+    { id: "accounts", label: "Accounts & Ledger", description: "Manage ledger and transactions" },
     { id: "company", label: "Company Settings", description: "Access to company settings" },
     { id: "payroll", label: "Payroll Management", description: "Manage employee salaries and slips" },
     { id: "users", label: "User Management", description: "Manage users (Admin only)" },

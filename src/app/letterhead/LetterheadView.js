@@ -712,7 +712,7 @@ export default function LetterheadView({ profile }) {
 
       {/* Left Sidebar Controls - Fixed */}
       <div
-        className={`fixed left-0 top-[90px] h-[80vh] bg-gray-50/50 backdrop-blur-sm z-50 p-5 w-[460px] transition-transform duration-300 ease-in-out print:hidden flex flex-col gap-4 overflow-y-auto border-r border-gray-200 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed left-0 top-[90px] h-[80vh] bg-gray-50/50 backdrop-blur-sm z-50 p-5 w-[460px] transition-transform duration-300 ease-in-out print:hidden flex flex-col gap-4 border-r border-gray-200 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Scrollable Container for controls */}
         <div className="pb-10 flex flex-col gap-6">

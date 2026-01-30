@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import StatsCard from "@/components/project/StatsCard";
 import MonthlyChart from "@/components/project/MonthlyChart";
-import StatusBadge from "@/components/project/StatusBadge";
+import ProjectFilters from "@/components/project/ProjectFilters";
+import ActiveTaskCard from "@/components/project/ActiveTaskCard";
+import WorkLogTable from "@/components/project/WorkLogTable";
 import {
   CheckCircle,
   ListTodo,
   FolderKanban,
-  User,
-  Filter,
 } from "lucide-react";
 
 export default function ProjectDashboard() {
@@ -18,8 +18,9 @@ export default function ProjectDashboard() {
   const [stats, setStats] = useState(null);
   const [workLogs, setWorkLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState([]);
-  const [tasks, setTasks] = useState([]);
+
+  // Note: projects and tasks states were defined but unused in the original code beyond fetching.
+  // Kept logic consistent with original but removed unused imports if any.
 
   // Filters
   const currentYear = new Date().getFullYear();
@@ -35,13 +36,14 @@ export default function ProjectDashboard() {
 
   useEffect(() => {
     if (session) {
-      fetchDashboardData();
-      fetchWorkLogs();
-      fetchProjects();
-      fetchTasks();
-      if (session.user.role === "admin") {
+      if (session.user.role === "admin" && users.length === 0) {
         fetchUsers();
       }
+      // Re-fetch data when session exists and filters change
+      fetchDashboardData();
+      fetchWorkLogs();
+      // fetchProjects(); // Unused in UI
+      // fetchTasks();    // Unused in UI
     }
   }, [session, filters]);
 
@@ -95,26 +97,6 @@ export default function ProjectDashboard() {
     }
   };
 
-  const fetchProjects = async () => {
-    try {
-      const res = await fetch("/api/projects");
-      const data = await res.json();
-      if (data.success) setProjects(data.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const fetchTasks = async () => {
-    try {
-      const res = await fetch("/api/tasks");
-      const data = await res.json();
-      if (data.success) setTasks(data.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -150,66 +132,12 @@ export default function ProjectDashboard() {
         </div>
 
         {/* Filters */}
-        {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 mr-2">
-              <Filter className="w-4 h-4" />
-              <span className="font-medium text-sm">Filters:</span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <select
-                value={filters.month}
-                onChange={(e) =>
-                  setFilters({ ...filters, month: parseInt(e.target.value) })
-                }
-                className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
-              >
-                {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                  <option key={month} value={month}>
-                    {new Date(2024, month - 1).toLocaleString("default", {
-                      month: "long",
-                    })}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={filters.year}
-                onChange={(e) =>
-                  setFilters({ ...filters, year: parseInt(e.target.value) })
-                }
-                className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
-              >
-                {Array.from({ length: 5 }, (_, i) => currentYear - i).map(
-                  (year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ),
-                )}
-              </select>
-
-              {session?.user?.role?.toLowerCase() === "admin" && (
-                <select
-                  value={filters.userId}
-                  onChange={(e) =>
-                    setFilters({ ...filters, userId: e.target.value })
-                  }
-                  className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
-                >
-                  <option value="">All Users</option>
-                  {users.map((user) => (
-                    <option key={user._id} value={user._id}>
-                      {user.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-          </div>
-        </div>
+        <ProjectFilters
+          filters={filters}
+          setFilters={setFilters}
+          users={users}
+          isAdmin={session?.user?.role?.toLowerCase() === "admin"}
+        />
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -240,25 +168,7 @@ export default function ProjectDashboard() {
         </div>
 
         {/* Current Active Project/Task */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-800">
-            Current Project / Task
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Project</p>
-              <p className="text-lg font-semibold text-blue-600">
-                {stats?.currentActive?.project}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Task</p>
-              <p className="text-lg font-semibold text-purple-600">
-                {stats?.currentActive?.task}
-              </p>
-            </div>
-          </div>
-        </div>
+        <ActiveTaskCard activeStats={stats?.currentActive} />
 
         {/* Monthly Graph */}
         {stats?.monthlyData && (
@@ -268,74 +178,7 @@ export default function ProjectDashboard() {
         )}
 
         {/* Recent Work Logs */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800">
-              Recent Work Logs
-            </h3>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Project
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Task
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Details
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Remarks
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {workLogs.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="6"
-                      className="px-6 py-4 text-center text-gray-500"
-                    >
-                      No work logs found for the selected period
-                    </td>
-                  </tr>
-                ) : (
-                  workLogs.map((log) => (
-                    <tr key={log._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatDate(log.date)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {log.projectId?.name || "N/A"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {log.taskId?.taskName || "N/A"}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {log.details}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <StatusBadge status={log.status} />
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {log.remarks || "-"}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <WorkLogTable workLogs={workLogs} formatDate={formatDate} />
       </div>
     </div>
   );

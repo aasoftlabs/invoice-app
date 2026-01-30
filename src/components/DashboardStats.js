@@ -1,34 +1,34 @@
 import { DollarSign, FileText, Clock, TrendingUp } from "lucide-react";
 
-export default function DashboardStats({ invoices = [] }) {
-  // Calculate Stats
-  const totalInvoices = invoices.length;
-
-  const totalAmount = invoices.reduce(
+export default function DashboardStats({ filteredInvoices = [], allInvoices = [] }) {
+  // 1. Total Revenue (Filtered Period) - Corresponds to Income
+  const totalInvoicesCount = filteredInvoices.length;
+  const totalRevenue = filteredInvoices.reduce(
     (sum, inv) => sum + (inv.totalAmount || 0),
     0,
   );
+  const paidInFiltered = filteredInvoices.filter((inv) => inv.status === "Paid");
 
-  const pendingInvoices = invoices.filter((inv) => inv.status === "Pending");
-  const pendingAmount = pendingInvoices.reduce(
-    (sum, inv) => sum + (inv.totalAmount || 0),
+  // 2. Pending Dues (Global/All-time) - Corresponds to Net Balance
+  // Sum of (Total - Paid) for ALL invoices
+  const pendingAmount = allInvoices.reduce(
+    (sum, inv) => sum + ((inv.totalAmount || 0) - (inv.amountPaid || 0)),
     0,
   );
-
-  const paidInvoices = invoices.filter((inv) => inv.status === "Paid");
-  const paidAmount = paidInvoices.reduce(
-    (sum, inv) => sum + (inv.totalAmount || 0),
-    0,
-  );
+  // Count of invoices with any pending amount
+  const pendingCount = allInvoices.filter(inv => {
+    const due = (inv.totalAmount || 0) - (inv.amountPaid || 0);
+    return due > 0; // Floating point safety? Usually integers here but > 1 is safer if float issues. 0 is fine for now.
+  }).length;
 
   const stats = [
     {
       title: "Total Revenue",
-      value: `₹ ${totalAmount.toLocaleString("en-IN")}`,
+      value: `₹ ${totalRevenue.toLocaleString("en-IN")}`,
       icon: DollarSign,
       color: "text-green-600",
       bg: "bg-green-100",
-      desc: `${paidInvoices.length} paid invoices`,
+      desc: "For selected period",
     },
     {
       title: "Pending Dues",
@@ -36,15 +36,15 @@ export default function DashboardStats({ invoices = [] }) {
       icon: Clock,
       color: "text-orange-600",
       bg: "bg-orange-100",
-      desc: `${pendingInvoices.length} pending invoices`,
+      desc: "Total outstanding stats",
     },
     {
       title: "Total Invoices",
-      value: totalInvoices,
+      value: totalInvoicesCount,
       icon: FileText,
       color: "text-blue-600",
       bg: "bg-blue-100",
-      desc: "Lifetime generated",
+      desc: "Generated in period",
     },
   ];
 

@@ -28,7 +28,16 @@ const InvoiceSchema = new mongoose.Schema({
   ],
   taxRate: { type: Number, default: 0 },
   totalAmount: Number,
-  status: { type: String, default: "Pending" }, // Pending, Paid
+  amountPaid: { type: Number, default: 0 }, // Track total amount received
+  paymentHistory: [
+    {
+      amount: Number,
+      date: Date,
+      note: String,
+      transactionId: mongoose.Schema.Types.ObjectId
+    }
+  ],
+  status: { type: String, default: "Pending" }, // Pending, Paid, Partial, Overdue, Cancelled
   createdAt: { type: Date, default: Date.now },
 });
 

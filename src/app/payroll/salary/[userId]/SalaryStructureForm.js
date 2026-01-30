@@ -2,15 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-    Save,
-    ArrowLeft,
-    Calculator,
-    Plus,
-    Trash2,
-    DollarSign,
-    AlertCircle,
-} from "lucide-react";
+import { Save, ArrowLeft } from "lucide-react";
+import SalaryConfiguration from "@/components/payroll/salary/SalaryConfiguration";
+import SalaryEarnings from "@/components/payroll/salary/SalaryEarnings";
+import SalaryDeductions from "@/components/payroll/salary/SalaryDeductions";
+import SalaryPreview from "@/components/payroll/salary/SalaryPreview";
 
 export default function SalaryStructureForm({ userId, sessionUserId }) {
     const router = useRouter();
@@ -39,9 +35,6 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
         esiApplicable: false,
         taxRegime: "new",
     });
-
-    // State for calculation preview
-    const [preview, setPreview] = useState(null);
 
     useEffect(() => {
         fetchData();
@@ -144,7 +137,6 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
     };
 
     // Function to calculate estimated net pay purely on client side for quick view
-    // This is an approximation; real calculation happens on backend
     const calculateEstimate = () => {
         const gross =
             (salary.basic || 0) +
@@ -161,9 +153,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
 
         let pf = 0;
         if (salary.pfApplicable) {
-            if (salary.pfApplicable) {
-                pf = Math.round(salary.basic * 0.12);
-            }
+            pf = Math.round(salary.basic * 0.12);
         }
 
         let esi = 0;
@@ -239,418 +229,32 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
                     {/* Basic Details */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <UserIcon className="w-5 h-5 text-blue-600" />
-                            Configuration
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Employee ID
-                                </label>
-                                <input
-                                    type="text"
-                                    value={salary.employeeId || ""}
-                                    onChange={(e) =>
-                                        setSalary({ ...salary, employeeId: e.target.value })
-                                    }
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
-                                    placeholder="EMP001"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Department
-                                </label>
-                                <input
-                                    type="text"
-                                    value={salary.department || ""}
-                                    onChange={(e) =>
-                                        setSalary({ ...salary, department: e.target.value })
-                                    }
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
-                                    placeholder="General"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Date of Joining
-                                </label>
-                                <input
-                                    type="date"
-                                    value={
-                                        salary.joiningDate
-                                            ? new Date(salary.joiningDate).toISOString().split("T")[0]
-                                            : ""
-                                    }
-                                    onChange={(e) =>
-                                        setSalary({ ...salary, joiningDate: e.target.value })
-                                    }
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    State (for PT)
-                                </label>
-                                <select
-                                    name="state"
-                                    value={salary.state}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
-                                >
-                                    <option value="Maharashtra" className="text-gray-900">Maharashtra</option>
-                                    <option value="Karnataka" className="text-gray-900">Karnataka</option>
-                                    <option value="Tamil Nadu" className="text-gray-900">Tamil Nadu</option>
-                                    <option value="West Bengal" className="text-gray-900">West Bengal</option>
-                                    <option value="Gujarat" className="text-gray-900">Gujarat</option>
-                                    <option value="Telangana" className="text-gray-900">Telangana</option>
-                                    <option value="Andhra Pradesh" className="text-gray-900">Andhra Pradesh</option>
-                                    <option value="Madhya Pradesh" className="text-gray-900">Madhya Pradesh</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Tax Regime
-                                </label>
-                                <select
-                                    name="taxRegime"
-                                    value={salary.taxRegime}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white"
-                                >
-                                    <option value="new" className="text-gray-900">New Regime (Default)</option>
-                                    <option value="old" className="text-gray-900">Old Regime</option>
-                                </select>
-                            </div>
-                            <div className="flex items-center gap-2 mt-6">
-                                <input
-                                    type="checkbox"
-                                    id="pfApplicable"
-                                    name="pfApplicable"
-                                    checked={salary.pfApplicable}
-                                    onChange={handleChange}
-                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                                />
-                                <label
-                                    htmlFor="pfApplicable"
-                                    className="text-sm font-medium text-gray-700"
-                                >
-                                    PF Applicable
-                                </label>
-                            </div>
-                            <div className="flex items-center gap-2 mt-6">
-                                <input
-                                    type="checkbox"
-                                    id="esiApplicable"
-                                    name="esiApplicable"
-                                    checked={salary.esiApplicable}
-                                    onChange={handleChange}
-                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                                />
-                                <label
-                                    htmlFor="esiApplicable"
-                                    className="text-sm font-medium text-gray-700"
-                                >
-                                    ESI Applicable
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    <SalaryConfiguration salary={salary} handleChange={handleChange} />
 
                     {/* Earnings */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <DollarSign className="w-5 h-5 text-green-600" />
-                            Earnings (Allowances)
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <InputField
-                                label="Basic Salary"
-                                name="basic"
-                                value={salary.basic}
-                                onChange={handleNumberChange}
-                                required
-                            />
-                            <InputField
-                                label="Dearness Allowance (DA)"
-                                name="da"
-                                value={salary.da}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="HRA"
-                                name="hra"
-                                value={salary.hra}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="Conveyance Allowance"
-                                name="conveyanceAllowance"
-                                value={salary.conveyanceAllowance}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="Special Allowance"
-                                name="specialAllowance"
-                                value={salary.specialAllowance}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="Medical Allowance"
-                                name="medicalAllowance"
-                                value={salary.medicalAllowance}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="Mobile Expense"
-                                name="mobileExpense"
-                                value={salary.mobileExpense}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="Distance Allowance"
-                                name="distanceAllowance"
-                                value={salary.distanceAllowance}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="Bonus"
-                                name="bonus"
-                                value={salary.bonus}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="Arrears"
-                                name="arrears"
-                                value={salary.arrears}
-                                onChange={handleNumberChange}
-                            />
-                        </div>
-
-                        {/* Other Allowances */}
-                        <div className="mt-6">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Other Allowances
-                            </label>
-                            {salary.otherAllowances.map((item, index) => (
-                                <div key={index} className="flex gap-2 mb-2">
-                                    <input
-                                        type="text"
-                                        placeholder="Name"
-                                        value={item.name}
-                                        onChange={(e) =>
-                                            handleDynamicChange(
-                                                "otherAllowances",
-                                                index,
-                                                "name",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400"
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Amount"
-                                        value={item.amount}
-                                        onChange={(e) =>
-                                            handleDynamicChange(
-                                                "otherAllowances",
-                                                index,
-                                                "amount",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-32 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400"
-                                    />
-                                    <button
-                                        onClick={() => removeDynamicField("otherAllowances", index)}
-                                        className="text-red-500 hover:bg-red-50 p-2 rounded-lg"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            ))}
-                            <button
-                                type="button"
-                                onClick={() => addDynamicField("otherAllowances")}
-                                className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 mt-2"
-                            >
-                                <Plus className="w-4 h-4" /> Add Allowance
-                            </button>
-                        </div>
-                    </div>
+                    <SalaryEarnings
+                        salary={salary}
+                        handleNumberChange={handleNumberChange}
+                        handleDynamicChange={handleDynamicChange}
+                        addDynamicField={addDynamicField}
+                        removeDynamicField={removeDynamicField}
+                    />
 
                     {/* Deductions */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <AlertCircle className="w-5 h-5 text-red-600" />
-                            Manual Deductions
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <InputField
-                                label="Loan Deduction"
-                                name="loanDeduction"
-                                value={salary.loanDeduction}
-                                onChange={handleNumberChange}
-                            />
-                            <InputField
-                                label="Advance Deduction"
-                                name="advanceDeduction"
-                                value={salary.advanceDeduction}
-                                onChange={handleNumberChange}
-                            />
-                        </div>
-
-                        {/* Other Deductions */}
-                        <div className="mt-6">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Other Deductions
-                            </label>
-                            {salary.otherDeductions.map((item, index) => (
-                                <div key={index} className="flex gap-2 mb-2">
-                                    <input
-                                        type="text"
-                                        placeholder="Name"
-                                        value={item.name}
-                                        onChange={(e) =>
-                                            handleDynamicChange(
-                                                "otherDeductions",
-                                                index,
-                                                "name",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400"
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Amount"
-                                        value={item.amount}
-                                        onChange={(e) =>
-                                            handleDynamicChange(
-                                                "otherDeductions",
-                                                index,
-                                                "amount",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-32 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder:text-gray-400"
-                                    />
-                                    <button
-                                        onClick={() => removeDynamicField("otherDeductions", index)}
-                                        className="text-red-500 hover:bg-red-50 p-2 rounded-lg"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            ))}
-                            <button
-                                type="button"
-                                onClick={() => addDynamicField("otherDeductions")}
-                                className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 mt-2"
-                            >
-                                <Plus className="w-4 h-4" /> Add Deduction
-                            </button>
-                        </div>
-                    </div>
+                    <SalaryDeductions
+                        salary={salary}
+                        handleNumberChange={handleNumberChange}
+                        handleDynamicChange={handleDynamicChange}
+                        addDynamicField={addDynamicField}
+                        removeDynamicField={removeDynamicField}
+                    />
                 </div>
 
                 {/* Real-time Estimate */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-6">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <Calculator className="w-5 h-5 text-purple-600" />
-                            Monthly Estimate
-                        </h2>
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center pb-4 border-b">
-                                <span className="text-gray-600">Gross Salary</span>
-                                <span className="font-semibold text-green-600 text-lg">
-                                    ₹{estimate.gross.toLocaleString("en-IN")}
-                                </span>
-                            </div>
-
-                            <div className="space-y-2 text-sm text-gray-500 pb-4 border-b">
-                                <div className="flex justify-between">
-                                    <span>PF (12%)</span>
-                                    <span>₹{estimate.pf}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span>ESI (0.75%)</span>
-                                    <span>₹{estimate.esi}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span>PT (Est.)</span>
-                                    <span>₹{estimate.pt}</span>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-between items-center pb-4 border-b">
-                                <span className="text-gray-600">Total Deductions</span>
-                                <span className="font-semibold text-red-600">
-                                    -₹{estimate.deductions.toLocaleString("en-IN")}
-                                </span>
-                            </div>
-
-                            <div className="flex justify-between items-center pt-2">
-                                <span className="font-bold text-gray-800">Net Salary</span>
-                                <span className="font-bold text-blue-600 text-xl">
-                                    ₹{estimate.net.toLocaleString("en-IN")}
-                                </span>
-                            </div>
-
-                            <div className="bg-yellow-50 text-yellow-800 p-3 rounded-lg text-xs mt-4">
-                                Note: This is an estimate. TDS and precise statutory deductions
-                                will be calculated exactly when generating the salary slip.
-                            </div>
-                        </div>
-                    </div>
+                    <SalaryPreview estimate={estimate} />
                 </div>
             </div>
         </div>
-    );
-}
-
-function InputField({ label, name, value, onChange, required = false }) {
-    return (
-        <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-                {label}
-            </label>
-            <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
-                    ₹
-                </span>
-                <input
-                    type="number"
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    required={required}
-                    className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 placeholder:text-gray-400"
-                    placeholder="0"
-                />
-            </div>
-        </div>
-    );
-}
-
-function UserIcon({ className }) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={className}
-        >
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-        </svg>
     );
 }
