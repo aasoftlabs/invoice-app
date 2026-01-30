@@ -28,15 +28,30 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
   const session = await auth();
-  if (!session || session.user.role !== "admin") {
-    // Only admin can delete? Or owner? Let's say any auth user for now or admin.
-    // Actually user request didn't specify Delete. But good to have.
+  if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check permissions
+  const hasAccess =
+    session.user.role === "admin" ||
+    session.user.permissions?.includes("invoices");
+
+  if (!hasAccess) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {
     await connectDB();
-    await Invoice.findByIdAndDelete(params.id);
+    const { id } = await params;
+
+    // Check if invoice exists before deleting (optional but good practice)
+    const invoice = await Invoice.findByIdAndDelete(id);
+
+    if (!invoice) {
+      return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+    }
+
     return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 400 });

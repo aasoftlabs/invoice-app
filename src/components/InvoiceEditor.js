@@ -192,267 +192,274 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-sans text-gray-800">
       {/* LEFT SIDE: EDITOR */}
-      <div className="w-full md:w-1/3 bg-white border-r border-gray-200 p-6 overflow-y-auto print:hidden h-screen sticky top-0 scrollbar-thin scrollbar-thumb-gray-200">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="p-1 hover:bg-gray-100 rounded">
-              <ArrowLeft className="w-5 h-5 text-gray-500" />
-            </Link>
-            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-600" />
-              {isEditing ? "Edit Invoice" : "New Invoice"}
-            </h2>
+      {/* LEFT SIDE: EDITOR */}
+      <div className="w-full md:w-1/3 bg-white border-r border-gray-200 print:hidden h-[calc(100vh-4rem)] sticky top-0 flex flex-col">
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200">
+          <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => router.back()}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-500" />
+              </button>
+              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-blue-600" />
+                {isEditing ? "Edit Invoice" : "New Invoice"}
+              </h2>
+            </div>
           </div>
-        </div>
 
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            {/* Invoice Type Selector */}
-            <div className="col-span-2 bg-blue-50 p-3 rounded-lg border border-blue-100 flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                {invoiceData.type === "Digital" ? (
-                  <QrCode className="w-5 h-5 text-blue-600" />
-                ) : (
-                  <PenTool className="w-5 h-5 text-blue-600" />
-                )}
-                <div>
-                  <p className="text-sm font-bold text-blue-900">
-                    Invoice Type
-                  </p>
-                  <p className="text-xs text-blue-700">
-                    {invoiceData.type} Invoice
-                  </p>
-                </div>
-              </div>
-              <div className="flex bg-white rounded-md border border-blue-200 p-1">
-                <button
-                  onClick={() =>
-                    setInvoiceData({ ...invoiceData, type: "Standard" })
-                  }
-                  className={`px-3 py-1 text-xs rounded transition-all ${invoiceData.type === "Standard" ? "bg-blue-600 text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"}`}
-                >
-                  Standard
-                </button>
-                <button
-                  onClick={() =>
-                    setInvoiceData({ ...invoiceData, type: "Digital" })
-                  }
-                  className={`px-3 py-1 text-xs rounded transition-all ${invoiceData.type === "Digital" ? "bg-blue-600 text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"}`}
-                >
-                  Digital
-                </button>
-              </div>
-            </div>
-
-            {/* Optional QR Code for Standard */}
-            {invoiceData.type === "Standard" && (
-              <div className="col-span-2 bg-gray-50 p-2 rounded-lg border border-gray-200 flex items-center justify-between mb-2">
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Invoice Type Selector */}
+              <div className="col-span-2 bg-blue-50 p-3 rounded-lg border border-blue-100 flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <QrCode className="w-4 h-4 text-gray-500" />
-                  <span className="text-xs font-semibold text-gray-600">
-                    Show Verification QR
-                  </span>
+                  {invoiceData.type === "Digital" ? (
+                    <QrCode className="w-5 h-5 text-blue-600" />
+                  ) : (
+                    <PenTool className="w-5 h-5 text-blue-600" />
+                  )}
+                  <div>
+                    <p className="text-sm font-bold text-blue-900">
+                      Invoice Type
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      {invoiceData.type} Invoice
+                    </p>
+                  </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    checked={invoiceData.showQrCode || false}
-                    onChange={(e) =>
-                      setInvoiceData({
-                        ...invoiceData,
-                        showQrCode: e.target.checked,
-                      })
+                <div className="flex bg-white rounded-md border border-blue-200 p-1">
+                  <button
+                    onClick={() =>
+                      setInvoiceData({ ...invoiceData, type: "Standard" })
                     }
-                  />
-                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
+                    className={`px-3 py-1 text-xs rounded transition-all ${invoiceData.type === "Standard" ? "bg-blue-600 text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"}`}
+                  >
+                    Standard
+                  </button>
+                  <button
+                    onClick={() =>
+                      setInvoiceData({ ...invoiceData, type: "Digital" })
+                    }
+                    className={`px-3 py-1 text-xs rounded transition-all ${invoiceData.type === "Digital" ? "bg-blue-600 text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"}`}
+                  >
+                    Digital
+                  </button>
+                </div>
               </div>
-            )}
 
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 mb-1">
-                Invoice #
-              </label>
-              <input
-                type="text"
-                value={invoiceData.invoiceNo}
-                onChange={(e) =>
-                  setInvoiceData({ ...invoiceData, invoiceNo: e.target.value })
-                }
-                className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              />
+              {/* Optional QR Code for Standard */}
+              {invoiceData.type === "Standard" && (
+                <div className="col-span-2 bg-gray-50 p-2 rounded-lg border border-gray-200 flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <QrCode className="w-4 h-4 text-gray-500" />
+                    <span className="text-xs font-semibold text-gray-600">
+                      Show Verification QR
+                    </span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={invoiceData.showQrCode || false}
+                      onChange={(e) =>
+                        setInvoiceData({
+                          ...invoiceData,
+                          showQrCode: e.target.checked,
+                        })
+                      }
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">
+                  Invoice #
+                </label>
+                <input
+                  type="text"
+                  value={invoiceData.invoiceNo}
+                  onChange={(e) =>
+                    setInvoiceData({
+                      ...invoiceData,
+                      invoiceNo: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">
+                  Date
+                </label>
+                <input
+                  type="date"
+                  value={invoiceData.date}
+                  onChange={(e) =>
+                    setInvoiceData({ ...invoiceData, date: e.target.value })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded text-sm outline-none"
+                />
+              </div>
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1">
-                Date
+                Due Date
               </label>
               <input
                 type="date"
-                value={invoiceData.date}
+                value={invoiceData.dueDate}
                 onChange={(e) =>
-                  setInvoiceData({ ...invoiceData, date: e.target.value })
+                  setInvoiceData({ ...invoiceData, dueDate: e.target.value })
                 }
                 className="w-full p-2 border border-gray-300 rounded text-sm outline-none"
               />
             </div>
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">
-              Due Date
-            </label>
+
+          <div className="border-t pt-4 mt-4">
+            <h3 className="text-sm font-bold text-gray-700 mb-3">
+              Client Details
+            </h3>
             <input
-              type="date"
-              value={invoiceData.dueDate}
+              placeholder="Client / Contact Name"
+              value={invoiceData.clientName}
               onChange={(e) =>
-                setInvoiceData({ ...invoiceData, dueDate: e.target.value })
+                setInvoiceData({ ...invoiceData, clientName: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 rounded text-sm outline-none"
+              className="w-full mb-2 p-2 border border-gray-300 rounded text-sm"
+            />
+            <input
+              placeholder="Company Name"
+              value={invoiceData.clientCompany}
+              onChange={(e) =>
+                setInvoiceData({
+                  ...invoiceData,
+                  clientCompany: e.target.value,
+                })
+              }
+              className="w-full mb-2 p-2 border border-gray-300 rounded text-sm"
+            />
+            <textarea
+              placeholder="Address"
+              value={invoiceData.clientAddress}
+              onChange={(e) =>
+                setInvoiceData({
+                  ...invoiceData,
+                  clientAddress: e.target.value,
+                })
+              }
+              className="w-full mb-2 p-2 border border-gray-300 rounded text-sm h-20"
+            />
+            <input
+              placeholder="Client GSTIN (Optional)"
+              value={invoiceData.clientGst}
+              onChange={(e) =>
+                setInvoiceData({ ...invoiceData, clientGst: e.target.value })
+              }
+              className="w-full p-2 border border-gray-300 rounded text-sm"
             />
           </div>
-        </div>
 
-        <div className="border-t pt-4">
-          <h3 className="text-sm font-bold text-gray-700 mb-3">
-            Client Details
-          </h3>
-          <input
-            placeholder="Client / Contact Name"
-            value={invoiceData.clientName}
-            onChange={(e) =>
-              setInvoiceData({ ...invoiceData, clientName: e.target.value })
-            }
-            className="w-full mb-2 p-2 border border-gray-300 rounded text-sm"
-          />
-          <input
-            placeholder="Company Name"
-            value={invoiceData.clientCompany}
-            onChange={(e) =>
-              setInvoiceData({
-                ...invoiceData,
-                clientCompany: e.target.value,
-              })
-            }
-            className="w-full mb-2 p-2 border border-gray-300 rounded text-sm"
-          />
-          <textarea
-            placeholder="Address"
-            value={invoiceData.clientAddress}
-            onChange={(e) =>
-              setInvoiceData({
-                ...invoiceData,
-                clientAddress: e.target.value,
-              })
-            }
-            className="w-full mb-2 p-2 border border-gray-300 rounded text-sm h-20"
-          />
-          <input
-            placeholder="Client GSTIN (Optional)"
-            value={invoiceData.clientGst}
-            onChange={(e) =>
-              setInvoiceData({ ...invoiceData, clientGst: e.target.value })
-            }
-            className="w-full p-2 border border-gray-300 rounded text-sm"
-          />
-        </div>
-
-        <div className="border-t pt-4">
-          <h3 className="text-sm font-bold text-gray-700 mb-3">
-            Billable Items
-          </h3>
-          {invoiceData.items.map((item, index) => (
-            <div
-              key={index}
-              className="bg-gray-50 p-3 rounded mb-2 border border-gray-200"
-            >
-              <input
-                type="text"
-                placeholder="Item Description"
-                value={item.description}
-                onChange={(e) =>
-                  handleItemChange(index, "description", e.target.value)
-                }
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white mb-2"
-              />
-              <textarea
-                placeholder="Additional Details (Optional)"
-                rows={2}
-                value={item.subDescription || ""}
-                onChange={(e) =>
-                  handleItemChange(index, "subDescription", e.target.value)
-                }
-                className="w-full p-2 border-b border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-600 bg-transparent mb-2 resize-none"
-              />
-              <div className="flex gap-2">
-                <div className="w-1/2">
-                  <label className="text-[10px] text-gray-500">Rate (₹)</label>
-                  <input
-                    type="number"
-                    value={item.rate}
-                    onChange={(e) =>
-                      handleItemChange(index, "rate", e.target.value)
-                    }
-                    className="w-full p-2 border border-gray-300 rounded text-sm"
-                  />
-                </div>
-                <div className="w-1/4">
-                  <label className="text-[10px] text-gray-500">Qty</label>
-                  <input
-                    type="number"
-                    value={item.qty}
-                    onChange={(e) =>
-                      handleItemChange(index, "qty", e.target.value)
-                    }
-                    className="w-full p-2 border border-gray-300 rounded text-sm"
-                  />
-                </div>
-                <div className="w-1/4 flex items-end justify-end">
-                  <button
-                    onClick={() => removeItem(index)}
-                    className="p-2 text-red-500 hover:bg-red-50 rounded"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+          <div className="border-t pt-4 mt-4">
+            <h3 className="text-sm font-bold text-gray-700 mb-3">
+              Billable Items
+            </h3>
+            {invoiceData.items.map((item, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 p-3 rounded mb-2 border border-gray-200"
+              >
+                <input
+                  type="text"
+                  placeholder="Item Description"
+                  value={item.description}
+                  onChange={(e) =>
+                    handleItemChange(index, "description", e.target.value)
+                  }
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white mb-2"
+                />
+                <textarea
+                  placeholder="Additional Details (Optional)"
+                  rows={2}
+                  value={item.subDescription || ""}
+                  onChange={(e) =>
+                    handleItemChange(index, "subDescription", e.target.value)
+                  }
+                  className="w-full p-2 border-b border-gray-200 focus:border-blue-500 outline-none text-sm text-gray-600 bg-transparent mb-2 resize-none"
+                />
+                <div className="flex gap-2">
+                  <div className="w-1/2">
+                    <label className="text-[10px] text-gray-500">
+                      Rate (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={item.rate}
+                      onChange={(e) =>
+                        handleItemChange(index, "rate", e.target.value)
+                      }
+                      className="w-full p-2 border border-gray-300 rounded text-sm"
+                    />
+                  </div>
+                  <div className="w-1/4">
+                    <label className="text-[10px] text-gray-500">Qty</label>
+                    <input
+                      type="number"
+                      value={item.qty}
+                      onChange={(e) =>
+                        handleItemChange(index, "qty", e.target.value)
+                      }
+                      className="w-full p-2 border border-gray-300 rounded text-sm"
+                    />
+                  </div>
+                  <div className="w-1/4 flex items-end justify-end">
+                    <button
+                      onClick={() => removeItem(index)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-          <button
-            onClick={addItem}
-            className="w-full py-2 border-2 border-dashed border-gray-300 text-gray-500 rounded hover:border-blue-500 hover:text-blue-500 text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-          >
-            <Plus className="w-4 h-4" /> Add Item
-          </button>
+            ))}
+            <button
+              onClick={addItem}
+              className="w-full py-2 border-2 border-dashed border-gray-300 text-gray-500 rounded hover:border-blue-500 hover:text-blue-500 text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Add Item
+            </button>
 
-          <div className="mt-4 border-t pt-4">
-            <div className="flex justify-end items-center gap-3">
-              <label className="text-sm font-semibold text-gray-700">
-                GST Rate (%):
-              </label>
-              <input
-                type="number"
-                min="0"
-                step="0.1"
-                value={invoiceData.taxRate}
-                onChange={(e) =>
-                  setInvoiceData({
-                    ...invoiceData,
-                    taxRate: Number(e.target.value),
-                  })
-                }
-                className="w-24 p-2 border border-gray-300 rounded text-sm text-right"
-              />
+            <div className="mt-4 border-t pt-4">
+              <div className="flex justify-end items-center gap-3">
+                <label className="text-sm font-semibold text-gray-700">
+                  GST Rate (%):
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={invoiceData.taxRate}
+                  onChange={(e) =>
+                    setInvoiceData({
+                      ...invoiceData,
+                      taxRate: Number(e.target.value),
+                    })
+                  }
+                  className="w-24 p-2 border border-gray-300 rounded text-sm text-right"
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t pt-6 flex gap-3 sticky bottom-0 bg-white pb-4 z-10">
-          <button
-            onClick={handlePrint}
-            className="flex-1 bg-gray-800 text-white py-2.5 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-900 transition-colors"
-          >
-            <Printer className="w-4 h-4" /> Print
-          </button>
+        {/* Fixed Footer Actions */}
+        <div className="border-t p-6 bg-white shrink-0 z-10 flex gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
           <button
             onClick={saveInvoice}
             disabled={isSaving}
@@ -470,45 +477,12 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
       </div>
 
       {/* RIGHT SIDE: PREVIEW */}
-      <div className="w-full md:w-2/3 bg-gray-200 p-8 overflow-y-auto flex justify-center print:p-0 print:overflow-visible">
+      <div className="w-full md:w-2/3 bg-gray-200 p-8 overflow-y-auto flex justify-center print:p-0 print:overflow-visible print:w-full">
         <InvoicePreview
           profile={profile}
           invoiceData={invoiceData}
           initialData={initialData}
         />
-
-        {/* Print CSS */}
-        <style jsx global>{`
-          @media print {
-            @page {
-              size: A4;
-              margin: 0;
-            }
-            body {
-              print-color-adjust: exact;
-              -webkit-print-color-adjust: exact;
-            }
-            body * {
-              visibility: hidden;
-            }
-            .print\\:hidden {
-              display: none !important;
-            }
-            .w-full.md\\:w-2\\/3,
-            .w-full.md\\:w-2\\/3 * {
-              visibility: visible;
-            }
-            .w-full.md\\:w-2\\/3 {
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 100%;
-              margin: 0;
-              padding: 0;
-              background: white;
-            }
-          }
-        `}</style>
       </div>
     </div>
   );
