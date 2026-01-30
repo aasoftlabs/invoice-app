@@ -12,43 +12,17 @@ import {
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import BrandName from "./BrandName";
+import Logo from "./Logo";
 
 export default function Navbar({ user, profile }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center shadow-sm">
-      {/* Left: Company Brand */}
-      {/* Left: Company Brand & Desktop Nav */}
+    <nav className="bg-white border-b border-gray-200 px-40 m-auto py-2 flex justify-between items-center shadow-sm">
       <div className="flex items-center gap-8">
-        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          {profile?.logo ? (
-            <img
-              src={profile.logo}
-              alt="Logo"
-              className="h-10 w-auto object-contain"
-            />
-          ) : (
-            <div className="h-10 w-10 bg-blue-100 rounded flex items-center justify-center text-blue-600 font-bold">
-              {profile?.name?.[0] || "C"}
-            </div>
-          )}
-          <div className="leading-tight">
-            <BrandName
-              name={profile?.name}
-              color={profile?.formatting?.color}
-            />
-            {profile?.tagline && (
-              <p
-                className="text-[10px] font-bold uppercase mt-0.5"
-                style={{ color: profile?.formatting?.color || "#1d4ed8" }}
-              >
-                {profile.tagline}
-              </p>
-            )}
-          </div>
-        </Link>
-
+        <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Logo />
+        </div>
       </div>
 
       {/* Right: Navigation & User Menu */}
@@ -80,14 +54,15 @@ export default function Navbar({ user, profile }) {
           </Link>
         )}
 
-        {user && (user.role === "admin" || user.permissions?.includes("payroll")) && (
-          <Link
-            href="/payroll"
-            className="hidden md:block text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors"
-          >
-            Payroll
-          </Link>
-        )}
+        {user &&
+          (user.role === "admin" || user.permissions?.includes("payroll")) && (
+            <Link
+              href="/payroll"
+              className="hidden md:block text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Payroll
+            </Link>
+          )}
 
         {/* User Menu */}
         <div className="relative">
