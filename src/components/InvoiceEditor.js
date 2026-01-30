@@ -21,29 +21,29 @@ import { useToast } from "@/contexts/ToastContext";
 import InvoicePreview from "./InvoicePreview";
 import { api } from "@/lib/api";
 
+// Initial State
+const defaultInvoice = {
+  invoiceNo: "",
+  date: new Date().toISOString().split("T")[0],
+  dueDate: "",
+
+  clientName: "",
+  clientCompany: "",
+  clientAddress: "",
+  clientGst: "",
+  items: [
+    { description: "Web Application Development", rate: 40000, qty: 1 },
+    { description: "Server Configuration", rate: 5000, qty: 1 },
+  ],
+  taxRate: 0,
+  type: "Digital",
+};
+
 export default function InvoiceEditor({ initialData, isEditing = false }) {
   const router = useRouter();
   const { addToast } = useToast();
   const [profile, setProfile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  // Initial State
-  const defaultInvoice = {
-    invoiceNo: "",
-    date: new Date().toISOString().split("T")[0],
-    dueDate: "",
-
-    clientName: "",
-    clientCompany: "",
-    clientAddress: "",
-    clientGst: "",
-    items: [
-      { description: "Web Application Development", rate: 40000, qty: 1 },
-      { description: "Server Configuration", rate: 5000, qty: 1 },
-    ],
-    taxRate: 0,
-    type: "Digital",
-  };
 
   const [invoiceData, setInvoiceData] = useState(defaultInvoice);
 

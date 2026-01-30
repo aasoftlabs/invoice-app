@@ -20,8 +20,6 @@ import { QRCodeSVG } from "qrcode.react";
 // Wait, I can't use multi_replace for imports AND the button if I want to be safe and clean.
 // Let's use multi_replace_file_content.
 
-
-
 const HeaderContent = ({ profile, invoice }) => (
   <div
     className="border-b-4 pb-6 mb-8 flex justify-between items-end bg-white"
@@ -108,7 +106,7 @@ const FooterContent = ({ profile, invoice }) => (
 
     {invoice?.type === "Digital" && (
       <p className="text-[10px] text-gray-400 italic mt-2">
-        This is a computer generated invoice and doesn't need signature.
+        This is a computer generated invoice and doesn&apos;t need signature.
       </p>
     )}
   </div>

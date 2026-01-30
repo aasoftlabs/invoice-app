@@ -364,7 +364,7 @@ export default function SlipView({ slipId }) {
           </div>
 
           {/* Totals */}
-          <div className="grid grid-cols-2 border-t border-gray-300 bg-gray-50 font-bold border-b border-gray-300 text-gray-900">
+          <div className="grid grid-cols-2 border-t border-gray-300 bg-gray-50 font-bold border-b text-gray-900">
             <div className="p-3 pl-4 pr-4 flex justify-between border-r border-gray-300">
               <span>Total Earnings</span>
               <span>₹{formatCurrency(slip.earnings.gross)}</span>
