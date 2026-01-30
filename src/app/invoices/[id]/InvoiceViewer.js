@@ -31,7 +31,7 @@ export default function InvoiceViewer({ invoice, profile }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 font-sans">
+    <div className="min-h-screen bg-gray-100 p-8 font-sans print:p-0 print:bg-white">
       <div className="max-w-4xl mx-auto print:max-w-none print:mx-0 print:w-full">
         {/* Toolbar (Hidden on Print) */}
         <div className="mb-6 flex justify-between items-center print:hidden">
@@ -68,39 +68,38 @@ export default function InvoiceViewer({ invoice, profile }) {
             style={{ borderColor: profile?.formatting?.color || "#1d4ed8" }}
           >
             <div className="w-1/2">
-                 <div className="flex items-center gap-4 mb-2">
-                           {profile.logo ? (
-                             <img
-                               src={profile.logo}
-                               className="h-16 w-auto object-contain max-w-[150px]"
-                               alt="Logo"
-                             />
-                           ) : (
-                             <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">
-                               Logo
-                             </div>
-                           )}
-                           <div>
-                             <BrandName
-                               name={profile.name}
-                               color={profile.formatting?.color}
-                             />
-                             {profile.slogan && (
-                               <div className="text-[8px] text-gray-500 uppercase mt-1">
-                                 {profile.slogan}
-                               </div>
-                             )}
-                             {profile.tagline && (
-                               <div
-                                 className="text-[10px] uppercase font-bold mt-1"
-                                 style={{ color: profile.formatting?.color || "#1d4ed8" }}
-                               >
-                                 {profile.tagline}
-                               </div>
-                             )}
-           
-                           </div>
-                         </div>
+              <div className="flex items-center gap-4 mb-2">
+                {profile.logo ? (
+                  <img
+                    src={profile.logo}
+                    className="h-16 w-auto object-contain max-w-[150px]"
+                    alt="Logo"
+                  />
+                ) : (
+                  <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">
+                    Logo
+                  </div>
+                )}
+                <div>
+                  <BrandName
+                    name={profile.name}
+                    color={profile.formatting?.color}
+                  />
+                  {profile.slogan && (
+                    <div className="text-[8px] text-gray-500 uppercase mt-1">
+                      {profile.slogan}
+                    </div>
+                  )}
+                  {profile.tagline && (
+                    <div
+                      className="text-[10px] uppercase font-bold mt-1"
+                      style={{ color: profile.formatting?.color || "#1d4ed8" }}
+                    >
+                      {profile.tagline}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="w-1/2 flex flex-col items-end text-right">
@@ -151,7 +150,9 @@ export default function InvoiceViewer({ invoice, profile }) {
                 Bill To (Client):
               </div>
               <div className="text-sm text-gray-800">
-                <div className="font-bold">{invoice.client.name || invoice.client.company}</div>
+                <div className="font-bold">
+                  {invoice.client.name || invoice.client.company}
+                </div>
                 {invoice.client.name && invoice.client.company && (
                   <div>{invoice.client.company}</div>
                 )}
@@ -173,7 +174,9 @@ export default function InvoiceViewer({ invoice, profile }) {
                 Bill From:
               </div>
               <div className="text-sm text-gray-800">
-                <div className="font-bold">{profile?.billingName || profile?.name}</div>
+                <div className="font-bold">
+                  {profile?.billingName || profile?.name}
+                </div>
                 <div className="whitespace-pre-wrap">{profile?.address}</div>
                 <div className="mt-2">Phone: {profile?.phone}</div>
                 <div>Email: {profile?.email}</div>
@@ -221,11 +224,17 @@ export default function InvoiceViewer({ invoice, profile }) {
                     )}
                   </td>
                   <td className="p-3 text-right text-gray-600">
-                    {item.rate.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {item.rate.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </td>
                   <td className="p-3 text-center text-gray-600">{item.qty}</td>
                   <td className="p-3 text-right font-bold text-gray-800">
-                    {(item.rate * item.qty).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {(item.rate * item.qty).toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </td>
                 </tr>
               ))}
@@ -239,7 +248,10 @@ export default function InvoiceViewer({ invoice, profile }) {
                   Sub Total
                 </td>
                 <td className="p-2 text-right text-sm font-bold text-gray-800">
-                  {calculateSubTotal().toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {calculateSubTotal().toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </td>
               </tr>
               <tr>
@@ -248,7 +260,10 @@ export default function InvoiceViewer({ invoice, profile }) {
                   GST ({invoice.taxRate || 0}%)
                 </td>
                 <td className="p-2 text-right text-sm font-bold text-gray-800">
-                  {calculateTax().toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {calculateTax().toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </td>
               </tr>
               <tr className="bg-blue-50">
@@ -273,7 +288,11 @@ export default function InvoiceViewer({ invoice, profile }) {
                   className="p-3 text-right text-base font-bold border-t border-blue-200"
                   style={{ color: profile?.formatting?.color || "#1d4ed8" }}
                 >
-                  ₹ {invoice.totalAmount?.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ₹{" "}
+                  {invoice.totalAmount?.toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </td>
               </tr>
             </tbody>
@@ -291,16 +310,24 @@ export default function InvoiceViewer({ invoice, profile }) {
               <div className="bg-yellow-50 border border-dashed border-yellow-400 rounded-lg p-4 text-xs print:border-gray-600">
                 <div className="grid grid-cols-[80px_1fr] gap-y-1">
                   <span className="font-bold text-gray-700">Bank:</span>
-                  <span className="text-gray-800">{profile?.bankDetails?.bankName}</span>
+                  <span className="text-gray-800">
+                    {profile?.bankDetails?.bankName}
+                  </span>
 
                   <span className="font-bold text-gray-700">Account:</span>
-                  <span className="text-gray-800">{profile?.bankDetails?.accountName}</span>
+                  <span className="text-gray-800">
+                    {profile?.bankDetails?.accountName}
+                  </span>
 
                   <span className="font-bold text-gray-700">Acc No:</span>
-                  <span className="text-gray-800">{profile?.bankDetails?.accountNumber}</span>
+                  <span className="text-gray-800">
+                    {profile?.bankDetails?.accountNumber}
+                  </span>
 
                   <span className="font-bold text-gray-700">IFSC:</span>
-                  <span className="text-gray-800">{profile?.bankDetails?.ifscCode}</span>
+                  <span className="text-gray-800">
+                    {profile?.bankDetails?.ifscCode}
+                  </span>
 
                   <span className="font-bold text-gray-700">PAN No:</span>
                   <span className="text-gray-800">{profile?.pan}</span>
@@ -308,10 +335,10 @@ export default function InvoiceViewer({ invoice, profile }) {
               </div>
 
               {/* Optional QR Code for Standard Invoice */}
-              {invoice.type === 'Standard' && invoice.showQrCode && (
+              {invoice.type === "Standard" && invoice.showQrCode && (
                 <div className="mt-4">
                   <QRCodeSVG
-                    value={`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/verify/${invoice._id}`}
+                    value={`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify/${invoice._id}`}
                     size={60}
                     level="H"
                   />
@@ -322,11 +349,11 @@ export default function InvoiceViewer({ invoice, profile }) {
               )}
             </div>
             <div className="text-right flex flex-col items-end">
-              {invoice.type === 'Digital' ? (
+              {invoice.type === "Digital" ? (
                 <div className="flex flex-col items-end">
                   <div className="mb-2 p-2 bg-white border border-gray-200 rounded-lg">
                     <QRCodeSVG
-                      value={`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/verify/${invoice._id}`}
+                      value={`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify/${invoice._id}`}
                       size={90}
                       level="H"
                     />
@@ -337,10 +364,21 @@ export default function InvoiceViewer({ invoice, profile }) {
                 </div>
               ) : (
                 <>
-                  <div className="text-sm font-bold mb-24" style={{ color: profile?.formatting?.color || "#1d4ed8", fontFamily: 'Verdana, sans-serif' }}>
+                  <div
+                    className="text-sm font-bold mb-24"
+                    style={{
+                      color: profile?.formatting?.color || "#1d4ed8",
+                      fontFamily: "Verdana, sans-serif",
+                    }}
+                  >
                     For {profile?.billingName || profile?.name}
                   </div>
-                  <div className="text-[10px] font-bold uppercase border-t pt-1 min-w-[150px] text-center text-gray-500" style={{ borderColor: profile?.formatting?.color || "#1d4ed8" }}>
+                  <div
+                    className="text-[10px] font-bold uppercase border-t pt-1 min-w-[150px] text-center text-gray-500"
+                    style={{
+                      borderColor: profile?.formatting?.color || "#1d4ed8",
+                    }}
+                  >
                     Authorized Signatory
                   </div>
                 </>
@@ -348,13 +386,16 @@ export default function InvoiceViewer({ invoice, profile }) {
             </div>
           </div>
 
-
           {/* Page Footer */}
           <div className="mt-auto text-center text-xs text-gray-500 border-t border-gray-100 pt-6">
-            <p className="font-semibold text-gray-700 mb-1">Thank you for your business!</p>
-            <p className="mb-2">For any enquiries, please email {profile?.email}</p>
+            <p className="font-semibold text-gray-700 mb-1">
+              Thank you for your business!
+            </p>
+            <p className="mb-2">
+              For any enquiries, please email {profile?.email}
+            </p>
 
-            {invoice.type === 'Digital' && (
+            {invoice.type === "Digital" && (
               <p className="text-[10px] text-gray-400 italic mt-2">
                 This is a computer generated invoice and doesn't need signature.
               </p>
@@ -372,12 +413,12 @@ export default function InvoiceViewer({ invoice, profile }) {
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;
           }
-           /* Ensure the main container fits A4 mostly */
+          /* Ensure the main container fits A4 mostly */
           .print\\:min-h-\\[297mm\\] {
-             min-height: 296mm;
+            min-height: 296mm;
           }
         }
       `}</style>
-    </div >
+    </div>
   );
 }

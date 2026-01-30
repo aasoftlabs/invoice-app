@@ -6,7 +6,7 @@ import Logo from "./Logo";
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-50 border-t border-gray-200 relative overflow-hidden transition-colors duration-300">
+    <footer className="bg-slate-50 border-t border-gray-200 relative overflow-hidden transition-colors duration-300 print:hidden">
       {/* Background Effect */}
       <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 to-transparent pointer-events-none"></div>
 

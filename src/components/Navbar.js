@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  LogOut,
-  User,
-  Settings,
-  ChevronDown,
-  UserPlus,
-} from "lucide-react";
+import { LogOut, User, Settings, ChevronDown, UserPlus } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Logo from "./Logo";
 
@@ -16,7 +10,7 @@ export default function Navbar({ user, profile }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white border-b border-gray-200 px-40 m-auto py-2 flex justify-between items-center shadow-sm">
+    <nav className="bg-white border-b border-gray-200 px-40 m-auto py-2 flex justify-between items-center shadow-sm print:hidden">
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <Logo />

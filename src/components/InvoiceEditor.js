@@ -69,7 +69,8 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
       });
     } else {
       // Fetch Next Invoice Number for new invoices
-      api.invoices.getNextNumber()
+      api.invoices
+        .getNextNumber()
         .then((data) => {
           if (data.success) {
             setInvoiceData((prev) => ({ ...prev, invoiceNo: data.invoiceNo }));
@@ -79,10 +80,9 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
     }
 
     // Fetch Company Profile
-    api.setup.getProfile()
-      .then((data) => {
-        if (data.profile) setProfile(data.profile);
-      });
+    api.setup.getProfile().then((data) => {
+      if (data.profile) setProfile(data.profile);
+    });
   }, [initialData, isEditing]);
 
   // Calculations
@@ -155,17 +155,9 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
         dueDate: invoiceData.dueDate ? invoiceData.dueDate : null,
         type: invoiceData.type,
         showQrCode: invoiceData.showQrCode,
-        totalAmount: calculatedTotal, // Using the logic from previous steps
+        totalAmount: calculateTotal(),
         status: initialData?.status || "Pending",
       };
-
-      // Need to recalculate total here or ensure it's up to date. 
-      // Editor implementation logic:
-      const calculateSubTotal = () => invoiceData.items.reduce((acc, item) => acc + item.rate * item.qty, 0);
-      const calculateTax = () => calculateSubTotal() * (invoiceData.taxRate / 100);
-      const totalAmount = calculateSubTotal() + calculateTax();
-      payload.totalAmount = totalAmount;
-
 
       let response;
       if (isEditing) {
@@ -174,10 +166,14 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
         await api.invoices.create(payload);
       }
 
-      addToast(isEditing ? "Invoice Updated Successfully!" : "Invoice Saved Successfully!", "success");
+      addToast(
+        isEditing
+          ? "Invoice Updated Successfully!"
+          : "Invoice Saved Successfully!",
+        "success",
+      );
       router.push(isEditing ? `/invoices/${initialData._id}` : "/");
       router.refresh();
-
     } catch (error) {
       console.error("Error saving:", error);
       addToast("Failed: " + error.message, "error");
@@ -211,27 +207,37 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-
-
             {/* Invoice Type Selector */}
             <div className="col-span-2 bg-blue-50 p-3 rounded-lg border border-blue-100 flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                {invoiceData.type === 'Digital' ? <QrCode className="w-5 h-5 text-blue-600" /> : <PenTool className="w-5 h-5 text-blue-600" />}
+                {invoiceData.type === "Digital" ? (
+                  <QrCode className="w-5 h-5 text-blue-600" />
+                ) : (
+                  <PenTool className="w-5 h-5 text-blue-600" />
+                )}
                 <div>
-                  <p className="text-sm font-bold text-blue-900">Invoice Type</p>
-                  <p className="text-xs text-blue-700">{invoiceData.type} Invoice</p>
+                  <p className="text-sm font-bold text-blue-900">
+                    Invoice Type
+                  </p>
+                  <p className="text-xs text-blue-700">
+                    {invoiceData.type} Invoice
+                  </p>
                 </div>
               </div>
               <div className="flex bg-white rounded-md border border-blue-200 p-1">
                 <button
-                  onClick={() => setInvoiceData({ ...invoiceData, type: 'Standard' })}
-                  className={`px-3 py-1 text-xs rounded transition-all ${invoiceData.type === 'Standard' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
+                  onClick={() =>
+                    setInvoiceData({ ...invoiceData, type: "Standard" })
+                  }
+                  className={`px-3 py-1 text-xs rounded transition-all ${invoiceData.type === "Standard" ? "bg-blue-600 text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"}`}
                 >
                   Standard
                 </button>
                 <button
-                  onClick={() => setInvoiceData({ ...invoiceData, type: 'Digital' })}
-                  className={`px-3 py-1 text-xs rounded transition-all ${invoiceData.type === 'Digital' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
+                  onClick={() =>
+                    setInvoiceData({ ...invoiceData, type: "Digital" })
+                  }
+                  className={`px-3 py-1 text-xs rounded transition-all ${invoiceData.type === "Digital" ? "bg-blue-600 text-white shadow-sm" : "text-gray-500 hover:bg-gray-50"}`}
                 >
                   Digital
                 </button>
@@ -239,18 +245,25 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
             </div>
 
             {/* Optional QR Code for Standard */}
-            {invoiceData.type === 'Standard' && (
+            {invoiceData.type === "Standard" && (
               <div className="col-span-2 bg-gray-50 p-2 rounded-lg border border-gray-200 flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <QrCode className="w-4 h-4 text-gray-500" />
-                  <span className="text-xs font-semibold text-gray-600">Show Verification QR</span>
+                  <span className="text-xs font-semibold text-gray-600">
+                    Show Verification QR
+                  </span>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     className="sr-only peer"
                     checked={invoiceData.showQrCode || false}
-                    onChange={(e) => setInvoiceData({ ...invoiceData, showQrCode: e.target.checked })}
+                    onChange={(e) =>
+                      setInvoiceData({
+                        ...invoiceData,
+                        showQrCode: e.target.checked,
+                      })
+                    }
                   />
                   <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                 </label>
@@ -372,9 +385,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
               />
               <div className="flex gap-2">
                 <div className="w-1/2">
-                  <label className="text-[10px] text-gray-500">
-                    Rate (₹)
-                  </label>
+                  <label className="text-[10px] text-gray-500">Rate (₹)</label>
                   <input
                     type="number"
                     value={item.rate}
@@ -458,7 +469,6 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
         </div>
       </div>
 
-
       {/* RIGHT SIDE: PREVIEW */}
       <div className="w-full md:w-2/3 bg-gray-200 p-8 overflow-y-auto flex justify-center print:p-0 print:overflow-visible">
         <InvoicePreview
@@ -469,36 +479,36 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
 
         {/* Print CSS */}
         <style jsx global>{`
-            @media print {
-              @page {
-                size: A4;
-                margin: 0;
-              }
-              body {
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-              }
-              body * {
-                visibility: hidden;
-              }
-              .print\\:hidden {
-                display: none !important;
-              }
-              .w-full.md\\:w-2\\/3,
-              .w-full.md\\:w-2\\/3 * {
-                visibility: visible;
-              }
-              .w-full.md\\:w-2\\/3 {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                background: white;
-              }
+          @media print {
+            @page {
+              size: A4;
+              margin: 0;
             }
-          `}</style>
+            body {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
+            }
+            body * {
+              visibility: hidden;
+            }
+            .print\\:hidden {
+              display: none !important;
+            }
+            .w-full.md\\:w-2\\/3,
+            .w-full.md\\:w-2\\/3 * {
+              visibility: visible;
+            }
+            .w-full.md\\:w-2\\/3 {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100%;
+              margin: 0;
+              padding: 0;
+              background: white;
+            }
+          }
+        `}</style>
       </div>
     </div>
   );
