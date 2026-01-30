@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, Loader2, Calendar, FileText, CheckCircle } from "lucide-react";
 
 export default function AddTransactionModal({ isOpen, onClose, onSuccess, editingTransaction }) {
@@ -19,42 +19,8 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess, editin
         invoiceId: ""
     });
 
-    // Reset or Populate form when modal opens
-    useEffect(() => {
-        if (isOpen) {
-            if (editingTransaction) {
-                setFormData({
-                    date: new Date(editingTransaction.date).toISOString().split('T')[0],
-                    type: editingTransaction.type,
-                    category: editingTransaction.category,
-                    amount: editingTransaction.amount,
-                    description: editingTransaction.description,
-                    paymentMode: editingTransaction.paymentMode,
-                    isInvoicePayment: editingTransaction.reference?.type === "Invoice",
-                    invoiceId: editingTransaction.reference?.id || ""
-                });
-                // Fetch invoices immediately if it's a credit transaction
-                if (editingTransaction.type === "Credit") {
-                    fetchInvoices("Credit");
-                }
-            } else {
-                setFormData({
-                    date: new Date().toISOString().split('T')[0],
-                    type: "Credit",
-                    category: "Invoice Payment",
-                    amount: "",
-                    description: "",
-                    paymentMode: "Bank Transfer",
-                    isInvoicePayment: true,
-                    invoiceId: ""
-                });
-                fetchInvoices();
-            }
-        }
-    }, [isOpen, editingTransaction]);
-
     // Fetch unpaid invoices
-    const fetchInvoices = async (typeOverride) => {
+    const fetchInvoices = useCallback(async (typeOverride) => {
         const typeToCheck = typeOverride || formData.type;
         if (typeToCheck !== "Credit") return;
 
@@ -92,7 +58,41 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess, editin
         } finally {
             setFetchingInvoices(false);
         }
-    };
+    }, [formData.type, editingTransaction]);
+
+    // Reset or Populate form when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            if (editingTransaction) {
+                setFormData({
+                    date: new Date(editingTransaction.date).toISOString().split('T')[0],
+                    type: editingTransaction.type,
+                    category: editingTransaction.category,
+                    amount: editingTransaction.amount,
+                    description: editingTransaction.description,
+                    paymentMode: editingTransaction.paymentMode,
+                    isInvoicePayment: editingTransaction.reference?.type === "Invoice",
+                    invoiceId: editingTransaction.reference?.id || ""
+                });
+                // Fetch invoices immediately if it's a credit transaction
+                if (editingTransaction.type === "Credit") {
+                    fetchInvoices("Credit");
+                }
+            } else {
+                setFormData({
+                    date: new Date().toISOString().split('T')[0],
+                    type: "Credit",
+                    category: "Invoice Payment",
+                    amount: "",
+                    description: "",
+                    paymentMode: "Bank Transfer",
+                    isInvoicePayment: true,
+                    invoiceId: ""
+                });
+                fetchInvoices();
+            }
+        }
+    }, [isOpen, editingTransaction, fetchInvoices]);
 
     // Auto-fill amount when invoice is selected
     const handleInvoiceSelect = (invoiceId) => {

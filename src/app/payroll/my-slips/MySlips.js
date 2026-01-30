@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FileText, Download, Eye, Calendar, Trash2, RefreshCw } from "lucide-react";
 
 export default function MySlips({ userId }) {
@@ -11,9 +11,9 @@ export default function MySlips({ userId }) {
 
     useEffect(() => {
         fetchSlips();
-    }, [userId, selectedYear]);
+    }, [fetchSlips]);
 
-    const fetchSlips = async () => {
+    const fetchSlips = useCallback(async () => {
         try {
             const res = await fetch(
                 `/api/payroll/slips?userId=${userId}${selectedYear ? `&year=${selectedYear}` : ""}`
@@ -27,7 +27,7 @@ export default function MySlips({ userId }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [userId, selectedYear]);
 
     const handleDelete = async (slipId) => {
         if (!confirm("Are you sure you want to delete this salary slip?")) return;
@@ -152,7 +152,7 @@ export default function MySlips({ userId }) {
                         No Salary Slips Found
                     </h3>
                     <p className="text-gray-500">
-                        You don't have any salary slips for the selected year.
+                        You don&apos;t have any salary slips for the selected year.
                     </p>
                 </div>
             ) : (

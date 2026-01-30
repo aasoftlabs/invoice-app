@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownLeft, FileText, Search, Edit2, Trash2 } from "lucide-react";
 import AddTransactionModal from "@/components/accounts/AddTransactionModal";
 import AccountFilters from "@/components/accounts/AccountFilters";
@@ -17,7 +17,7 @@ export default function AccountsPage() {
                 router.push("/");
             }
         }
-    }, [session]);
+    }, [session, router]);
 
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -30,7 +30,19 @@ export default function AccountsPage() {
         type: "all"
     });
 
-    const fetchTransactions = async () => {
+    const calculateStats = (data, globalBalance) => {
+        let income = 0;
+        let expense = 0;
+
+        data.forEach(t => {
+            if (t.type === "Credit") income += t.amount;
+            if (t.type === "Debit") expense += t.amount;
+        });
+
+        setStats({ income, expense, balance: globalBalance });
+    };
+
+    const fetchTransactions = useCallback(async () => {
         try {
             setLoading(true);
             const query = new URLSearchParams({
@@ -50,23 +62,11 @@ export default function AccountsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filters]);
 
     useEffect(() => {
         fetchTransactions();
-    }, [filters]); // Re-fetch on filter change
-
-    const calculateStats = (data, globalBalance) => {
-        let income = 0;
-        let expense = 0;
-
-        data.forEach(t => {
-            if (t.type === "Credit") income += t.amount;
-            if (t.type === "Debit") expense += t.amount;
-        });
-
-        setStats({ income, expense, balance: globalBalance });
-    };
+    }, [fetchTransactions]);
 
     const handleSuccess = () => {
         fetchTransactions();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Save, ArrowLeft } from "lucide-react";
 import SalaryConfiguration from "@/components/payroll/salary/SalaryConfiguration";
@@ -38,9 +38,9 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
 
     useEffect(() => {
         fetchData();
-    }, [userId]);
+    }, [fetchData]);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             const res = await fetch(`/api/payroll/salary/${userId}`);
             if (res.ok) {
@@ -73,7 +73,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [userId]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { LogOut, User, Settings, ChevronDown, UserPlus } from "lucide-react";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
 
 export default function UserMenu({ user }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,9 +25,11 @@ export default function UserMenu({ user }) {
                 </div>
                 <div className="h-10 w-10 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
                     {user?.image ? (
-                        <img
+                        <Image
                             src={user.image}
                             alt="Avatar"
+                            width={40}
+                            height={40}
                             className="h-full w-full object-cover"
                         />
                     ) : (

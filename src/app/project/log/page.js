@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import StatusBadge from "@/components/project/StatusBadge";
 import { Calendar, ListTodo, Plus, Trash2, Pencil, Filter } from "lucide-react";
@@ -25,14 +25,7 @@ export default function WorkLogPage() {
     year: currentYear,
   });
 
-  useEffect(() => {
-    if (session) {
-      fetchProjects();
-      fetchWorkLogs();
-    }
-  }, [session, filters]);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const res = await fetch("/api/projects");
       const data = await res.json();
@@ -42,9 +35,9 @@ export default function WorkLogPage() {
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
-  };
+  }, []);
 
-  const fetchWorkLogs = async () => {
+  const fetchWorkLogs = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         ...(filters.projectId && { projectId: filters.projectId }),
@@ -59,7 +52,8 @@ export default function WorkLogPage() {
     } catch (error) {
       console.error("Error fetching work logs:", error);
     }
-  };
+  }, [filters]);
+
 
   const handleDeleteLog = async (logId) => {
     if (!window.confirm("Are you sure you want to delete this work log?")) {
@@ -98,6 +92,15 @@ export default function WorkLogPage() {
     setIsModalOpen(false);
     setEditingLog(null);
   };
+
+  useEffect(() => {
+    if (session) {
+      Promise.resolve().then(() => {
+        fetchProjects();
+        fetchWorkLogs();
+      });
+    }
+  }, [session, filters, fetchProjects, fetchWorkLogs]);
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -283,17 +286,17 @@ export default function WorkLogPage() {
                           {/* Delete button - show for log creator or admin */}
                           {(log.userId?._id === session?.user?.id ||
                             session?.user?.role === "admin") && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteLog(log._id);
-                              }}
-                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                              title="Delete work log"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteLog(log._id);
+                                }}
+                                className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                title="Delete work log"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
                         </div>
                       </td>
                     </tr>

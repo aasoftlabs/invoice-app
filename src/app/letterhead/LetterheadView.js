@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import BrandName from "@/components/BrandName";
 import dynamic from "next/dynamic";
+import NextImage from "next/image";
 
 // Dynamically import ReactQuill to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -350,7 +351,7 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
   // Track selection formats to update UI state
   const [currentFormat, setCurrentFormat] = useState({});
 
-  useMemo(() => {
+  useEffect(() => {
     if (!quillRef?.current) return;
     const editor = quillRef.current.getEditor();
     // Handler for update
@@ -760,8 +761,11 @@ export default function LetterheadView({ profile }) {
           <header className="flex justify-between items-start border-b-2 border-blue-500 pb-2 mb-5">
             <div className="flex items-center gap-4 mb-2">
               {profile.logo ? (
-                <img
+                <NextImage
                   src={profile.logo}
+                  width={150}
+                  height={64}
+                  unoptimized
                   className="h-16 w-auto object-contain max-w-[150px]"
                   alt="Logo"
                 />

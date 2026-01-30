@@ -8,6 +8,7 @@ import { FileText, Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/schemas/loginSchema";
+import Logo from "@/components/Logo";
 
 export default function LoginPage() {
   const [errorMessage, dispatch, isPending] = useActionState(
@@ -29,11 +30,10 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 bg-white rounded-lg shadow-md w-96">
         <div className="flex items-center justify-center mb-6 gap-2">
-          <FileText className="w-8 h-8 text-blue-600" />
-          <h1 className="text-2xl font-bold text-gray-800">Invoice App</h1>
+          <Logo/>
         </div>
         <h2 className="text-xl font-semibold mb-6 text-center text-gray-700">
-          Login
+          Welcome Back
         </h2>
 
         {/* We keep the form action={dispatch} for the server action connection 

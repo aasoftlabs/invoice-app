@@ -209,7 +209,7 @@ export default function AddProjectModal({
               </p>
               <ul className="text-xs text-blue-700 mt-2 ml-4 list-disc space-y-1">
                 <li>
-                  Status starts as "Not Started" and updates based on task
+                  Status starts as &quot;Not Started&quot; and updates based on task
                   completion
                 </li>
                 <li>Start date is set from the first work log entry</li>

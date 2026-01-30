@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import BrandName from "@/components/BrandName";
+import Image from "next/image";
 
 const SlipTemplate = forwardRef(({ slip, company }, ref) => {
     const monthNames = [
@@ -113,9 +114,12 @@ const SlipTemplate = forwardRef(({ slip, company }, ref) => {
                 <div className="flex flex-col items-center">
                     <div className="flex items-center gap-3 mb-4">
                         {company?.logo ? (
-                            <img
+                            <Image
                                 src={company.logo}
                                 alt="Logo"
+                                width={100}
+                                height={64}
+                                unoptimized
                                 className="h-16 w-auto object-contain"
                             />
                         ) : (

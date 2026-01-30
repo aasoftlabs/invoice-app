@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import GenerateFilters from "@/components/payroll/generate/GenerateFilters";
@@ -19,9 +19,9 @@ export default function GeneratePayroll() {
 
   useEffect(() => {
     fetchData();
-  }, [selectedMonth, selectedYear]);
+  }, [fetchData]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch employees
@@ -52,7 +52,7 @@ export default function GeneratePayroll() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedMonth, selectedYear]);
 
   const handleGenerate = async (userId) => {
     setProcessing(userId);

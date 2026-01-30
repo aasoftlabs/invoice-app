@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import StatusBadge from "@/components/project/StatusBadge";
 import { ListTodo, Search, Plus, Edit2, Trash2, Filter } from "lucide-react";
@@ -20,15 +20,7 @@ export default function TasksPage() {
   const [viewingTask, setViewingTask] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (session) {
-      fetchProjects();
-      fetchTasks();
-      fetchUsers();
-    }
-  }, [filters, session]);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const res = await fetch("/api/projects");
       const data = await res.json();
@@ -36,9 +28,9 @@ export default function TasksPage() {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, []);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams(filters);
@@ -50,9 +42,9 @@ export default function TasksPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await fetch("/api/users");
       const data = await res.json();
@@ -60,7 +52,15 @@ export default function TasksPage() {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      fetchProjects();
+      fetchTasks();
+      fetchUsers();
+    }
+  }, [filters, session, fetchProjects, fetchTasks, fetchUsers]);
 
   const filteredTasks = tasks.filter(
     (task) =>
@@ -141,7 +141,6 @@ export default function TasksPage() {
           </button>
         </div>
 
-        {/* Filters */}
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
           <div className="flex flex-wrap items-center gap-4">

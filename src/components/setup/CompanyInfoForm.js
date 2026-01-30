@@ -63,7 +63,7 @@ export default function CompanyInfoForm() {
                                 placeholder="Legal Entity Name for Billing"
                             />
                             <p className="text-xs text-gray-500 mt-1">
-                                This name will appear in the "Bill From" section instead of the Company Name.
+                                This name will appear in the &quot;Bill From&quot; section instead of the Company Name.
                             </p>
                         </div>
                     )}

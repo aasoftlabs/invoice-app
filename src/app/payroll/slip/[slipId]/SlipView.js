@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
@@ -20,9 +20,9 @@ export default function SlipView({ slipId }) {
 
   useEffect(() => {
     fetchData();
-  }, [slipId]);
+  }, [fetchData]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       // Fetch slip
       const data = await api.payroll.getSlip(slipId);
@@ -40,7 +40,7 @@ export default function SlipView({ slipId }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slipId]);
 
   const handlePaySuccess = () => {
     // Refresh data to show paid status

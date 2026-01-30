@@ -1,55 +1,76 @@
 import Link from "next/link";
 import {
-  ArrowRight,
   FileText,
   Banknote,
   Briefcase,
   PenTool,
-  PieChart,
-  Users,
-  CheckCircle,
 } from "lucide-react";
 import { auth } from "@/auth";
+import connectDB from "@/lib/mongoose";
+import Project from "@/models/Project";
+import Invoice from "@/models/Invoice";
+import User from "@/models/User";
+import { redirect } from "next/navigation";
 
 export default async function LandingPage() {
   const session = await auth();
 
+  if (!session) {
+    redirect("/login");
+  }
+
+  await connectDB();
+
+  // Fetch counts dynamically
+  const [activeProjectsCount, pendingInvoicesCount, teamMembersCount] = await Promise.all([
+    Project.countDocuments({ status: { $ne: "Completed" } }),
+    Invoice.countDocuments({ status: { $in: ["Pending", "Partial", "Overdue"] } }),
+    User.countDocuments(),
+  ]);
+
   return (
     <div className="min-h-screen bg-white font-sans text-gray-800">
       {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-6 py-16 md:py-20 lg:py-24 flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-medium mb-8">
-          <span className="flex h-2 w-2 rounded-full bg-blue-600"></span>
-          All-in-One Business Management Suite
+      <main className="max-w-7xl mx-auto px-6 py-10 md:py-12 lg:py-12 flex flex-col items-center text-center">
+        <div className="mb-12 text-center">
+          <h1 className="text-3xl font-bold text-gray-900">Employee Dashboard</h1>
+          <p className="text-gray-500 mt-2">Access your business tools</p>
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-linear-to-r from-gray-900 via-blue-800 to-gray-900">
-          Manage Your Business <br className="hidden md:block" />
-          <span className="text-blue-600">With Confidence</span>
-        </h1>
+        {/* Company Info Section */}
+        <div className="w-full max-w-7xl mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 bg-gradient-to-br from-blue-50 to-white p-8 rounded-2xl border border-blue-100 shadow-sm text-left">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome to AA SoftLabs</h2>
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              We are dedicated to delivering excellence in every project. As part of our team, you retain access to all the tools you need to manage invoices, payroll, and projects efficiently.
+            </p>
+            <div className="flex gap-4">
+              <div className="px-4 py-2 bg-white rounded-lg border border-blue-100 text-sm font-medium text-blue-700 shadow-sm">
+                🚀 Q1 Goals: Enhance UX
+              </div>
+              <div className="px-4 py-2 bg-white rounded-lg border border-blue-100 text-sm font-medium text-blue-700 shadow-sm">
+                Team Meeting: Friday 4 PM
+              </div>
+            </div>
+          </div>
 
-        <p className="text-xl text-gray-600 max-w-2xl mb-10 leading-relaxed">
-          From smart invoicing and payroll management to project tracking and
-          official letterheads — everything you need in one place.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-20">
-          <Link
-            href={session ? "#apps" : "/login"}
-            className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-blue-600 rounded-full hover:bg-blue-700 shadow-lg hover:shadow-xl hover:-translate-y-1"
-          >
-            {session ? "Explore Apps" : "Get Started"}
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Link>
-
-          {!session && (
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-gray-700 transition-all duration-200 bg-gray-50 rounded-full hover:bg-gray-100 border border-gray-200"
-            >
-              Log In
-            </Link>
-          )}
+          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-left flex flex-col justify-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+                <span className="text-gray-500 text-sm">Active Projects</span>
+                <span className="font-bold text-gray-900">{activeProjectsCount}</span>
+              </div>
+              <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+                <span className="text-gray-500 text-sm">Pending Invoices</span>
+                <span className="font-bold text-gray-900">{pendingInvoicesCount}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 text-sm">Team Members</span>
+                <span className="font-bold text-gray-900">{teamMembersCount}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Feature Modules Grid */}

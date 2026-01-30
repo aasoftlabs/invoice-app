@@ -1,6 +1,6 @@
 import { useFormContext, useWatch } from "react-hook-form";
 import { Upload } from "lucide-react";
-
+import Image from "next/image";
 export default function BrandingForm() {
     const { register, setValue } = useFormContext();
     const color = useWatch({ name: "formatting.color" });
@@ -53,9 +53,12 @@ export default function BrandingForm() {
                             />
                         </label>
                         {logo && (
-                            <img
+                            <Image
                                 src={logo}
                                 alt="Preview"
+                                width={100}
+                                height={48}
+                                unoptimized
                                 className="h-12 w-auto object-contain border p-1 rounded bg-white"
                             />
                         )}

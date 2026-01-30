@@ -42,6 +42,16 @@ export default function Navbar({ user, profile }) {
           </Link>
         )}
 
+           {user &&
+          (user.role === "admin" || user.permissions?.includes("payroll")) && (
+            <Link
+              href="/payroll"
+              className="hidden md:block text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Payroll
+            </Link>
+          )}
+
         {user &&
           (user.role === "admin" || user.permissions?.includes("accounts")) && (
             <Link
@@ -52,15 +62,7 @@ export default function Navbar({ user, profile }) {
             </Link>
           )}
 
-        {user &&
-          (user.role === "admin" || user.permissions?.includes("payroll")) && (
-            <Link
-              href="/payroll"
-              className="hidden md:block text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors"
-            >
-              Payroll
-            </Link>
-          )}
+     
 
         {/* User Menu */}
         <UserMenu user={user} />

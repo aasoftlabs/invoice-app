@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import StatsCard from "@/components/project/StatsCard";
 import MonthlyChart from "@/components/project/MonthlyChart";
@@ -19,9 +19,6 @@ export default function ProjectDashboard() {
   const [workLogs, setWorkLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Note: projects and tasks states were defined but unused in the original code beyond fetching.
-  // Kept logic consistent with original but removed unused imports if any.
-
   // Filters
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
@@ -34,20 +31,19 @@ export default function ProjectDashboard() {
 
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    if (session) {
-      if (session.user.role === "admin" && users.length === 0) {
-        fetchUsers();
+  const fetchUsers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      if (data.success) {
+        setUsers(data.data);
       }
-      // Re-fetch data when session exists and filters change
-      fetchDashboardData();
-      fetchWorkLogs();
-      // fetchProjects(); // Unused in UI
-      // fetchTasks();    // Unused in UI
+    } catch (error) {
+      console.error("Error fetching users:", error);
     }
-  }, [session, filters]);
+  }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -65,9 +61,9 @@ export default function ProjectDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
-  const fetchWorkLogs = async () => {
+  const fetchWorkLogs = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         month: filters.month,
@@ -83,19 +79,18 @@ export default function ProjectDashboard() {
     } catch (error) {
       console.error("Error fetching work logs:", error);
     }
-  };
+  }, [filters]);
 
-  const fetchUsers = async () => {
-    try {
-      const res = await fetch("/api/users");
-      const data = await res.json();
-      if (data.success) {
-        setUsers(data.data);
+  useEffect(() => {
+    if (session) {
+      if (session.user.role === "admin" && users.length === 0) {
+        fetchUsers();
       }
-    } catch (error) {
-      console.error("Error fetching users:", error);
+      // Re-fetch data when session exists and filters change
+      fetchDashboardData();
+      fetchWorkLogs();
     }
-  };
+  }, [session, filters, users.length, fetchUsers, fetchDashboardData, fetchWorkLogs]);
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {

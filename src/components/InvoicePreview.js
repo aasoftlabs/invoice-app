@@ -4,6 +4,7 @@ import React from "react";
 import BrandName from "./BrandName";
 import { QRCodeSVG } from "qrcode.react";
 import { toWords } from "number-to-words";
+import Image from "next/image";
 
 const HeaderContent = ({ profile, invoiceData }) => (
   <div
@@ -13,8 +14,11 @@ const HeaderContent = ({ profile, invoiceData }) => (
     <div className="w-1/2">
       <div className="flex items-center gap-4 mb-2">
         {profile?.logo ? (
-          <img
+          <Image
             src={profile.logo}
+            width={150}
+            height={64}
+            unoptimized
             className="h-16 w-auto object-contain max-w-[150px]"
             alt="Logo"
           />
@@ -97,17 +101,24 @@ const FooterContent = ({ profile, invoiceData, initialData }) => (
   </div>
 );
 
-export default function InvoicePreview({ profile, invoiceData, initialData }) {
-  // Calculations
+import { useWatch } from "react-hook-form";
+
+// ... (Header/Footer components stay same, but I can't easily skip them in replace_file_content if I want to wrap the export)
+// I'll replace the COMPONENT DEFINITION part mostly.
+
+// ... imports ...
+
+const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
+  // Calculations based on `data`
   const calculateSubTotal = () => {
-    return invoiceData.items.reduce(
-      (acc, item) => acc + item.rate * item.qty,
+    return (data?.items || []).reduce(
+      (acc, item) => acc + (Number(item.rate) || 0) * (Number(item.qty) || 0),
       0,
     );
   };
 
   const calculateTax = () => {
-    return calculateSubTotal() * (invoiceData.taxRate / 100);
+    return calculateSubTotal() * ((data?.taxRate || 0) / 100);
   };
 
   const calculateTotal = () => {
@@ -125,19 +136,19 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
     }
   };
 
-  if (!profile) return null;
+  if (!profile || !data) return null;
 
   return (
     <div className="bg-white shadow-lg mx-auto print:shadow-none print:w-full print:m-0 print:p-0 flex flex-col w-[210mm] min-h-[296mm] h-auto p-[40px] relative box-border print:min-h-0 print:h-auto">
       {/* Print Layout Structure */}
       <div className="hidden print:block fixed top-0 left-0 w-full px-10 py-0 z-50">
-        <HeaderContent profile={profile} invoiceData={invoiceData} />
+        <HeaderContent profile={profile} invoiceData={data} />
       </div>
 
       <div className="hidden print:block fixed bottom-0 left-0 w-full px-10 pb-0 z-50">
         <FooterContent
           profile={profile}
-          invoiceData={invoiceData}
+          invoiceData={data}
           initialData={initialData}
         />
       </div>
@@ -148,7 +159,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
             <td>
               {/* Spacer for Fixed Header */}
               <div className="invisible px-10 py-0">
-                <HeaderContent profile={profile} invoiceData={invoiceData} />
+                <HeaderContent profile={profile} invoiceData={data} />
               </div>
             </td>
           </tr>
@@ -159,7 +170,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
               <div className="px-10">
                 {/* Screen Header */}
                 <div className="print:hidden">
-                  <HeaderContent profile={profile} invoiceData={invoiceData} />
+                  <HeaderContent profile={profile} invoiceData={data} />
                 </div>
 
                 {/* Addresses */}
@@ -173,19 +184,19 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
                     </div>
                     <div className="text-sm text-gray-800">
                       <div className="font-bold">
-                        {invoiceData.clientName ||
-                          invoiceData.clientCompany ||
+                        {data.clientName ||
+                          data.clientCompany ||
                           "[Client/Company Name]"}
                       </div>
-                      {invoiceData.clientName && invoiceData.clientCompany && (
-                        <div>{invoiceData.clientCompany}</div>
+                      {data.clientName && data.clientCompany && (
+                        <div>{data.clientCompany}</div>
                       )}
                       <div className="whitespace-pre-wrap">
-                        {invoiceData.clientAddress || "[Address]"}
+                        {data.clientAddress || "[Address]"}
                       </div>
-                      {invoiceData.clientGst && (
+                      {data.clientGst && (
                         <div className="mt-1 text-xs text-gray-500">
-                          GSTIN: {invoiceData.clientGst}
+                          GSTIN: {data.clientGst}
                         </div>
                       )}
                     </div>
@@ -238,7 +249,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {invoiceData.items.map((item, i) => (
+                    {data.items.map((item, i) => (
                       <tr key={i} className="text-sm border-b border-gray-100">
                         <td className="p-3 text-gray-600">{i + 1}</td>
                         <td className="py-4 text-gray-800">
@@ -250,7 +261,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
                           )}
                         </td>
                         <td className="p-3 text-right text-gray-600">
-                          {item.rate.toLocaleString("en-IN", {
+                          {Number(item.rate).toLocaleString("en-IN", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
@@ -259,7 +270,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
                           {item.qty}
                         </td>
                         <td className="p-3 text-right font-bold text-gray-800">
-                          {(item.rate * item.qty).toLocaleString("en-IN", {
+                          {(Number(item.rate) * Number(item.qty)).toLocaleString("en-IN", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
@@ -284,7 +295,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
                     <tr>
                       <td colSpan={3}></td>
                       <td className="p-2 text-right text-xs font-bold text-gray-600">
-                        GST ({invoiceData.taxRate}%)
+                        GST ({data.taxRate}%)
                       </td>
                       <td className="p-2 text-right text-sm font-bold text-gray-800">
                         {calculateTax().toLocaleString("en-IN", {
@@ -372,8 +383,8 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
                     </div>
 
                     {/* Optional QR Code for Standard Invoice */}
-                    {invoiceData.type === "Standard" &&
-                      invoiceData.showQrCode && (
+                    {data.type === "Standard" &&
+                      data.showQrCode && (
                         <div className="mt-4">
                           <QRCodeSVG
                             value={`${typeof window !== "undefined" ? window.location.origin : ""}/verify/${initialData?._id || "preview"}`}
@@ -388,7 +399,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
                   </div>
 
                   <div className="text-right flex flex-col items-end">
-                    {invoiceData.type === "Digital" ? (
+                    {data.type === "Digital" ? (
                       <div className="flex flex-col items-end">
                         <div className="mb-2 p-2 bg-white border border-gray-200 rounded-lg">
                           <QRCodeSVG
@@ -429,7 +440,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
                 <div className="print:hidden">
                   <FooterContent
                     profile={profile}
-                    invoiceData={invoiceData}
+                    invoiceData={data}
                     initialData={initialData}
                   />
                 </div>
@@ -444,7 +455,7 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
               <div className="invisible px-10 pb-6">
                 <FooterContent
                   profile={profile}
-                  invoiceData={invoiceData}
+                  invoiceData={data}
                   initialData={initialData}
                 />
               </div>
@@ -454,4 +465,25 @@ export default function InvoicePreview({ profile, invoiceData, initialData }) {
       </table>
     </div>
   );
-}
+});
+
+// Connected Component (Live Mode)
+const InvoicePreviewLive = ({ control, invoiceData, ...props }) => {
+  const watchedData = useWatch({ control });
+  // Merge watched data with initial data to ensure structure
+  const data = watchedData ? { ...invoiceData, ...watchedData } : invoiceData;
+  return <InvoicePreviewContent data={data} {...props} />;
+};
+
+// Main Component Wrapper
+const InvoicePreview = React.memo(({ control, invoiceData, ...props }) => {
+  if (control) {
+    return <InvoicePreviewLive control={control} invoiceData={invoiceData} {...props} />;
+  }
+  return <InvoicePreviewContent data={invoiceData} {...props} />;
+});
+
+InvoicePreview.displayName = "InvoicePreview";
+InvoicePreviewContent.displayName = "InvoicePreviewContent";
+
+export default InvoicePreview;

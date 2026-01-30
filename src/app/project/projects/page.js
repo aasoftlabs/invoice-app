@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import StatusBadge from "@/components/project/StatusBadge";
 import {
@@ -27,13 +27,7 @@ export default function ProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
-  useEffect(() => {
-    if (session) {
-      fetchProjects();
-    }
-  }, [session]);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/projects");
@@ -44,7 +38,13 @@ export default function ProjectsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      fetchProjects();
+    }
+  }, [session, fetchProjects]);
 
   const fetchProjectTasks = async (projectId) => {
     try {
@@ -246,30 +246,30 @@ export default function ProjectsPage() {
                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {(session?.user?.role?.toLowerCase() === "admin" ||
                             project.projectManager?._id ===
-                              session?.user?.id) && (
-                            <>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEditProject(project);
-                                }}
-                                className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                title="Edit Project"
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteProject(project._id);
-                                }}
-                                className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                                title="Delete Project"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </>
-                          )}
+                            session?.user?.id) && (
+                              <>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditProject(project);
+                                  }}
+                                  className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                  title="Edit Project"
+                                >
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteProject(project._id);
+                                  }}
+                                  className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                  title="Delete Project"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </>
+                            )}
                         </div>
                       </td>
                     </tr>

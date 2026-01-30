@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Building2, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function CompanyForm({ profile }) {
     const router = useRouter();
@@ -51,7 +52,7 @@ export default function CompanyForm({ profile }) {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Company Name *
+                        Company Name <span className="text-red-500">{"*"}</span>
                     </label>
                     <input
                         required
@@ -63,7 +64,7 @@ export default function CompanyForm({ profile }) {
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email *
+                        Email <span className="text-red-500">{"*"}</span>
                     </label>
                     <input
                         required
@@ -123,7 +124,14 @@ export default function CompanyForm({ profile }) {
                     />
                     {formData.logo && (
                         <div className="mt-2">
-                            <img src={formData.logo} alt="Logo preview" className="h-16 w-auto object-contain border rounded" />
+                            <Image
+                                src={formData.logo}
+                                alt="Logo preview"
+                                width={100}
+                                height={64}
+                                unoptimized
+                                className="h-16 w-auto object-contain border rounded"
+                            />
                         </div>
                     )}
                 </div>

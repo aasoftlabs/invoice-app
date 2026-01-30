@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, ArrowLeft, Loader2 } from "lucide-react";
-import { useForm, FormProvider, useWatch } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useToast } from "@/contexts/ToastContext";
@@ -31,8 +31,6 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
 
   const { reset, handleSubmit, control } = methods;
 
-  // Watch for Preview
-  const watchedData = useWatch({ control });
 
   useEffect(() => {
     // 1. Fetch Profile
@@ -169,7 +167,8 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
       <div className="w-full md:w-2/3 bg-gray-200 p-8 overflow-y-auto flex justify-center print:p-0 print:overflow-visible print:w-full">
         <InvoicePreview
           profile={profile}
-          invoiceData={watchedData}
+          invoiceData={initialData}
+          control={control}
           initialData={initialData}
         />
       </div>
