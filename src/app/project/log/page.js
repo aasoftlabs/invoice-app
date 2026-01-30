@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import StatusBadge from "@/components/project/StatusBadge";
-import { Calendar, ListTodo, Plus, Trash2, Pencil } from "lucide-react";
+import { Calendar, ListTodo, Plus, Trash2, Pencil, Filter } from "lucide-react";
 import AddWorkLogModal from "@/components/project/AddWorkLogModal";
 import WorkLogDetailsModal from "@/components/project/WorkLogDetailsModal";
 
@@ -17,12 +17,20 @@ export default function WorkLogPage() {
   const [viewingLog, setViewingLog] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+  const [filters, setFilters] = useState({
+    projectId: "",
+    month: currentMonth,
+    year: currentYear,
+  });
+
   useEffect(() => {
     if (session) {
       fetchProjects();
       fetchWorkLogs();
     }
-  }, [session]);
+  }, [session, filters]);
 
   const fetchProjects = async () => {
     try {
@@ -38,7 +46,12 @@ export default function WorkLogPage() {
 
   const fetchWorkLogs = async () => {
     try {
-      const res = await fetch("/api/worklogs");
+      const params = new URLSearchParams({
+        ...(filters.projectId && { projectId: filters.projectId }),
+        month: filters.month,
+        year: filters.year,
+      });
+      const res = await fetch(`/api/worklogs?${params}`);
       const data = await res.json();
       if (data.success) {
         setWorkLogs(data.data);
@@ -121,6 +134,65 @@ export default function WorkLogPage() {
             <Plus className="w-5 h-5" />
             Add Work Log
           </button>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2 text-gray-700 mr-2">
+              <Filter className="w-4 h-4" />
+              <span className="font-medium text-sm">Filters:</span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <select
+                value={filters.month}
+                onChange={(e) =>
+                  setFilters({ ...filters, month: parseInt(e.target.value) })
+                }
+                className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                  <option key={month} value={month}>
+                    {new Date(2024, month - 1).toLocaleString("default", {
+                      month: "long",
+                    })}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={filters.year}
+                onChange={(e) =>
+                  setFilters({ ...filters, year: parseInt(e.target.value) })
+                }
+                className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+              >
+                {Array.from({ length: 5 }, (_, i) => currentYear - i).map(
+                  (year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ),
+                )}
+              </select>
+
+              <select
+                value={filters.projectId}
+                onChange={(e) =>
+                  setFilters({ ...filters, projectId: e.target.value })
+                }
+                className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+              >
+                <option value="">All Projects</option>
+                {projects.map((p) => (
+                  <option key={p._id} value={p._id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Work Log History */}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import StatusBadge from "@/components/project/StatusBadge";
-import { ListTodo, Search, Plus, Edit2, Trash2 } from "lucide-react";
+import { ListTodo, Search, Plus, Edit2, Trash2, Filter } from "lucide-react";
 import AddTaskModal from "@/components/project/AddTaskModal";
 import TaskDetailsModal from "@/components/project/TaskDetailsModal";
 
@@ -142,45 +142,55 @@ export default function TasksPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="relative">
-              <Search className="w-5 h-5 absolute left-3 top-3 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search tasks..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2 text-gray-700 mr-2">
+              <Filter className="w-4 h-4" />
+              <span className="font-medium text-sm">Filters:</span>
             </div>
-            <select
-              value={filters.projectId}
-              onChange={(e) =>
-                setFilters({ ...filters, projectId: e.target.value })
-              }
-              className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900"
-            >
-              <option value="">All Projects</option>
-              {projects.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filters.status}
-              onChange={(e) =>
-                setFilters({ ...filters, status: e.target.value })
-              }
-              className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900"
-            >
-              <option value="">All Statuses</option>
-              <option value="Completed">Completed</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Follow-up">Follow-up</option>
-              <option value="Not Started">Not Started</option>
-            </select>
+
+            <div className="flex flex-wrap items-center gap-3 grow">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search tasks..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 w-64 bg-gray-50 hover:bg-white transition-colors"
+                />
+              </div>
+
+              <select
+                value={filters.projectId}
+                onChange={(e) =>
+                  setFilters({ ...filters, projectId: e.target.value })
+                }
+                className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+              >
+                <option value="">All Projects</option>
+                {projects.map((p) => (
+                  <option key={p._id} value={p._id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={filters.status}
+                onChange={(e) =>
+                  setFilters({ ...filters, status: e.target.value })
+                }
+                className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+              >
+                <option value="">All Statuses</option>
+                <option value="Completed">Completed</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Follow-up">Follow-up</option>
+                <option value="Not Started">Not Started</option>
+              </select>
+            </div>
           </div>
         </div>
 
