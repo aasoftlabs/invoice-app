@@ -452,21 +452,6 @@ export default function LetterheadView({ profile }) {
         }, 100);
     };
 
-    const handleImportClick = () => {
-        fileInputRef.current?.click();
-    };
-
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            setContent(event.target.result.replace(/\n/g, "<br/>"));
-        };
-        reader.readAsText(file);
-    };
-
     const modules = useMemo(() => ({
         toolbar: {
             container: "#toolbar",
@@ -511,7 +496,7 @@ export default function LetterheadView({ profile }) {
 
             {/* Left Sidebar Controls - Fixed */}
             <div
-                className={`fixed left-0 top-[90px] h-[calc(100vh-60px)] bg-gray-50/50 backdrop-blur-sm z-50 p-5 w-[460px] transition-transform duration-300 ease-in-out print:hidden flex flex-col gap-4 overflow-y-auto border-r border-gray-200 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+                className={`fixed left-0 top-[90px] h-[80vh] bg-gray-50/50 backdrop-blur-sm z-50 p-5 w-[460px] transition-transform duration-300 ease-in-out print:hidden flex flex-col gap-4 overflow-y-auto border-r border-gray-200 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
             >
                 {/* Scrollable Container for controls */}
                 <div className="pb-10 flex flex-col gap-6">
@@ -521,19 +506,6 @@ export default function LetterheadView({ profile }) {
                         {/* Top Controls Row */}
                         <div className="flex flex-row justify-between items-center mb-2">
                             <h1 className="text-2xl font-bold text-gray-800 mb-2 px-2">Letterhead</h1>
-                            {/* <input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleFileUpload}
-                                accept=".txt,.md,.json,.csv"
-                                className="hidden"
-                            /> */}
-                            {/* <button
-                                onClick={handleImportClick}
-                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 text-gray-700 text-sm transition"
-                            >
-                                <Upload className="w-4 h-4" /> Import
-                            </button> */}
                             <button
                                 onClick={handlePrint}
                                 className="flex-0 flex items-center mx-4 justify-center gap-2 px-4 py-2 hover:cursor-pointer bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 text-sm transition"

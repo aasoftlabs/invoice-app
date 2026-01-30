@@ -3,6 +3,7 @@ import "./globals.css";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { SessionProvider } from "next-auth/react";
 import NavbarWrapper from "@/components/NavbarWrapper";
+import Footer from "@/components/Footer";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
           <SessionProvider>
             <NavbarWrapper />
             {children}
+            <Footer />
           </SessionProvider>
         </ToastProvider>
       </body>

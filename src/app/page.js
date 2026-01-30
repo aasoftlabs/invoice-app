@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, FileText, Banknote, Briefcase, PenTool, PieChart, Users, CheckCircle } from "lucide-react";
 import { auth } from "@/auth";
-import Footer from "@/components/Footer";
+
 
 export default async function LandingPage() {
   const session = await auth();
@@ -105,8 +105,6 @@ export default async function LandingPage() {
 
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

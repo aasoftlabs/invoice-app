@@ -6,12 +6,10 @@ import {
   LogOut,
   User,
   Settings,
-  FileText,
   ChevronDown,
   UserPlus,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import BrandName from "./BrandName";
 import Logo from "./Logo";
 
 export default function Navbar({ user, profile }) {

@@ -4,17 +4,17 @@ import User from "@/models/User";
 import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
 
-// GET: List all users (Admin only)
+// GET: List all users (Authenticated users can view for task assignment)
 export async function GET() {
   const session = await auth();
 
-  if (!session || session.user.role !== "admin") {
+  if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   await connectDB();
   const users = await User.find({}).select("-password").sort({ createdAt: -1 });
-  return NextResponse.json(users);
+  return NextResponse.json({ success: true, data: users });
 }
 
 // POST: Create new user (Admin only)
@@ -41,9 +41,10 @@ export async function POST(req) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     // Set permissions - admin gets all, regular user gets provided permissions
-    const userPermissions = data.role === "admin"
-      ? ["invoices", "letterhead", "project", "users", "profile"]
-      : (data.permissions || ["invoices", "letterhead", "project", "profile"]);
+    const userPermissions =
+      data.role === "admin"
+        ? ["invoices", "letterhead", "project", "users", "profile"]
+        : data.permissions || ["invoices", "letterhead", "project", "profile"];
 
     const newUser = await User.create({
       name: data.name,
