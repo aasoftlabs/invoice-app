@@ -62,15 +62,26 @@ export default async function InvoicePage({ params }) {
       ...i,
       _id: i._id ? i._id.toString() : undefined,
     })),
+    // Flatten client details for the view component
+    clientName: invoice.client?.name || "",
+    clientCompany: invoice.client?.company || "",
+    clientAddress: invoice.client?.address || "",
+    clientGst: invoice.client?.gst || "",
+    paymentHistory: (invoice.paymentHistory || []).map((p) => ({
+      ...p,
+      _id: p._id ? p._id.toString() : undefined,
+      date: p.date ? new Date(p.date).toISOString() : null,
+      transactionId: p.transactionId ? p.transactionId.toString() : undefined,
+    })),
     // Mongoose subdocs might have _ids
   };
 
   const serializedProfile = profile
     ? {
-      ...profile,
-      _id: profile._id.toString(),
-      updatedAt: profile.updatedAt ? profile.updatedAt.toISOString() : null,
-    }
+        ...profile,
+        _id: profile._id.toString(),
+        updatedAt: profile.updatedAt ? profile.updatedAt.toISOString() : null,
+      }
     : null;
 
   return (

@@ -42,9 +42,10 @@ export async function POST(req) {
 
     // Set permissions - admin gets all, regular user gets provided permissions
     const userPermissions =
-      data.role === "admin"
-        ? ["invoices", "letterhead", "project", "users", "profile"]
-        : data.permissions || ["invoices", "letterhead", "project", "profile"];
+      data.permissions ||
+      (data.role === "admin"
+        ? ["invoices", "letterhead", "project", "company", "users", "profile"]
+        : ["invoices", "letterhead", "project", "profile"]);
 
     const newUser = await User.create({
       name: data.name,

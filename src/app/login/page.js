@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
 import { authenticate } from "@/lib/actions";
@@ -9,12 +9,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/schemas/loginSchema";
 import Logo from "@/components/Logo";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [errorMessage, dispatch, isPending] = useActionState(
-    authenticate,
-    undefined,
-  );
+  const [state, dispatch, isPending] = useActionState(authenticate, undefined);
+
+  // rename state to errorMessage for clarity in rest of code, but it is now an object
+  const errorMessage = state?.error || null;
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -23,14 +24,24 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
-    mode: "onBlur" // Validate on blur for immediate feedback
+    mode: "onBlur", // Validate on blur for immediate feedback
   });
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state?.success) {
+      // Force a hard refresh to ensure the session cookie is picked up by the Server Components
+      // and the SessionProvider in RootLayout is initialized with the correct user data.
+      window.location.href = "/";
+    }
+  }, [state]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 bg-white rounded-lg shadow-md w-96">
         <div className="flex items-center justify-center mb-6 gap-2">
-          <Logo/>
+          <Logo />
         </div>
         <h2 className="text-xl font-semibold mb-6 text-center text-gray-700">
           Welcome Back
@@ -53,13 +64,17 @@ export default function LoginPage() {
               Email
             </label>
             <input
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.email ? 'border-red-500' : ''}`}
+              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.email ? "border-red-500" : ""}`}
               id="email"
               type="text"
               placeholder="admin@aasoftlabs.com"
               {...register("email")}
             />
-            {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
           <div className="mb-6">
             <label
@@ -70,7 +85,7 @@ export default function LoginPage() {
             </label>
             <div className="relative">
               <input
-                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pr-10 ${errors.password ? "border-red-500" : ""}`}
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="admin123"
@@ -88,7 +103,11 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
-            {errors.password && <p className="text-xs text-red-500 -mt-2">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-xs text-red-500 -mt-2">
+                {errors.password.message}
+              </p>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <LoginButton />
@@ -103,7 +122,6 @@ export default function LoginPage() {
             )}
           </div>
         </form>
-
       </div>
     </div>
   );

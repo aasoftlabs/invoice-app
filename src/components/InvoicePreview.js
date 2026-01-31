@@ -5,6 +5,7 @@ import BrandName from "./BrandName";
 import { QRCodeSVG } from "qrcode.react";
 import { toWords } from "number-to-words";
 import Image from "next/image";
+import { useWatch } from "react-hook-form";
 
 const HeaderContent = ({ profile, invoiceData }) => (
   <div
@@ -100,13 +101,6 @@ const FooterContent = ({ profile, invoiceData, initialData }) => (
     )}
   </div>
 );
-
-import { useWatch } from "react-hook-form";
-
-// ... (Header/Footer components stay same, but I can't easily skip them in replace_file_content if I want to wrap the export)
-// I'll replace the COMPONENT DEFINITION part mostly.
-
-// ... imports ...
 
 const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
   // Calculations based on `data`
@@ -270,7 +264,9 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                           {item.qty}
                         </td>
                         <td className="p-3 text-right font-bold text-gray-800">
-                          {(Number(item.rate) * Number(item.qty)).toLocaleString("en-IN", {
+                          {(
+                            Number(item.rate) * Number(item.qty)
+                          ).toLocaleString("en-IN", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
@@ -383,19 +379,18 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                     </div>
 
                     {/* Optional QR Code for Standard Invoice */}
-                    {data.type === "Standard" &&
-                      data.showQrCode && (
-                        <div className="mt-4">
-                          <QRCodeSVG
-                            value={`${typeof window !== "undefined" ? window.location.origin : ""}/verify/${initialData?._id || "preview"}`}
-                            size={60}
-                            level="H"
-                          />
-                          <div className="text-[9px] text-gray-500 mt-1 max-w-[120px] leading-tight">
-                            Scan to verify
-                          </div>
+                    {data.type === "Standard" && data.showQrCode && (
+                      <div className="mt-4">
+                        <QRCodeSVG
+                          value={`${typeof window !== "undefined" ? window.location.origin : ""}/verify/${initialData?._id || "preview"}`}
+                          size={60}
+                          level="H"
+                        />
+                        <div className="text-[9px] text-gray-500 mt-1 max-w-[120px] leading-tight">
+                          Scan to verify
                         </div>
-                      )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="text-right flex flex-col items-end">
@@ -478,7 +473,13 @@ const InvoicePreviewLive = ({ control, invoiceData, ...props }) => {
 // Main Component Wrapper
 const InvoicePreview = React.memo(({ control, invoiceData, ...props }) => {
   if (control) {
-    return <InvoicePreviewLive control={control} invoiceData={invoiceData} {...props} />;
+    return (
+      <InvoicePreviewLive
+        control={control}
+        invoiceData={invoiceData}
+        {...props}
+      />
+    );
   }
   return <InvoicePreviewContent data={invoiceData} {...props} />;
 });

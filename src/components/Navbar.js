@@ -17,39 +17,45 @@ export default function Navbar({ user, profile }) {
 
       {/* Right: Navigation & User Menu */}
       <div className="flex items-center gap-6">
-        {user && (() => {
-          const links = [
-            { href: "/invoices", label: "Invoices" },
-            { href: "/letterhead", label: "Letterhead" },
-            { href: "/project", label: "Project" },
-          ];
+        {user &&
+          (() => {
+            const links = [];
 
-          if (user.role === "admin" || user.permissions?.includes("payroll")) {
-            links.push({ href: "/payroll", label: "Payroll" });
-          }
+            if (user.permissions?.includes("invoices")) {
+              links.push({ href: "/invoices", label: "Invoices" });
+            }
+            if (user.permissions?.includes("letterhead")) {
+              links.push({ href: "/letterhead", label: "Letterhead" });
+            }
+            if (user.permissions?.includes("project")) {
+              links.push({ href: "/project", label: "Project" });
+            }
 
-          if (user.role === "admin" || user.permissions?.includes("accounts")) {
-            links.push({ href: "/accounts", label: "Accounts" });
-          }
+            if (user.permissions?.includes("payroll")) {
+              links.push({ href: "/payroll", label: "Payroll" });
+            }
 
-          return links.map((link) => {
-            const isActive = pathname.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`hidden md:block text-sm font-semibold transition-colors ${isActive
-                  ? "text-blue-600 border-b-2 border-blue-600 -mb-[22px] pb-[18px]"
-                  : "text-gray-600 hover:text-blue-600"
+            if (user.permissions?.includes("accounts")) {
+              links.push({ href: "/accounts", label: "Accounts" });
+            }
+
+            return links.map((link) => {
+              const isActive = pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`hidden md:block text-sm font-semibold transition-colors ${
+                    isActive
+                      ? "text-blue-600 border-b-2 border-blue-600 -mb-[22px] pb-[18px]"
+                      : "text-gray-600 hover:text-blue-600"
                   }`}
-              >
-                {link.label}
-              </Link>
-            );
-          });
-        })()}
-
-
+                >
+                  {link.label}
+                </Link>
+              );
+            });
+          })()}
 
         {/* User Menu */}
         <UserMenu user={user} />

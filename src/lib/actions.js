@@ -6,14 +6,15 @@ import { AuthError } from "next-auth";
 export async function authenticate(prevState, formData) {
   try {
     const data = Object.fromEntries(formData);
-    await signIn("credentials", { ...data, redirectTo: "/" });
+    await signIn("credentials", { ...data, redirect: false });
+    return { success: true };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return "Invalid credentials.";
+          return { error: "Invalid credentials." };
         default:
-          return "Something went wrong.";
+          return { error: "Something went wrong." };
       }
     }
     throw error;
