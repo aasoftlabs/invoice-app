@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
   permissions: {
     type: [String],
     default: ["project", "profile"],
-    // Available permissions: invoices, letterhead, project, company, users, payroll, profile
+    // Available permissions: invoices, letterhead, project, company, users, payroll, profile, notes
     // If user has "project" permission, they can access all /project/* pages
     // If user has "invoices" permission, they can access all /invoices/* pages
     // If user has "payroll" permission, they can access all /payroll/* pages and manage all employees

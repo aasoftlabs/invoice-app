@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "./Logo";
 import UserMenu from "@/components/navbar/UserMenu";
+import { getUserPermissions } from "@/lib/permissions";
 
 export default function Navbar({ user, profile }) {
   const pathname = usePathname();
+  const permissions = getUserPermissions(user);
   return (
     <nav className="bg-white border-b border-gray-200 px-40 m-auto py-2 flex justify-between items-center shadow-sm print:hidden">
       <div className="flex items-center gap-8">
@@ -21,21 +23,21 @@ export default function Navbar({ user, profile }) {
           (() => {
             const links = [];
 
-            if (user.permissions?.includes("invoices")) {
+            if (permissions.includes("invoices")) {
               links.push({ href: "/invoices", label: "Invoices" });
             }
-            if (user.permissions?.includes("letterhead")) {
+            if (permissions.includes("letterhead")) {
               links.push({ href: "/letterhead", label: "Letterhead" });
             }
-            if (user.permissions?.includes("project")) {
+            if (permissions.includes("project")) {
               links.push({ href: "/project", label: "Project" });
             }
 
-            if (user.permissions?.includes("payroll")) {
+            if (permissions.includes("payroll")) {
               links.push({ href: "/payroll", label: "Payroll" });
             }
 
-            if (user.permissions?.includes("accounts")) {
+            if (permissions.includes("accounts")) {
               links.push({ href: "/accounts", label: "Accounts" });
             }
 

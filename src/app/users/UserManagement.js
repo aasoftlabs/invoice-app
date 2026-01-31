@@ -40,6 +40,11 @@ const AVAILABLE_PERMISSIONS = [
     label: "User Management",
     description: "Manage users (Admin only)",
   },
+  {
+    id: "notes",
+    label: "Notes & Reminders",
+    description: "Personal and shared company notes",
+  },
 ];
 
 export default function UserManagement({ users: initialUsers }) {
@@ -418,9 +423,14 @@ export default function UserManagement({ users: initialUsers }) {
                     >
                       <input
                         type="checkbox"
-                        checked={newUser.permissions.includes(perm.id)}
+                        checked={
+                          perm.id === "notes"
+                            ? true
+                            : newUser.permissions.includes(perm.id)
+                        }
                         onChange={() => togglePermission(perm.id, false)}
                         disabled={
+                          perm.id === "notes" ||
                           (perm.id === "users" && newUser.role !== "admin") ||
                           (perm.id === "company" && newUser.role !== "admin")
                         }
@@ -578,10 +588,14 @@ export default function UserManagement({ users: initialUsers }) {
                       <input
                         type="checkbox"
                         checked={
-                          editingUser.permissions?.includes(perm.id) || false
+                          perm.id === "notes"
+                            ? true
+                            : editingUser.permissions?.includes(perm.id) ||
+                              false
                         }
                         onChange={() => togglePermission(perm.id, true)}
                         disabled={
+                          perm.id === "notes" ||
                           (perm.id === "users" &&
                             editingUser.role !== "admin") ||
                           (perm.id === "company" &&

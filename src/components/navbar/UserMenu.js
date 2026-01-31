@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { LogOut, User, Settings, ChevronDown, UserPlus } from "lucide-react";
+import {
+  LogOut,
+  User,
+  Settings,
+  ChevronDown,
+  UserPlus,
+  StickyNote,
+} from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 
@@ -57,6 +64,14 @@ export default function UserMenu({ user }) {
             onClick={() => setIsOpen(false)}
           >
             <User className="w-4 h-4" /> My Profile
+          </Link>
+
+          <Link
+            href="/notes"
+            className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+            onClick={() => setIsOpen(false)}
+          >
+            <StickyNote className="w-4 h-4" /> My Notes
           </Link>
 
           {user?.permissions?.includes("company") && (

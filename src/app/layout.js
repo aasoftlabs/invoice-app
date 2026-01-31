@@ -4,20 +4,29 @@ import { ToastProvider } from "@/contexts/ToastContext";
 import { SessionProvider } from "next-auth/react";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import Footer from "@/components/Footer";
+import GlobalNoteButton from "@/components/notes/GlobalNoteButton";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata = {
   title: "AA SoftLabs™ | Office",
-  description: "AA SoftLabs provides scalable web and mobile solutions. Expert development in Next.js, React Native, and business automation. Powered by ADMINASHU SOFTLABS.",
+  description:
+    "AA SoftLabs provides scalable web and mobile solutions. Expert development in Next.js, React Native, and business automation. Powered by ADMINASHU SOFTLABS.",
   icons: {
-    icon: '/icon.ico', // Path to your favicon
+    icon: "/icon.ico", // Path to your favicon
   },
   authors: [{ name: "ADMINASHU SOFTLABS" }],
   creator: "ADMINASHU SOFTLABS",
   publisher: "ADMINASHU SOFTLABS",
-  keywords: ["AA SoftLabs", "ADMINASHU SOFTLABS", "Web Development", "Mobile Development", "Business Automation", "Next.js", "React Native"],
-  
+  keywords: [
+    "AA SoftLabs",
+    "ADMINASHU SOFTLABS",
+    "Web Development",
+    "Mobile Development",
+    "Business Automation",
+    "Next.js",
+    "React Native",
+  ],
 };
 
 import { auth } from "@/auth";
@@ -31,6 +40,7 @@ export default async function RootLayout({ children }) {
           <SessionProvider session={session}>
             <NavbarWrapper />
             {children}
+            <GlobalNoteButton />
             <Footer />
           </SessionProvider>
         </ToastProvider>
