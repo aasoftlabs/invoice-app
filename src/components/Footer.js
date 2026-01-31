@@ -35,29 +35,29 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/invoices"
+                  href="/"
                   className="group inline-flex items-center text-sm text-slate-600 hover:text-blue-600 transition-colors"
                 >
                   <ArrowRight className="w-4 h-4 mr-2 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-                  Invoices
+                  Home
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/payroll"
+                  href="/notes"
                   className="group inline-flex items-center text-sm text-slate-600 hover:text-blue-600 transition-colors"
                 >
                   <ArrowRight className="w-4 h-4 mr-2 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-                  Payroll
+                  My Notes
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/project"
+                  href="/profile"
                   className="group inline-flex items-center text-sm text-slate-600 hover:text-blue-600 transition-colors"
                 >
                   <ArrowRight className="w-4 h-4 mr-2 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-                  Projects
+                  My Profile
                 </Link>
               </li>
             </ul>

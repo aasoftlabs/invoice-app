@@ -183,17 +183,80 @@ export default async function LandingPage() {
             },
           ].map((feature) => {
             const hasAccess = userPermissions.includes(feature.id);
+
+            // Mapping for Tailwind classes to ensure they are detected by the compiler
+            const colorStyles = {
+              blue: {
+                hover: "hover:border-blue-300",
+                bg: "bg-blue-50",
+                iconBg: "bg-blue-100",
+                text: "text-blue-600",
+                hoverText: "group-hover:text-blue-600",
+              },
+              green: {
+                hover: "hover:border-green-300",
+                bg: "bg-green-50",
+                iconBg: "bg-green-100",
+                text: "text-green-600",
+                hoverText: "group-hover:text-green-600",
+              },
+              purple: {
+                hover: "hover:border-purple-300",
+                bg: "bg-purple-50",
+                iconBg: "bg-purple-100",
+                text: "text-purple-600",
+                hoverText: "group-hover:text-purple-600",
+              },
+              orange: {
+                hover: "hover:border-orange-300",
+                bg: "bg-orange-50",
+                iconBg: "bg-orange-100",
+                text: "text-orange-600",
+                hoverText: "group-hover:text-orange-600",
+              },
+              yellow: {
+                hover: "hover:border-yellow-300",
+                bg: "bg-yellow-50",
+                iconBg: "bg-yellow-100",
+                text: "text-yellow-600",
+                hoverText: "group-hover:text-yellow-600",
+              },
+              cyan: {
+                hover: "hover:border-cyan-300",
+                bg: "bg-cyan-50",
+                iconBg: "bg-cyan-100",
+                text: "text-cyan-600",
+                hoverText: "group-hover:text-cyan-600",
+              },
+              rose: {
+                hover: "hover:border-rose-300",
+                bg: "bg-rose-50",
+                iconBg: "bg-rose-100",
+                text: "text-rose-600",
+                hoverText: "group-hover:text-rose-600",
+              },
+              indigo: {
+                hover: "hover:border-indigo-300",
+                bg: "bg-indigo-50",
+                iconBg: "bg-indigo-100",
+                text: "text-indigo-600",
+                hoverText: "group-hover:text-indigo-600",
+              },
+            };
+
+            const style = colorStyles[feature.color];
+
             const CardContent = (
               <div
-                className={`h-full p-6 bg-white rounded-2xl border border-gray-200 shadow-xs relative overflow-hidden transition-all duration-300 ${hasAccess ? `hover:border-${feature.color}-300 hover:shadow-lg group` : "opacity-60 grayscale-[0.5]"}`}
+                className={`h-full p-6 bg-white rounded-2xl border border-gray-200 shadow-xs relative overflow-hidden transition-all duration-300 ${hasAccess ? `${style.hover} hover:shadow-lg group` : "opacity-60 grayscale-[0.5]"}`}
               >
                 <div
-                  className={`absolute top-0 right-0 w-24 h-24 bg-${feature.color}-50 rounded-bl-full -mr-4 -mt-4 transition-transform ${hasAccess ? "group-hover:scale-110" : ""}`}
+                  className={`absolute top-0 right-0 w-24 h-24 ${style.bg} rounded-bl-full -mr-4 -mt-4 transition-transform ${hasAccess ? "group-hover:scale-110" : ""}`}
                 ></div>
 
                 <div className="flex justify-between items-start mb-4 relative z-10">
                   <div
-                    className={`h-12 w-12 bg-${feature.color}-100 rounded-xl flex items-center justify-center text-${feature.color}-600`}
+                    className={`h-12 w-12 ${style.iconBg} rounded-xl flex items-center justify-center ${style.text}`}
                   >
                     {feature.icon}
                   </div>
@@ -205,7 +268,7 @@ export default async function LandingPage() {
                 </div>
 
                 <h3
-                  className={`text-xl font-bold text-gray-900 mb-2 relative z-10 transition-colors ${hasAccess ? `group-hover:text-${feature.color}-600` : ""}`}
+                  className={`text-xl font-bold text-gray-900 mb-2 relative z-10 transition-colors ${hasAccess ? style.hoverText : ""}`}
                 >
                   {feature.label}
                 </h3>
@@ -214,7 +277,7 @@ export default async function LandingPage() {
                 </p>
 
                 {!hasAccess && (
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 mt-auto bg-gray-50 py-1 px-2 rounded-md w-max border border-gray-100">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 mt-auto bg-gray-50 py-1 px-2 rounded-md w-max border border-gray-100 relative z-10">
                     <ShieldAlert className="w-3.5 h-3.5" />
                     ACCESS RESTRICTED
                   </div>

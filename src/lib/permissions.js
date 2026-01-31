@@ -5,8 +5,8 @@ export function hasPermission(user, page) {
   // Admin has access to everything
   if (user.role === "admin") return true;
 
-  // Notes are allowed to all users by default
-  if (page === "notes") return true;
+  // Notes and Profile are allowed to all users by default
+  if (page === "notes" || page === "profile") return true;
 
   // Check if user has specific permission
   return user.permissions && user.permissions.includes(page);
@@ -33,6 +33,9 @@ export function getUserPermissions(user) {
   const perms = user.permissions || [];
   if (!perms.includes("notes")) {
     perms.push("notes");
+  }
+  if (!perms.includes("profile")) {
+    perms.push("profile");
   }
 
   return perms;
