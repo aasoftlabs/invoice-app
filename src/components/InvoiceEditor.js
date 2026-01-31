@@ -9,7 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/contexts/ToastContext";
 import InvoicePreview from "./InvoicePreview";
 import { api } from "@/lib/api";
-import { invoiceSchema, defaultInvoiceValues } from "@/lib/schemas/invoiceSchema";
+import {
+  invoiceSchema,
+  defaultInvoiceValues,
+} from "@/lib/schemas/invoiceSchema";
 
 // Sub-components
 import InvoiceMeta from "./invoices/form/InvoiceMeta";
@@ -22,6 +25,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
   const { addToast } = useToast();
   const [profile, setProfile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [preGeneratedId, setPreGeneratedId] = useState(null);
 
   // Initialize Form
   const methods = useForm({
@@ -30,7 +34,6 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
   });
 
   const { reset, handleSubmit, control } = methods;
-
 
   useEffect(() => {
     // 1. Fetch Profile
@@ -65,6 +68,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
         .then((data) => {
           if (data.success) {
             methods.setValue("invoiceNo", data.invoiceNo);
+            setPreGeneratedId(data._id);
           }
         })
         .catch(console.error);
@@ -78,7 +82,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
       // Calculate Total (Backend might calculate effectively, but keeping strict parity)
       const subTotal = data.items.reduce(
         (acc, item) => acc + item.rate * item.qty,
-        0
+        0,
       );
       const taxAmount = subTotal * (data.taxRate / 100);
       const totalAmount = subTotal + taxAmount;
@@ -101,14 +105,14 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
       if (isEditing) {
         await api.invoices.update(initialData._id, payload);
       } else {
-        await api.invoices.create(payload);
+        await api.invoices.create({ ...payload, _id: preGeneratedId });
       }
 
       addToast(
         isEditing
           ? "Invoice Updated Successfully!"
           : "Invoice Saved Successfully!",
-        "success"
+        "success",
       );
       router.push(isEditing ? `/invoices/${initialData._id}` : "/");
       router.refresh();
@@ -150,7 +154,11 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
               </div>
             </div>
 
-            <form id="invoice-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              id="invoice-form"
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
               <InvoiceMeta />
               <ClientDetails />
               <InvoiceItems />
@@ -169,7 +177,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
           profile={profile}
           invoiceData={initialData}
           control={control}
-          initialData={initialData}
+          initialData={isEditing ? initialData : { _id: preGeneratedId }}
         />
       </div>
     </div>

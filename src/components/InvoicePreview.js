@@ -103,6 +103,12 @@ const FooterContent = ({ profile, invoiceData, initialData }) => (
 );
 
 const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
+  const [origin, setOrigin] = React.useState("");
+
+  React.useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
   // Calculations based on `data`
   const calculateSubTotal = () => {
     return (data?.items || []).reduce(
@@ -382,7 +388,7 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                     {data.type === "Standard" && data.showQrCode && (
                       <div className="mt-4">
                         <QRCodeSVG
-                          value={`${typeof window !== "undefined" ? window.location.origin : ""}/verify/${initialData?._id || "preview"}`}
+                          value={`${origin}/verify/${data?._id || initialData?._id || "preview"}`}
                           size={60}
                           level="H"
                         />
@@ -398,7 +404,7 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                       <div className="flex flex-col items-end">
                         <div className="mb-2 p-2 bg-white border border-gray-200 rounded-lg">
                           <QRCodeSVG
-                            value={`${typeof window !== "undefined" ? window.location.origin : ""}/verify/${initialData?._id || "preview"}`}
+                            value={`${origin}/verify/${data?._id || initialData?._id || "preview"}`}
                             size={80}
                             level="H"
                           />
