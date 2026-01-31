@@ -11,8 +11,13 @@ export default function GlobalNoteButton() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Don't show on login or setup pages
-  if (!session || pathname === "/login" || pathname === "/setup") {
+  // Don't show on login, setup, or verify pages
+  if (
+    !session ||
+    pathname === "/login" ||
+    pathname === "/setup" ||
+    pathname.startsWith("/verify")
+  ) {
     return null;
   }
 
