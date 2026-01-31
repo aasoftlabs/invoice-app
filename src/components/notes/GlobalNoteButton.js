@@ -25,7 +25,7 @@ export default function GlobalNoteButton() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 z-40 bg-blue-700 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 hover:scale-110 active:scale-95 transition-all group flex items-center gap-2"
+        className="fixed bottom-8 right-8 z-40 bg-blue-700 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 hover:scale-110 active:scale-95 transition-all group flex items-center gap-2 print:hidden"
         title="Add Note / Reminder"
       >
         <StickyNote className="w-6 h-6" />
