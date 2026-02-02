@@ -5,7 +5,6 @@ import { Save, Loader2, Upload } from "lucide-react";
 import { useModal } from "@/contexts/ModalContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Image from "next/image";
 import { Building2 } from "lucide-react"; // Added Building2 import
 import Spotlight from "@/components/ui/Spotlight";
 
