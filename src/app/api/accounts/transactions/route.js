@@ -16,7 +16,14 @@ export async function GET(req) {
         const { searchParams } = new URL(req.url);
         const type = searchParams.get("type");
         const month = searchParams.get("month");
+
         const year = searchParams.get("year");
+
+        // Pagination
+        const page = parseInt(searchParams.get("page") || "1");
+        const limit = parseInt(searchParams.get("limit") || "50");
+        const filterAll = searchParams.get("all") === "true";
+
 
         let query = {};
 
@@ -34,9 +41,15 @@ export async function GET(req) {
             query.date = { $gte: startDate, $lte: endDate };
         }
 
-        const transactions = await Transaction.find(query)
-            .sort({ date: -1 })
-            .limit(100); // Limit for performance
+        const queryExec = Transaction.find(query)
+            .sort({ date: -1 });
+
+        if (!filterAll) {
+            const skip = (page - 1) * limit;
+            queryExec.skip(skip).limit(limit);
+        }
+
+        const transactions = await queryExec;
 
         // Calculate totals (aggregating for dashboard logic here or separate endpoint depending on need)
         // For now just return list

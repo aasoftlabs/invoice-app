@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import PayrollStats from "@/components/payroll/PayrollStats";
 import PayrollFilters from "@/components/payroll/PayrollFilters";
 import PayrollTable from "@/components/payroll/PayrollTable";
@@ -12,6 +12,26 @@ export default function PayrollDashboard() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Observer for infinite scroll
+  const observer = useRef();
+  const lastEmployeeElementRef = useCallback(
+    (node) => {
+      if (loading || loadingMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, loadingMore, hasMore]
+  );
+
 
   // Filter States
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,28 +39,69 @@ export default function PayrollDashboard() {
   const [filterState, setFilterState] = useState("all");
   const [filterDepartment, setFilterDepartment] = useState("all");
 
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
+  // Fetch Employees
+  const fetchEmployees = useCallback(
+    async (isLoadMore = false, currentPage = 1) => {
+      try {
+        if (isLoadMore) {
+          setLoadingMore(true);
+        } else {
+          setLoading(true);
+        }
 
-  const fetchEmployees = async () => {
-    try {
-      const res = await fetch("/api/payroll/employees", { cache: "no-store" });
-      if (res.ok) {
-        const data = await res.json();
-        setEmployees(data.employees);
-      } else {
-        const errData = await res.json();
-        setError(errData.error || "Failed to fetch employees");
-        console.error("Failed to fetch employees:", errData);
+        const query = new URLSearchParams({
+          page: currentPage,
+          limit: 20,
+          search: searchTerm,
+          status: filterStatus,
+          state: filterState,
+          department: filterDepartment
+        }).toString();
+
+        const res = await fetch(`/api/payroll/employees?${query}`, { cache: "no-store" });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (isLoadMore) {
+            setEmployees(prev => [...prev, ...data.employees]);
+          } else {
+            setEmployees(data.employees);
+          }
+
+          if (data.employees.length < 20) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+
+        } else {
+          const errData = await res.json();
+          setError(errData.error || "Failed to fetch employees");
+        }
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } catch (error) {
-      console.error("Error fetching employees:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
+    },
+    [searchTerm, filterStatus, filterState, filterDepartment]
+  );
+
+  // Initial Fetch & Filter Change
+  useEffect(() => {
+    setPage(1);
+    fetchEmployees(false, 1);
+  }, [searchTerm, filterStatus, filterState, filterDepartment, fetchEmployees]);
+
+  // Load More
+  useEffect(() => {
+    if (page > 1) {
+      fetchEmployees(true, page);
     }
-  };
+  }, [page, fetchEmployees]);
+
 
   // Get unique states from employees
   const uniqueStates = [
@@ -56,30 +117,8 @@ export default function PayrollDashboard() {
     .filter(Boolean)
     .sort();
 
-  // Filter employees
-  const filteredEmployees = employees.filter((emp) => {
-    const matchesSearch =
-      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.designation?.toLowerCase().includes(searchTerm.toLowerCase());
+  // Removed client-side filtering: filteredEmployees replaced by employees state
 
-    const matchesStatus =
-      filterStatus === "all"
-        ? true
-        : filterStatus === "with_salary"
-          ? !!emp.salary
-          : !emp.salary; // setup_pending
-
-    const empState = emp.salary?.state || emp.state || "N/A";
-    const matchesState =
-      filterState === "all" ? true : empState === filterState;
-
-    const empDepartment = emp.department || "N/A";
-    const matchesDepartment =
-      filterDepartment === "all" ? true : empDepartment === filterDepartment;
-
-    return matchesSearch && matchesStatus && matchesState && matchesDepartment;
-  });
 
   return (
     <div>
@@ -117,10 +156,17 @@ export default function PayrollDashboard() {
       />
 
       <PayrollTable
-        employees={filteredEmployees}
+        employees={employees}
         loading={loading}
         error={error}
+        lastElementRef={lastEmployeeElementRef}
       />
+
+      {loadingMore && (
+        <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" /> Loading more employees...
+        </div>
+      )}
     </div>
   );
 }

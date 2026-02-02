@@ -47,7 +47,7 @@ export default function InvoiceFilters({ filters, setFilters }) {
             className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
           >
             <option value="all">All Years</option>
-            <option value="all">All Years</option>
+
             {Array.from({ length: 6 }, (_, i) => 2025 + i).map((year) => (
               <option key={year} value={year}>
                 {year}

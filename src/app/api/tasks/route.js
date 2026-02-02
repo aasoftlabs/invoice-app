@@ -51,6 +51,12 @@ export async function GET(req) {
     const status = searchParams.get("status");
     const assignedTo = searchParams.get("assignedTo");
 
+    // Pagination
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const filterAll = searchParams.get("all") === "true";
+
+
     let query = {};
 
     // If regular user (non-admin)
@@ -75,11 +81,18 @@ export async function GET(req) {
     if (status) query.status = status;
     if (assignedTo) query.assignedTo = assignedTo;
 
-    const tasks = await Task.find(query)
+    let queryExec = Task.find(query)
       .populate("projectId", "name")
       .populate("assignedTo", "name email")
       .populate("completedBy", "name email")
       .sort({ createdAt: -1 });
+
+    if (!filterAll) {
+      const skip = (page - 1) * limit;
+      queryExec = queryExec.skip(skip).limit(limit);
+    }
+
+    const tasks = await queryExec;
 
     return NextResponse.json({ success: true, data: tasks });
   } catch (error) {

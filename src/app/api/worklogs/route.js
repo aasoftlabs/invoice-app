@@ -78,6 +78,12 @@ export async function GET(req) {
     const month = searchParams.get("month");
     const year = searchParams.get("year");
 
+    // Pagination
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const filterAll = searchParams.get("all") === "true";
+
+
     let query = {};
 
     // Permission check: Regular users see only their own logs, Admin sees all
@@ -105,11 +111,18 @@ export async function GET(req) {
       };
     }
 
-    const workLogs = await WorkLog.find(query)
+    let queryExec = WorkLog.find(query)
       .populate("userId", "name email")
       .populate("projectId", "name")
       .populate("taskId", "taskName")
       .sort({ date: -1 });
+
+    if (!filterAll) {
+      const skip = (page - 1) * limit;
+      queryExec = queryExec.skip(skip).limit(limit);
+    }
+
+    const workLogs = await queryExec;
 
     return NextResponse.json({ success: true, data: workLogs });
   } catch (error) {

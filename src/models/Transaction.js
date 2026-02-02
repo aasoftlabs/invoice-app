@@ -55,5 +55,11 @@ const TransactionSchema = new mongoose.Schema({
     }
 });
 
+// Indexes
+TransactionSchema.index({ date: -1 });
+TransactionSchema.index({ type: 1 });
+TransactionSchema.index({ "reference.id": 1 });
+TransactionSchema.index({ category: 1 });
+
 export default mongoose.models.Transaction ||
     mongoose.model("Transaction", TransactionSchema);

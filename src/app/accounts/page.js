@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import {
@@ -16,6 +16,7 @@ import {
   TrendingUp,
   TrendingDown,
   FileText,
+  Loader2,
 } from "lucide-react";
 import Spotlight from "@/components/ui/Spotlight";
 import AddTransactionModal from "@/components/accounts/AddTransactionModal";
@@ -48,6 +49,26 @@ export default function AccountsPage() {
     year: new Date().getFullYear(),
     type: "all",
   });
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Observer for infinite scroll
+  const observer = useRef();
+  const lastTransactionElementRef = useCallback(
+    (node) => {
+      if (loading || loadingMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, loadingMore, hasMore]
+  );
+
 
   const calculateStats = (data, globalBalance) => {
     let income = 0;
@@ -61,34 +82,74 @@ export default function AccountsPage() {
     setStats({ income, expense, balance: globalBalance });
   };
 
-  const fetchTransactions = useCallback(async () => {
-    try {
-      setLoading(true);
-      const query = new URLSearchParams({
-        month: filters.month,
-        year: filters.year,
-        type: filters.type,
-      }).toString();
+  const fetchTransactions = useCallback(
+    async (isLoadMore = false, currentPage = 1) => {
+      try {
+        if (isLoadMore) {
+          setLoadingMore(true);
+        } else {
+          setLoading(true);
+        }
 
-      const res = await fetch(`/api/accounts/transactions?${query}`);
-      const data = await res.json();
-      if (data.success) {
-        setTransactions(data.data);
-        calculateStats(data.data, data.meta?.globalBalance || 0);
+        const query = new URLSearchParams({
+          month: filters.month,
+          year: filters.year,
+          type: filters.type,
+          page: currentPage,
+          limit: 50
+        }).toString();
+
+        const res = await fetch(`/api/accounts/transactions?${query}`);
+        const data = await res.json();
+
+        if (data.success) {
+          if (isLoadMore) {
+            setTransactions((prev) => [...prev, ...data.data]);
+          } else {
+            setTransactions(data.data);
+            if (data.meta?.globalBalance !== undefined) {
+              // Only update stats on first load or if needed. 
+              // Note: This logic might need adjustment if we want running balance
+              calculateStats(data.data, data.meta.globalBalance);
+            }
+          }
+
+          // Re-calculate stats for the view? 
+          // If we append data, we should probably re-run calculateStats on the whole list or handle it differently.
+          // For now, let's just append. Use a memoized stats calculation if possible, or just re-run on 'transactions' list effect.
+
+          if (data.data.length < 50) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch transactions", error);
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch transactions", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
+    },
+    [filters]
+  );
+
 
   useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
+    setPage(1);
+    fetchTransactions(false, 1);
+  }, [filters, fetchTransactions]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchTransactions(true, page);
+    }
+  }, [page, fetchTransactions]);
 
   const handleSuccess = () => {
-    fetchTransactions();
+    setPage(1);
+    fetchTransactions(false, 1);
     setEditingTransaction(null);
   };
 
@@ -114,7 +175,8 @@ export default function AccountsPage() {
         method: "DELETE",
       });
       if (res.ok) {
-        fetchTransactions();
+        setPage(1);
+        fetchTransactions(false, 1);
       } else {
         await alert({
           title: "Error",
@@ -253,6 +315,7 @@ export default function AccountsPage() {
                     <tr
                       key={t._id}
                       className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                      ref={index === transactions.length - 1 ? lastTransactionElementRef : null}
                     >
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
                         {new Date(t.date).toLocaleDateString("en-IN")}
@@ -315,6 +378,12 @@ export default function AccountsPage() {
             </table>
           </div>
         </div>
+
+        {loadingMore && (
+          <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading more transactions...
+          </div>
+        )}
       </div>
 
       <AddTransactionModal

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useState, useEffect, useCallback } from "react";
+import React, { Fragment, useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
@@ -16,6 +16,7 @@ import {
   ExternalLink,
   Pencil,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import AddProjectModal from "@/components/project/AddProjectModal";
 
@@ -29,24 +30,85 @@ export default function ProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
-  const fetchProjects = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/projects");
-      const data = await res.json();
-      if (data.success) setProjects(data.data);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [showCompleted, setShowCompleted] = useState(false);
 
+  // Memoize fetchProjects based on showCompleted
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // Observer for infinite scroll
+  const observer = useRef();
+  const lastProjectElementRef = useCallback(
+    (node) => {
+      if (loading || loadingMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, loadingMore, hasMore]
+  );
+
+  // Fetch Projects Function
+  const fetchProjects = useCallback(
+    async (isLoadMore = false, currentPage = 1) => {
+      try {
+        if (isLoadMore) {
+          setLoadingMore(true);
+        } else {
+          setLoading(true);
+        }
+
+        // If showCompleted is false, pass activeOnly=true
+        const queryParams = new URLSearchParams({
+          page: currentPage,
+          limit: 20,
+          ...(!showCompleted && { activeOnly: "true" })
+        });
+
+        const res = await fetch(`/api/projects?${queryParams}`);
+        const data = await res.json();
+
+        if (data.success) {
+          if (isLoadMore) {
+            setProjects((prev) => [...prev, ...data.data]);
+          } else {
+            setProjects(data.data);
+          }
+
+          if (data.data.length < 20) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [showCompleted]
+  );
+
+  // Initial Fetch & Filter Change
   useEffect(() => {
-    if (session) {
-      fetchProjects();
+    setPage(1);
+    fetchProjects(false, 1);
+  }, [showCompleted, fetchProjects]);
+
+  // Load More (Page Change)
+  useEffect(() => {
+    if (page > 1) {
+      fetchProjects(true, page);
     }
-  }, [session, fetchProjects]);
+  }, [page, fetchProjects]);
 
   const fetchProjectTasks = async (projectId) => {
     try {
@@ -147,16 +209,27 @@ export default function ProjectsPage() {
             <FolderKanban className="w-8 h-8 text-purple-600" />
             Projects
           </h1>
-          <button
-            onClick={() => {
-              setEditingProject(null);
-              setIsModalOpen(true);
-            }}
-            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all font-bold shadow-lg hover:shadow-purple-500/20 active:scale-95"
-          >
-            <Plus className="w-5 h-5" />
-            Add Project
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowCompleted(!showCompleted)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${showCompleted
+                ? "bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white border-gray-300 dark:border-slate-600"
+                : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
+                }`}
+            >
+              {showCompleted ? "Hide Completed" : "Show Completed"}
+            </button>
+            <button
+              onClick={() => {
+                setEditingProject(null);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all font-bold shadow-lg hover:shadow-purple-500/20 active:scale-95"
+            >
+              <Plus className="w-5 h-5" />
+              Add Project
+            </button>
+          </div>
         </div>
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow border border-gray-200 dark:border-slate-700 overflow-hidden">
           <table className="min-w-full">
@@ -208,10 +281,11 @@ export default function ProjectsPage() {
                   </td>
                 </tr>
               ) : (
-                projects.map((project) => (
+                projects.map((project, index) => (
                   <React.Fragment key={project._id}>
                     <tr
                       className="hover:bg-gray-100 dark:hover:bg-slate-700 group cursor-pointer transition-colors"
+                      ref={index === projects.length - 1 ? lastProjectElementRef : null}
                       onClick={() => toggleProject(project._id)}
                     >
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-slate-200 flex items-center gap-2">
@@ -412,10 +486,20 @@ export default function ProjectsPage() {
         </div>
       </div>
 
+      {loadingMore && (
+        <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" /> Loading more projects...
+        </div>
+      )}
+
+
       <AddProjectModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSuccess={fetchProjects}
+        onSuccess={() => {
+          setPage(1);
+          fetchProjects(false, 1);
+        }}
         editProject={editingProject}
       />
     </div>

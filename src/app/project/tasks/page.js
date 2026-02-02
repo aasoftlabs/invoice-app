@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
-import { ListTodo, Search, Plus, Edit2, Trash2, Filter } from "lucide-react";
+import { ListTodo, Search, Plus, Edit2, Trash2, Filter, Loader2 } from "lucide-react";
 import AddTaskModal from "@/components/project/AddTaskModal";
 import TaskDetailsModal from "@/components/project/TaskDetailsModal";
 
@@ -15,6 +15,26 @@ export default function TasksPage() {
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Observer for infinite scroll
+  const observer = useRef();
+  const lastTaskElementRef = useCallback(
+    (node) => {
+      if (loading || loadingMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, loadingMore, hasMore]
+  );
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({ projectId: "", status: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,19 +52,48 @@ export default function TasksPage() {
     }
   }, []);
 
-  const fetchTasks = useCallback(async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams(filters);
-      const res = await fetch(`/api/tasks?${params}`);
-      const data = await res.json();
-      if (data.success) setTasks(data.data);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
+  const fetchTasks = useCallback(
+    async (isLoadMore = false, currentPage = 1) => {
+      try {
+        if (isLoadMore) {
+          setLoadingMore(true);
+        } else {
+          setLoading(true);
+        }
+
+        const params = new URLSearchParams({
+          ...filters,
+          page: currentPage,
+          limit: 20
+        });
+
+        const res = await fetch(`/api/tasks?${params}`);
+        const data = await res.json();
+
+        if (data.success) {
+          if (isLoadMore) {
+            setTasks((prev) => [...prev, ...data.data]);
+          } else {
+            setTasks(data.data);
+          }
+
+          if (data.data.length < 20) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [filters]
+  );
+
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -59,10 +108,20 @@ export default function TasksPage() {
   useEffect(() => {
     if (session) {
       fetchProjects();
-      fetchTasks();
+      // Initial fetch
+      setPage(1);
+      fetchTasks(false, 1);
       fetchUsers();
     }
   }, [filters, session, fetchProjects, fetchTasks, fetchUsers]);
+
+  // Load More
+  useEffect(() => {
+    if (page > 1) {
+      fetchTasks(true, page);
+    }
+  }, [page, fetchTasks]);
+
 
   const filteredTasks = tasks.filter(
     (task) =>
@@ -100,7 +159,7 @@ export default function TasksPage() {
           message: "Task deleted successfully!",
           variant: "success",
         });
-        fetchTasks();
+        fetchTasks(false, 1);
       } else {
         await alert({
           title: "Error",
@@ -262,9 +321,10 @@ export default function TasksPage() {
                   </td>
                 </tr>
               ) : (
-                filteredTasks.map((task) => (
+                filteredTasks.map((task, index) => (
                   <tr
                     key={task._id}
+                    ref={index === filteredTasks.length - 1 ? lastTaskElementRef : null}
                     className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
                     onClick={() => handleViewTask(task)}
                   >
@@ -323,11 +383,18 @@ export default function TasksPage() {
         </div>
       </div>
 
+      {loadingMore && (
+        <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" /> Loading more tasks...
+        </div>
+      )}
+
       <AddTaskModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSuccess={() => {
-          fetchTasks();
+          setPage(1);
+          fetchTasks(false, 1);
           handleCloseModal();
         }}
         projects={projects}

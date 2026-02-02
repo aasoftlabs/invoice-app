@@ -36,6 +36,10 @@ export async function PUT(req) {
 
     // Update fields
     if (data.name) user.name = data.name;
+    if (data.designation !== undefined) user.designation = data.designation;
+    if (data.employeeId !== undefined) user.employeeId = data.employeeId;
+    if (data.department !== undefined) user.department = data.department;
+    if (data.joiningDate !== undefined) user.joiningDate = data.joiningDate;
 
     // Password update
     if (data.password && data.newPassword) {

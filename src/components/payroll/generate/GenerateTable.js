@@ -84,7 +84,6 @@ export default function GenerateTable({
                       type="number"
                       min="0"
                       max="31"
-                      disabled={!!slip}
                       value={lopData[emp._id] || 0}
                       onChange={(e) =>
                         setLopData((prev) => ({
@@ -92,7 +91,7 @@ export default function GenerateTable({
                           [emp._id]: e.target.value,
                         }))
                       }
-                      className="w-20 px-2 py-1 border border-gray-300 dark:border-slate-600 rounded text-sm disabled:bg-gray-100 dark:disabled:bg-slate-700 text-gray-900 dark:text-white bg-white dark:bg-slate-700"
+                      className="w-20 px-2 py-1 border border-gray-300 dark:border-slate-600 rounded text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-700"
                     />
                   </td>
                   <td className="px-6 py-4">
@@ -117,16 +116,28 @@ export default function GenerateTable({
                           onClick={() =>
                             window.open(`/payroll/slip/${slip._id}`, "_blank")
                           }
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium cursor-pointer"
                         >
                           View
+                        </button>
+                        <button
+                          onClick={() => handleGenerate(emp._id)}
+                          disabled={isProcessing}
+                          className="inline-flex items-center gap-1 bg-orange-600 hover:bg-orange-700 text-white text-xs px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                        >
+                          {isProcessing ? (
+                            <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent" />
+                          ) : (
+                            <Play className="w-3 h-3" />
+                          )}
+                          Regenerate
                         </button>
                       </div>
                     ) : (
                       <button
                         onClick={() => handleGenerate(emp._id)}
                         disabled={!emp.salary || isProcessing}
-                        className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
                       >
                         {isProcessing ? (
                           <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent" />

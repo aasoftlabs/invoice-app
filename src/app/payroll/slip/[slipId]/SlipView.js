@@ -10,11 +10,12 @@ import SlipActions from "@/components/payroll/slip/SlipActions";
 import PaySalaryModal from "@/components/payroll/slip/PaySalaryModal";
 import { toPng } from "html-to-image"; // Added this import
 
-export default function SlipView({ slip }) {
+export default function SlipView({ slipId }) {
   const router = useRouter();
   const { alert } = useModal();
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [slip, setSlip] = useState(null);
   const [company, setCompany] = useState(null);
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const slipRef = useRef(null);

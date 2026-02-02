@@ -589,7 +589,7 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setEditingUser({ ...editingUser, email: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
@@ -673,24 +673,24 @@ export default function UserManagement({ users: initialUsers }) {
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Save Changes"
-                  )}
-                </button>
+              <div className="flex gap-3 justify-end">
                 <button
                   type="button"
                   onClick={() => setEditingUser(null)}
                   className="px-6 py-2 border border-gray-300 dark:border-slate-600 rounded-lg font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Save Changes"
+                  )}
                 </button>
               </div>
             </form>

@@ -16,7 +16,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="col-span-2 lg:col-span-2">
             <div className="mb-4">
-              <Logo />
+              <Logo flink="https://aasoftlabs.com/" />
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 max-w-md leading-relaxed">
               Next-Gen Web & Mobile Engineering. Building scalable solutions

@@ -3,6 +3,10 @@ import { z } from "zod";
 export const profileSchema = z
     .object({
         name: z.string().min(2, "Name must be at least 2 characters"),
+        designation: z.string().optional(),
+        employeeId: z.string().optional(),
+        department: z.string().optional(),
+        joiningDate: z.string().optional(),
         currentPassword: z.string().optional(),
         newPassword: z.string().optional(),
         confirmNewPassword: z.string().optional(),

@@ -41,5 +41,11 @@ const InvoiceSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+// Indexes for performance
+InvoiceSchema.index({ date: -1 });
+InvoiceSchema.index({ status: 1 });
+InvoiceSchema.index({ "client.name": 1 });
+InvoiceSchema.index({ "client.company": 1 });
+
 export default mongoose.models.Invoice ||
   mongoose.model("Invoice", InvoiceSchema);

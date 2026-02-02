@@ -59,6 +59,9 @@ export default function GeneratePayroll() {
   const handleGenerate = async (userId) => {
     setProcessing(userId);
     try {
+      // Check if slip already exists for this user
+      const existingSlip = getSlipStatus(userId);
+
       const res = await fetch("/api/payroll/slips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,14 +70,14 @@ export default function GeneratePayroll() {
           month: selectedMonth,
           year: selectedYear,
           lopDays: parseFloat(lopData[userId]) || 0,
+          overwrite: !!existingSlip, // Pass true if regenerating
         }),
       });
 
       const data = await res.json(); // Moved res.json() here
 
       if (res.ok && data.success) {
-        setGeneratedSlip(data.data);
-        // Optionally refresh data after successful generation
+        // Refresh data after successful generation
         await fetchData();
       } else {
         await alert({

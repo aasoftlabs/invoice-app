@@ -33,7 +33,7 @@ export default async function Dashboard() {
   // Parallel fetch for performance using .lean()
   const [profile, invoices] = await Promise.all([
     CompanyProfile.findOne({}).lean(),
-    Invoice.find({}).sort({ date: -1 }).lean(),
+    Invoice.find({}).sort({ date: -1 }).limit(10).lean(), // Initial fast load
   ]);
 
   // Check if profile exists, if not redirect to setup

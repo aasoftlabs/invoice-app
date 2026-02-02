@@ -42,15 +42,27 @@ export async function GET(req) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(req.url, "http://localhost");
     const status = searchParams.get("status");
     const owner = searchParams.get("owner");
     const priority = searchParams.get("priority");
+    const activeOnly = searchParams.get("activeOnly") === "true";
+
+    // Pagination
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const filterAll = searchParams.get("all") === "true"; // For dropdowns/modals that need all data
+
 
     let query = {};
     if (status) query.status = status;
     if (owner) query.client = owner;
     if (priority) query.priority = parseInt(priority);
+
+    // Default active filter: Exclude 'Completed' projects
+    if (activeOnly) {
+      query.status = { $ne: "Completed" };
+    }
 
     let projects;
 
@@ -71,10 +83,17 @@ export async function GET(req) {
       ];
     }
 
-    projects = await Project.find(query)
+    let queryExec = Project.find(query)
       .populate("createdBy", "name email")
       .populate("projectManager", "name email")
       .sort({ createdAt: -1 });
+
+    if (!filterAll) {
+      const skip = (page - 1) * limit;
+      queryExec = queryExec.skip(skip).limit(limit);
+    }
+
+    projects = await queryExec;
 
     return NextResponse.json({ success: true, data: projects });
   } catch (error) {

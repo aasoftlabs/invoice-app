@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useModal } from "@/contexts/ModalContext";
 import { ArrowRight, Trash2 } from "lucide-react";
 
-export default function InvoiceRow({ invoice }) {
+export default function InvoiceRow({ invoice, scrollRef }) {
   const router = useRouter();
   const { confirm, alert } = useModal();
 
@@ -51,6 +51,7 @@ export default function InvoiceRow({ invoice }) {
 
   return (
     <tr
+      ref={scrollRef}
       onClick={handleRowClick}
       className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors group cursor-pointer"
 
@@ -116,3 +117,6 @@ export default function InvoiceRow({ invoice }) {
     </tr>
   );
 }
+
+
+

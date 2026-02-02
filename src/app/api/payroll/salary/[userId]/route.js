@@ -33,6 +33,13 @@ export async function GET(req, { params }) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
+        // Auto-generate employee ID if not set
+        let employeeId = user.employeeId;
+        if (!employeeId) {
+            const totalUsers = await User.countDocuments();
+            employeeId = `EMP${String(totalUsers).padStart(3, '0')}`;
+        }
+
         let salary = await EmployeeSalary.findOne({ userId }).lean();
 
         // Fetch settings for calculation
@@ -51,7 +58,11 @@ export async function GET(req, { params }) {
             };
         }
 
-        return NextResponse.json({ user, salary, settings });
+        return NextResponse.json({
+            user: { ...user, employeeId },
+            salary,
+            settings
+        });
     } catch (error) {
         console.error("Error fetching salary:", error);
         return NextResponse.json({ error: error.message }, { status: 400 });

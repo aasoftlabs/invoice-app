@@ -1,7 +1,7 @@
 import { Edit, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function PayrollTable({ employees, loading, error }) {
+export default function PayrollTable({ employees, loading, error, lastElementRef }) {
   const router = useRouter();
 
   const formatCurrency = (amount) => {
@@ -18,6 +18,9 @@ export default function PayrollTable({ employees, loading, error }) {
         <thead className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b dark:border-slate-700">
           <tr>
             <th className="px-6 py-3">Employee</th>
+            <th className="px-6 py-3">Emp Code</th>
+            <th className="px-6 py-3">Department</th>
+            <th className="px-6 py-3">DOJ</th>
             <th className="px-6 py-3">State</th>
             <th className="px-6 py-3">Gross Salary</th>
             <th className="px-6 py-3">Deductions</th>
@@ -29,7 +32,7 @@ export default function PayrollTable({ employees, loading, error }) {
           {loading ? (
             <tr>
               <td
-                colSpan="6"
+                colSpan="9"
                 className="px-6 py-8 text-center text-gray-500 dark:text-slate-400"
               >
                 Loading employees...
@@ -37,20 +40,21 @@ export default function PayrollTable({ employees, loading, error }) {
             </tr>
           ) : error ? (
             <tr>
-              <td colSpan="6" className="px-6 py-8 text-center text-red-500">
+              <td colSpan="9" className="px-6 py-8 text-center text-red-500">
                 Error: {error}
               </td>
             </tr>
           ) : employees.length === 0 ? (
             <tr>
-              <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+              <td colSpan="9" className="px-6 py-8 text-center text-gray-500">
                 No employees found
               </td>
             </tr>
           ) : (
-            employees.map((emp) => (
+            employees.map((emp, index) => (
               <tr
                 key={emp._id}
+                ref={index === employees.length - 1 ? lastElementRef : null}
                 className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
               >
                 <td className="px-6 py-4">
@@ -65,6 +69,21 @@ export default function PayrollTable({ employees, loading, error }) {
                       {emp.designation}
                     </div>
                   )}
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-gray-700 dark:text-slate-300">
+                    {emp.employeeId || <span className="text-gray-400 italic text-xs">Not Set</span>}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-gray-700 dark:text-slate-300">
+                    {emp.department || "General"}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-sm text-gray-700 dark:text-slate-300">
+                    {emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : <span className="text-gray-400 italic text-xs">Not Set</span>}
+                  </span>
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-sm text-gray-700 dark:text-slate-300">

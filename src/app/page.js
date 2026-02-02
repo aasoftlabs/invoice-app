@@ -18,6 +18,7 @@ import Note from "@/models/Note";
 import { redirect } from "next/navigation";
 import ActiveNotes from "@/components/notes/ActiveNotes";
 import { getUserPermissions } from "@/lib/permissions";
+import Spotlight from "@/components/ui/Spotlight";
 
 export default async function LandingPage() {
   const session = await auth();
@@ -75,7 +76,10 @@ export default async function LandingPage() {
             <ActiveNotes notes={serializedNotes} />
           </div>
 
-          <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm text-left flex flex-col justify-center">
+          <Spotlight
+            className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm text-left flex flex-col justify-center"
+            spotlightColor="rgba(59, 130, 246, 0.15)"
+          >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Quick Stats
             </h3>
@@ -105,7 +109,7 @@ export default async function LandingPage() {
                 </span>
               </div>
             </div>
-          </div>
+          </Spotlight>
         </div>
         <div className="mb-12 text-center">
           <p className="text-gray-500 dark:text-slate-400 mt-2">

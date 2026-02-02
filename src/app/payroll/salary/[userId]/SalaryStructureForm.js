@@ -49,7 +49,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
           setSalary({
             ...data.salary,
             state: data.salary.state || data.user.state || "Maharashtra",
-            employeeId: data.user.employeeId,
+            employeeId: data.user.employeeId || "",
             department: data.user.department,
             joiningDate: data.user.joiningDate,
             otherAllowances: data.salary.otherAllowances || [],
@@ -60,7 +60,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
           setSalary((prev) => ({
             ...prev,
             state: data.user.state || "Maharashtra",
-            employeeId: data.user.employeeId,
+            employeeId: data.user.employeeId || "",
             department: data.user.department,
             joiningDate: data.user.joiningDate,
           }));

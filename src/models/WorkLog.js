@@ -101,4 +101,10 @@ WorkLogSchema.post('save', async function (doc) {
     }
 });
 
+// Indexes
+WorkLogSchema.index({ projectId: 1, date: 1 });
+WorkLogSchema.index({ taskId: 1 });
+WorkLogSchema.index({ userId: 1 });
+WorkLogSchema.index({ date: -1 });
+
 export default mongoose.models.WorkLog || mongoose.model("WorkLog", WorkLogSchema);

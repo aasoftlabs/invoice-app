@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
-import { Calendar, ListTodo, Plus, Trash2, Pencil, Filter } from "lucide-react";
+import { Calendar, ListTodo, Plus, Trash2, Pencil, Filter, Loader2 } from "lucide-react";
 import AddWorkLogModal from "@/components/project/AddWorkLogModal";
 import WorkLogDetailsModal from "@/components/project/WorkLogDetailsModal";
 
@@ -18,6 +18,26 @@ export default function WorkLogPage() {
   const [editingLog, setEditingLog] = useState(null);
   const [viewingLog, setViewingLog] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Observer for infinite scroll
+  const observer = useRef();
+  const lastLogElementRef = useCallback(
+    (node) => {
+      if (loading || loadingMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, loadingMore, hasMore]
+  );
+
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
@@ -39,22 +59,50 @@ export default function WorkLogPage() {
     }
   }, []);
 
-  const fetchWorkLogs = useCallback(async () => {
-    try {
-      const params = new URLSearchParams({
-        ...(filters.projectId && { projectId: filters.projectId }),
-        month: filters.month,
-        year: filters.year,
-      });
-      const res = await fetch(`/api/worklogs?${params}`);
-      const data = await res.json();
-      if (data.success) {
-        setWorkLogs(data.data);
+  const fetchWorkLogs = useCallback(
+    async (isLoadMore = false, currentPage = 1) => {
+      try {
+        if (isLoadMore) {
+          setLoadingMore(true);
+        } else {
+          setLoading(true);
+        }
+
+        const params = new URLSearchParams({
+          ...(filters.projectId && { projectId: filters.projectId }),
+          month: filters.month,
+          year: filters.year,
+          page: currentPage,
+          limit: 20
+        });
+
+        const res = await fetch(`/api/worklogs?${params}`);
+        const data = await res.json();
+
+        if (data.success) {
+          if (isLoadMore) {
+            setWorkLogs((prev) => [...prev, ...data.data]);
+          } else {
+            setWorkLogs(data.data);
+          }
+
+          if (data.data.length < 20) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching work logs:", error);
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } catch (error) {
-      console.error("Error fetching work logs:", error);
-    }
-  }, [filters]);
+    },
+    [filters]
+  );
+
 
   const handleDeleteLog = async (logId) => {
     if (
@@ -79,7 +127,7 @@ export default function WorkLogPage() {
           message: "Work log deleted successfully!",
           variant: "success",
         });
-        fetchWorkLogs();
+        fetchWorkLogs(false, 1);
       } else {
         await alert({
           title: "Error",
@@ -116,10 +164,19 @@ export default function WorkLogPage() {
     if (session) {
       Promise.resolve().then(() => {
         fetchProjects();
-        fetchWorkLogs();
+        setPage(1);
+        fetchWorkLogs(false, 1);
       });
     }
   }, [session, filters, fetchProjects, fetchWorkLogs]);
+
+  // Load More
+  useEffect(() => {
+    if (page > 1) {
+      fetchWorkLogs(true, page);
+    }
+  }, [page, fetchWorkLogs]);
+
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -265,10 +322,11 @@ export default function WorkLogPage() {
                     </td>
                   </tr>
                 ) : (
-                  workLogs.map((log) => (
+                  workLogs.map((log, index) => (
                     <tr
                       key={log._id}
                       className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
+                      ref={index === workLogs.length - 1 ? lastLogElementRef : null}
                       onClick={() => handleViewLog(log)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-200">
@@ -327,12 +385,21 @@ export default function WorkLogPage() {
             </table>
           </div>
         </div>
+
+        {loadingMore && (
+          <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading more logs...
+          </div>
+        )}
       </div>
 
       <AddWorkLogModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSuccess={fetchWorkLogs}
+        onSuccess={() => {
+          setPage(1);
+          fetchWorkLogs(false, 1);
+        }}
         projects={projects}
         editLog={editingLog}
       />
@@ -344,6 +411,6 @@ export default function WorkLogPage() {
         }}
         workLog={viewingLog}
       />
-    </div>
+    </div >
   );
 }

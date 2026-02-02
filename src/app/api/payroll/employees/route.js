@@ -1,12 +1,12 @@
+
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import connectDB from "@/lib/mongoose";
-import EmployeeSalary from "@/models/EmployeeSalary";
 import User from "@/models/User";
+// EmployeeSalary and PayrollSettings import kept for reference or used if needed
 import PayrollSettings from "@/models/PayrollSettings";
 import { calculateCompleteSalary } from "@/lib/payrollCalculations";
 
-// GET: Get all employees with their salary structures
 export async function GET(req) {
     const session = await auth();
 
@@ -17,7 +17,6 @@ export async function GET(req) {
     try {
         await connectDB();
 
-        // Check if user has payroll permission
         const hasPayrollAccess =
             session.user.role === "admin" ||
             session.user.permissions?.includes("payroll");
@@ -26,51 +25,106 @@ export async function GET(req) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        // Fetch all users with their salary structures
-        const users = await User.find({}).select("-password").lean();
-        console.log(`[Payroll API] Found ${users.length} users`);
+        const { searchParams } = new URL(req.url);
+        const page = parseInt(searchParams.get("page") || "1");
+        const limit = parseInt(searchParams.get("limit") || "20");
+        const search = searchParams.get("search") || "";
+        const status = searchParams.get("status") || "all";
+        const state = searchParams.get("state") || "all";
+        const department = searchParams.get("department") || "all";
+        const filterAll = searchParams.get("all") === "true"; // If true, ignore pagination
 
-        // Fetch salary structures for all users
-        const salaries = await EmployeeSalary.find({}).lean();
-
-        // Fetch payroll settings
+        // Fetch settings first
         let settings = await PayrollSettings.findOne({ companyId: "default" });
         if (!settings) {
-            // Create default settings if not exists
             settings = await PayrollSettings.create({ companyId: "default" });
         }
 
-        // Combine user data with salary data
-        const employeesWithSalary = users.map((user) => {
-            const salary = salaries.find(
-                (s) => s.userId.toString() === user._id.toString()
-            );
+        const pipeline = [];
+
+        // 1. Match Users (Search & Basic Filters)
+        const matchStage = {};
+        if (search) {
+            matchStage.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } },
+                { designation: { $regex: search, $options: "i" } }
+            ];
+        }
+        if (state !== "all") {
+            // User state
+            matchStage.state = state;
+        }
+        if (department !== "all") {
+            matchStage.department = department;
+        }
+
+        if (Object.keys(matchStage).length > 0) {
+            pipeline.push({ $match: matchStage });
+        }
+
+        // 2. Lookup Salary
+        pipeline.push({
+            $lookup: {
+                from: "employeesalaries",
+                localField: "_id",
+                foreignField: "userId",
+                as: "salaryData"
+            }
+        });
+
+        // 3. Unwind (preserve users without salary for setup_pending)
+        pipeline.push({
+            $unwind: {
+                path: "$salaryData",
+                preserveNullAndEmptyArrays: true
+            }
+        });
+
+        // 4. Filter by Salary Status
+        if (status === "with_salary") {
+            pipeline.push({ $match: { salaryData: { $exists: true, $ne: null } } });
+        } else if (status === "setup_pending") {
+            pipeline.push({ $match: { salaryData: { $exists: false } } }); // or check null
+        }
+
+        // 5. Pagination
+        if (!filterAll) {
+            pipeline.push({ $skip: (page - 1) * limit });
+            pipeline.push({ $limit: limit });
+        }
+
+        // Execute Aggregation
+        const employeesRaw = await User.aggregate(pipeline);
+
+        // Process results to match format and calculate specifics
+        const employees = employeesRaw.map(user => {
+            const salary = user.salaryData;
+            let finalSalary = null;
 
             if (salary) {
-                // Calculate complete salary
                 const calculated = calculateCompleteSalary(salary, settings);
-
-                return {
-                    ...user,
-                    salary: {
-                        ...salary,
-                        grossSalary: calculated.gross,
-                        totalDeductions: calculated.deductions.total,
-                        netSalary: calculated.netSalary,
-                    },
+                finalSalary = {
+                    ...salary,
+                    grossSalary: calculated.gross,
+                    totalDeductions: calculated.deductions.total,
+                    netSalary: calculated.netSalary
                 };
             }
 
+            // Clean up user object (remove salaryData, password)
+            const { salaryData, password, ...userFields } = user;
             return {
-                ...user,
-                salary: null,
+                ...userFields,
+                salary: finalSalary
             };
         });
 
         return NextResponse.json({
-            employees: employeesWithSalary,
+            employees,
             settings,
         });
+
     } catch (error) {
         console.error("Error fetching payroll data:", error);
         return NextResponse.json({ error: error.message }, { status: 400 });
