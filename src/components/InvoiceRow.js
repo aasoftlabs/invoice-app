@@ -52,7 +52,8 @@ export default function InvoiceRow({ invoice }) {
   return (
     <tr
       onClick={handleRowClick}
-      className="hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
+      className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors group cursor-pointer"
+
     >
       <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
         {invoice.invoiceNo}

@@ -10,7 +10,7 @@ const Footer = () => {
       {/* Background Effect */}
       <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 dark:from-blue-950/5 to-transparent pointer-events-none"></div>
 
-      <div className="max-w-full px-40 m-auto relative z-10">
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Main Footer Content */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 py-16">
           {/* Company Info */}

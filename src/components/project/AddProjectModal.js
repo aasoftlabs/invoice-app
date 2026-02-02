@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import { X, Briefcase, Calendar, CheckCircle, Save } from "lucide-react";
 import { useModal } from "@/contexts/ModalContext";
 
-export default function AddProjectModal({ isOpen, onClose, onSuccess }) {
+export default function AddProjectModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  editProject,
+}) {
   const { alert } = useModal();
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);

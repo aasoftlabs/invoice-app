@@ -2,22 +2,19 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
+  --background: #f8fafc;
+  /* Slate-50 */
   --foreground: #171717;
+  --grid-color: rgba(0, 0, 0, 0.03);
+  --spotlight-color: rgba(0, 0, 0, 0.05);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #020617;
+  /* Slate-950 */
+  --foreground: #ededed;
+  --grid-color: rgba(255, 255, 255, 0.03);
+  --spotlight-color: rgba(255, 255, 255, 0.06);
 }
 
 html {
@@ -25,22 +22,35 @@ html {
 }
 
 /* Global Theme Transition */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+
+  /* Grid Pattern & Footer-like Gradient Effect */
+  background-image:
+    linear-gradient(to right, var(--grid-color, rgba(0, 0, 0, 0.03)) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color, rgba(0, 0, 0, 0.03)) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.03), transparent);
+  /* Subtle blue tint */
+  background-size: 40px 40px, 40px 40px, 100% 100vh;
+  background-attachment: fixed;
+  /* Keep pattern fixed while scrolling */
 }
 
 @keyframes marquee {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }

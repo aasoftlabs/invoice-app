@@ -33,7 +33,7 @@ export default async function ViewEmployeeSlips({ searchParams }) {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans p-8">
+      <div className="min-h-screen font-sans p-8">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
             User not found

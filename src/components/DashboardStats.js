@@ -1,4 +1,5 @@
 import { DollarSign, FileText, Clock, TrendingUp } from "lucide-react";
+import Spotlight from "@/components/ui/Spotlight";
 
 export default function DashboardStats({
   filteredInvoices = [],
@@ -58,9 +59,9 @@ export default function DashboardStats({
       {stats.map((stat, i) => {
         const Icon = stat.icon;
         return (
-          <div
+          <Spotlight
             key={i}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-start justify-between hover:shadow-md transition-shadow"
+            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-start justify-between hover:shadow-md transition-shadow cursor-pointer group"
           >
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-slate-400 mb-1">
@@ -76,7 +77,7 @@ export default function DashboardStats({
             <div className={`p-3 rounded-lg ${stat.bg} ${stat.color}`}>
               <Icon className="w-6 h-6" />
             </div>
-          </div>
+          </Spotlight>
         );
       })}
     </div>

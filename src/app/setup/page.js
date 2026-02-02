@@ -110,7 +110,7 @@ export default function SetupPage() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col items-center py-10 font-sans">
+    <div className="min-h-screen flex flex-col items-center py-10 font-sans">
       <div className="w-full max-w-4xl bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 p-8">
         <div className="flex items-center gap-3 mb-8 border-b border-gray-200 dark:border-slate-700 pb-4">
           <Building2 className="w-8 h-8 text-blue-600" />

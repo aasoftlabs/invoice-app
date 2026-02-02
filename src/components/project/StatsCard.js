@@ -1,4 +1,5 @@
 "use client";
+import Spotlight from "@/components/ui/Spotlight";
 
 export default function StatsCard({
   title,
@@ -20,7 +21,7 @@ export default function StatsCard({
   const bgClass = colorClasses[color] || colorClasses.blue;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 p-6 hover:shadow-lg transition-shadow">
+    <Spotlight className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 p-6 hover:shadow-lg transition-shadow cursor-pointer group">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-medium text-gray-600 dark:text-slate-400">
           {title}
@@ -41,6 +42,6 @@ export default function StatsCard({
           </p>
         )}
       </div>
-    </div>
+    </Spotlight>
   );
 }

@@ -22,7 +22,7 @@ export default async function SalaryStructurePage({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans">
+    <div className="min-h-screen font-sans">
       <div className="max-w-5xl mx-auto p-8">
         <SalaryStructureForm userId={userId} sessionUserId={session.user.id} />
       </div>

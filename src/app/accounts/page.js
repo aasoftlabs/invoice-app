@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import {
@@ -13,7 +13,11 @@ import {
   Search,
   Edit2,
   Trash2,
+  TrendingUp,
+  TrendingDown,
+  FileText,
 } from "lucide-react";
+import Spotlight from "@/components/ui/Spotlight";
 import AddTransactionModal from "@/components/accounts/AddTransactionModal";
 import AccountFilters from "@/components/accounts/AccountFilters";
 import { useRouter } from "next/navigation";
@@ -129,8 +133,8 @@ export default function AccountsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans text-gray-800 dark:text-slate-200 p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen font-sans text-gray-800 dark:text-slate-200 py-8">
+      <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -141,21 +145,26 @@ export default function AccountsPage() {
               Track financial transactions, ledger, and cash flow
             </p>
           </div>
-          <button
-            onClick={() => {
-              setEditingTransaction(null);
-              setIsModalOpen(true);
-            }}
-            className="bg-cyan-600 dark:bg-cyan-700 hover:bg-cyan-700 dark:hover:bg-cyan-600 text-white px-5 py-3 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-cyan-500/20 transition-all font-semibold"
+          <Spotlight
+            className="bg-cyan-600 dark:bg-cyan-700 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition-all font-semibold cursor-pointer"
+            spotlightColor="rgba(255, 255, 255, 0.25)"
           >
-            <Plus className="w-5 h-5" /> Add Transaction
-          </button>
+            <button
+              onClick={() => {
+                setEditingTransaction(null);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-2 px-5 py-3 text-white w-full h-full hover:bg-cyan-700 dark:hover:bg-cyan-600 transition-colors rounded-xl"
+            >
+              <Plus className="w-5 h-5" /> Transaction
+            </button>
+          </Spotlight>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Balance */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center gap-4">
+          <Spotlight className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center gap-4 cursor-pointer group">
             <div className="w-12 h-12 bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-xl flex items-center justify-center">
               <Wallet className="w-6 h-6" />
             </div>
@@ -169,10 +178,10 @@ export default function AccountsPage() {
                 ₹ {stats.balance.toLocaleString("en-IN")}
               </h3>
             </div>
-          </div>
+          </Spotlight>
 
           {/* Income */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center gap-4">
+          <Spotlight className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center gap-4 cursor-pointer group">
             <div className="w-12 h-12 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-xl flex items-center justify-center">
               <TrendingUp className="w-6 h-6" />
             </div>
@@ -184,10 +193,10 @@ export default function AccountsPage() {
                 ₹ {stats.income.toLocaleString("en-IN")}
               </h3>
             </div>
-          </div>
+          </Spotlight>
 
           {/* Expense */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center gap-4">
+          <Spotlight className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center gap-4 cursor-pointer group">
             <div className="w-12 h-12 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl flex items-center justify-center">
               <TrendingDown className="w-6 h-6" />
             </div>
@@ -199,7 +208,7 @@ export default function AccountsPage() {
                 ₹ {stats.expense.toLocaleString("en-IN")}
               </h3>
             </div>
-          </div>
+          </Spotlight>
         </div>
         <AccountFilters filters={filters} setFilters={setFilters} />
         {/* Ledger Table */}
@@ -243,7 +252,7 @@ export default function AccountsPage() {
                   transactions.map((t) => (
                     <tr
                       key={t._id}
-                      className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                      className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
                     >
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
                         {new Date(t.date).toLocaleDateString("en-IN")}
@@ -314,6 +323,6 @@ export default function AccountsPage() {
         onSuccess={handleSuccess}
         editingTransaction={editingTransaction}
       />
-    </div>
+    </div >
   );
 }

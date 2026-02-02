@@ -11,60 +11,63 @@ export default function Navbar({ user, profile }) {
   const pathname = usePathname();
   const permissions = getUserPermissions(user);
   return (
-    <nav className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 px-40 m-auto py-2 flex justify-between items-center shadow-sm print:hidden transition-colors">
-      <div className="flex items-center gap-8">
-        <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <Logo />
+    <nav className="w-full bg-slate-50 dark:bg-slate-950 border-b border-gray-200 dark:border-white/5 shadow-sm print:hidden transition-colors relative">
+      {/* Background Effect */}
+      <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 dark:from-blue-950/5 to-transparent pointer-events-none"></div>
+      <div className="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center relative z-10">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <Logo />
+          </div>
         </div>
-      </div>
 
-      {/* Right: Navigation & User Menu */}
-      <div className="flex items-center gap-6">
-        {user &&
-          (() => {
-            const links = [];
+        {/* Right: Navigation & User Menu */}
+        <div className="flex items-center gap-6">
+          {user &&
+            (() => {
+              const links = [];
 
-            if (permissions.includes("invoices")) {
-              links.push({ href: "/invoices", label: "Invoices" });
-            }
-            if (permissions.includes("letterhead")) {
-              links.push({ href: "/letterhead", label: "Letterhead" });
-            }
-            if (permissions.includes("project")) {
-              links.push({ href: "/project", label: "Project" });
-            }
+              if (permissions.includes("invoices")) {
+                links.push({ href: "/invoices", label: "Invoices" });
+              }
+              if (permissions.includes("letterhead")) {
+                links.push({ href: "/letterhead", label: "Letterhead" });
+              }
+              if (permissions.includes("project")) {
+                links.push({ href: "/project", label: "Project" });
+              }
 
-            if (permissions.includes("payroll")) {
-              links.push({ href: "/payroll", label: "Payroll" });
-            }
+              if (permissions.includes("payroll")) {
+                links.push({ href: "/payroll", label: "Payroll" });
+              }
 
-            if (permissions.includes("accounts")) {
-              links.push({ href: "/accounts", label: "Accounts" });
-            }
+              if (permissions.includes("accounts")) {
+                links.push({ href: "/accounts", label: "Accounts" });
+              }
 
-            return links.map((link) => {
-              const isActive = pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`hidden md:block text-sm font-semibold transition-colors ${
-                    isActive
+              return links.map((link) => {
+                const isActive = pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`hidden md:block text-sm font-semibold transition-colors ${isActive
                       ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 -mb-[22px] pb-[18px]"
                       : "text-gray-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            });
-          })()}
+                      }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              });
+            })()}
 
-        {/* Theme Toggle */}
-        <ThemeToggle />
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
-        {/* User Menu */}
-        <UserMenu user={user} />
+          {/* User Menu */}
+          <UserMenu user={user} />
+        </div>
       </div>
     </nav>
   );

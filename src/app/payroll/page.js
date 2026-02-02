@@ -23,7 +23,7 @@ export default async function PayrollPage() {
   await connectDB();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans">
+    <div className="min-h-screen font-sans">
       <div className="max-w-7xl mx-auto p-8">
         <PayrollDashboard />
       </div>

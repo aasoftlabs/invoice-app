@@ -5,7 +5,9 @@ import { Save, Loader2, Upload } from "lucide-react";
 import { useModal } from "@/contexts/ModalContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Image from "next/image";
 import { Building2 } from "lucide-react"; // Added Building2 import
+import Spotlight from "@/components/ui/Spotlight";
 
 export default function CompanyForm({ initialData }) {
     const router = useRouter();
@@ -146,17 +148,22 @@ export default function CompanyForm({ initialData }) {
                     )}
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                <Spotlight
+                    className="w-full bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 transition-colors cursor-pointer"
+                    spotlightColor="rgba(255, 255, 255, 0.25)"
                 >
-                    {loading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                        "Save Company Settings"
-                    )}
-                </button>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full text-white py-2 font-medium flex items-center justify-center gap-2 disabled:opacity-70 h-full"
+                    >
+                        {loading ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                            "Save Company Settings"
+                        )}
+                    </button>
+                </Spotlight>
             </form>
         </div>
     );

@@ -43,7 +43,7 @@ export default async function Dashboard() {
   const serializedInvoices = JSON.parse(JSON.stringify(invoices));
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans text-gray-800 dark:text-slate-200">
+    <div className="min-h-screen font-sans text-gray-800 dark:text-slate-200">
       <InvoiceDashboard initialInvoices={serializedInvoices} />
     </div>
   );

@@ -1,6 +1,8 @@
+import Spotlight from "@/components/ui/Spotlight";
+
 export default function ActiveTaskCard({ activeStats }) {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 p-6 mb-6">
+    <Spotlight className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 p-6 mb-6 cursor-pointer group">
       <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">
         Current Project / Task
       </h3>
@@ -20,6 +22,6 @@ export default function ActiveTaskCard({ activeStats }) {
           </p>
         </div>
       </div>
-    </div>
+    </Spotlight>
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useModal } from "@/contexts/ModalContext";
 import { Edit2, Trash2, X, Loader2, UserPlus } from "lucide-react";
+import Spotlight from "@/components/ui/Spotlight";
 import { useRouter } from "next/navigation";
 
 const AVAILABLE_PERMISSIONS = [
@@ -219,13 +220,18 @@ export default function UserManagement({ users: initialUsers }) {
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
           User Management
         </h1>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+        <Spotlight
+          className="bg-rose-600 rounded-lg shadow-sm hover:bg-rose-700 transition-colors cursor-pointer"
+          spotlightColor="rgba(255, 255, 255, 0.2)"
         >
-          <UserPlus className="w-5 h-5" />
-          Add New User
-        </button>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 text-white font-medium w-full h-full"
+          >
+            <UserPlus className="w-5 h-5" />
+            New User
+          </button>
+        </Spotlight>
       </div>
 
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
@@ -244,7 +250,7 @@ export default function UserManagement({ users: initialUsers }) {
             {users.map((u) => (
               <tr
                 key={u._id}
-                className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+                className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
               >
                 <td className="px-6 py-4">
                   <div className="font-medium text-gray-900 dark:text-white">

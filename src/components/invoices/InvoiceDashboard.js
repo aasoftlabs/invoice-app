@@ -6,6 +6,7 @@ import { Plus, FileText } from "lucide-react";
 import DashboardStats from "@/components/DashboardStats";
 import InvoiceRow from "@/components/InvoiceRow";
 import InvoiceFilters from "@/components/invoices/InvoiceFilters";
+import Spotlight from "@/components/ui/Spotlight";
 
 export default function InvoiceDashboard({ initialInvoices }) {
   // State for filters
@@ -44,7 +45,7 @@ export default function InvoiceDashboard({ initialInvoices }) {
   // Let's stick to this dynamic behavior.
 
   return (
-    <div className="max-w-6xl mx-auto p-8">
+    <div className="container mx-auto px-4 md:px-6 py-8">
       {/* Page Header */}
       <div className="mb-8 flex justify-between items-start">
         <div>
@@ -55,12 +56,17 @@ export default function InvoiceDashboard({ initialInvoices }) {
             Create, view, and manage your invoices
           </p>
         </div>
-        <Link
-          href="/invoices/create"
-          className="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-blue-700 transition-all font-bold shadow-lg hover:shadow-blue-500/20 active:scale-95"
+        <Spotlight
+          className="bg-blue-600 rounded-xl shadow-lg hover:shadow-blue-500/20 active:scale-95 transition-all cursor-pointer"
+          spotlightColor="rgba(255, 255, 255, 0.25)"
         >
-          <Plus className="w-5 h-5" /> Add Invoice
-        </Link>
+          <Link
+            href="/invoices/create"
+            className="flex items-center gap-2 px-5 py-2.5 text-white font-bold w-full h-full"
+          >
+            <Plus className="w-5 h-5" /> Add Invoice
+          </Link>
+        </Spotlight>
       </div>
 
       {/* Dashboard Stats (Responsive to filters) */}

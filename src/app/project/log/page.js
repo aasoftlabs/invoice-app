@@ -12,6 +12,7 @@ export default function WorkLogPage() {
   const { data: session, status } = useSession();
   const { confirm, alert } = useModal();
   const [workLogs, setWorkLogs] = useState([]);
+  const [projects, setProjects] = useState([]); // Added projects state
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLog, setEditingLog] = useState(null);

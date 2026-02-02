@@ -1,4 +1,5 @@
 import { Users, DollarSign, TrendingDown, Wallet } from "lucide-react";
+import Spotlight from "@/components/ui/Spotlight";
 
 export default function PayrollStats({ employees }) {
   // Calculate summary statistics
@@ -27,7 +28,7 @@ export default function PayrollStats({ employees }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">
@@ -44,9 +45,9 @@ export default function PayrollStats({ employees }) {
             <Users className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
         </div>
-      </div>
+      </Spotlight>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">
@@ -63,9 +64,9 @@ export default function PayrollStats({ employees }) {
             <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
         </div>
-      </div>
+      </Spotlight>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">
@@ -82,9 +83,9 @@ export default function PayrollStats({ employees }) {
             <TrendingDown className="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
         </div>
-      </div>
+      </Spotlight>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">
@@ -101,7 +102,7 @@ export default function PayrollStats({ employees }) {
             <Wallet className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
         </div>
-      </div>
-    </div>
+      </Spotlight>
+    </div >
   );
 }

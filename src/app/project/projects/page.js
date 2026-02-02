@@ -211,7 +211,7 @@ export default function ProjectsPage() {
                 projects.map((project) => (
                   <React.Fragment key={project._id}>
                     <tr
-                      className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
+                      className="hover:bg-gray-100 dark:hover:bg-slate-700 group cursor-pointer transition-colors"
                       onClick={() => toggleProject(project._id)}
                     >
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-slate-200 flex items-center gap-2">

@@ -51,7 +51,7 @@ export default function PayrollTable({ employees, loading, error }) {
             employees.map((emp) => (
               <tr
                 key={emp._id}
-                className="hover:bg-gray-50 dark:hover:bg-slate-700"
+                className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
               >
                 <td className="px-6 py-4">
                   <div className="font-medium text-gray-900 dark:text-white">

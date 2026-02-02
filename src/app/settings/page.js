@@ -151,8 +151,8 @@ export default function SettingsPage() {
     TABS.find((t) => t.id === activeTab)?.icon || LayoutDashboard;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex justify-center py-10 font-sans">
-      <div className="w-full max-w-6xl flex gap-6 px-4">
+    <div className="min-h-screen flex justify-center py-10 font-sans">
+      <div className="container mx-auto px-4 md:px-6 flex gap-6">
         {/* Left Sidebar */}
         <div className="w-64 shrink-0">
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden sticky top-10">
@@ -168,11 +168,10 @@ export default function SettingsPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                      isActive
-                        ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 shadow-sm"
-                        : "text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white"
-                    }`}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
+                      ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 shadow-sm"
+                      : "text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white"
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <tab.icon
