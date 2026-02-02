@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Save, Loader2, User, Lock, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/contexts/ModalContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileSchema } from "@/lib/schemas/profileSchema";
 
 export default function ProfileForm({ user }) {
   const router = useRouter();
+  const { alert } = useModal();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -36,9 +38,9 @@ export default function ProfileForm({ user }) {
         name: data.name,
         ...(data.newPassword
           ? {
-              password: data.currentPassword,
-              newPassword: data.newPassword,
-            }
+            password: data.currentPassword,
+            newPassword: data.newPassword,
+          }
           : {}),
       };
 
@@ -49,7 +51,11 @@ export default function ProfileForm({ user }) {
       });
 
       if (res.ok) {
-        alert("Profile updated successfully");
+        await alert({
+          title: "Success",
+          message: "Profile updated successfully",
+          variant: "success",
+        });
         // Reset password fields but keep name
         reset({
           name: data.name,
@@ -60,11 +66,19 @@ export default function ProfileForm({ user }) {
         router.refresh();
       } else {
         const err = await res.json();
-        alert("Error: " + err.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + err.error,
+          variant: "danger",
+        });
       }
     } catch (e) {
       console.error(e);
-      alert("Failed to update profile");
+      await alert({
+        title: "Error",
+        message: "Failed to update profile",
+        variant: "danger",
+      });
     } finally {
       setLoading(false);
     }
@@ -95,11 +109,10 @@ export default function ProfileForm({ user }) {
           </label>
           <input
             {...register("name")}
-            className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${
-              errors.name
-                ? "border-red-500"
-                : "border-gray-300 dark:border-slate-600"
-            }`}
+            className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${errors.name
+              ? "border-red-500"
+              : "border-gray-300 dark:border-slate-600"
+              }`}
           />
           {errors.name && (
             <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
@@ -120,11 +133,10 @@ export default function ProfileForm({ user }) {
               <input
                 type="password"
                 {...register("currentPassword")}
-                className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${
-                  errors.currentPassword
-                    ? "border-red-500"
-                    : "border-gray-300 dark:border-slate-600"
-                }`}
+                className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${errors.currentPassword
+                  ? "border-red-500"
+                  : "border-gray-300 dark:border-slate-600"
+                  }`}
               />
               {errors.currentPassword && (
                 <p className="text-xs text-red-500 mt-1">
@@ -142,11 +154,10 @@ export default function ProfileForm({ user }) {
                 <input
                   type="password"
                   {...register("newPassword")}
-                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${
-                    errors.newPassword
-                      ? "border-red-500"
-                      : "border-gray-300 dark:border-slate-600"
-                  }`}
+                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${errors.newPassword
+                    ? "border-red-500"
+                    : "border-gray-300 dark:border-slate-600"
+                    }`}
                 />
                 {errors.newPassword && (
                   <p className="text-xs text-red-500 mt-1">
@@ -161,11 +172,10 @@ export default function ProfileForm({ user }) {
                 <input
                   type="password"
                   {...register("confirmNewPassword")}
-                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 ${
-                    errors.confirmNewPassword
-                      ? "border-red-500"
-                      : "border-gray-300 dark:border-slate-600"
-                  }`}
+                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 ${errors.confirmNewPassword
+                    ? "border-red-500"
+                    : "border-gray-300 dark:border-slate-600"
+                    }`}
                 />
                 {errors.confirmNewPassword && (
                   <p className="text-xs text-red-500 mt-1">

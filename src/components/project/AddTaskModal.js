@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Save } from "lucide-react";
+import { X, Calendar, User, ListTodo } from "lucide-react";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function AddTaskModal({
   isOpen,
@@ -11,6 +12,7 @@ export default function AddTaskModal({
   users,
   editTask = null,
 }) {
+  const { alert } = useModal();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     projectId: "",
@@ -63,26 +65,29 @@ export default function AddTaskModal({
 
       const data = await res.json();
       if (data.success) {
-        alert(
-          isEditing
+        await alert({
+          title: "Success",
+          message: editTask
             ? "Task updated successfully!"
             : "Task created successfully!",
-        );
-        setFormData({
-          projectId: "",
-          taskName: "",
-          description: "",
-          status: "Not Started",
-          assignedTo: "",
+          variant: "success",
         });
         onSuccess();
         onClose();
       } else {
-        alert("Error: " + data.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + data.error,
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error creating task:", error);
-      alert("Error creating task");
+      await alert({
+        title: "Error",
+        message: "Error creating task",
+        variant: "danger",
+      });
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useModal } from "@/contexts/ModalContext";
 import { Edit2, Trash2, X, Loader2, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -53,6 +54,7 @@ export default function UserManagement({ users: initialUsers }) {
   const [editingUser, setEditingUser] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { confirm, alert } = useModal();
 
   const [newUser, setNewUser] = useState({
     name: "",
@@ -65,29 +67,35 @@ export default function UserManagement({ users: initialUsers }) {
 
   const handleDelete = async (userId, userName) => {
     if (
-      !confirm(
-        `Are you sure you want to delete user "${userName}"? This action cannot be undone.`,
-      )
+      !(await confirm({
+        title: "Delete User",
+        message: `Are you sure you want to delete user "${userName}"? This action cannot be undone.`,
+        variant: "danger",
+        confirmText: "Delete",
+      }))
     ) {
       return;
     }
 
-    try {
-      const res = await fetch(`/api/users/${userId}`, {
-        method: "DELETE",
-      });
+    const res = await fetch(`/api/users/${userId}`, {
+      method: "DELETE",
+    });
 
-      if (res.ok) {
-        alert("User deleted successfully");
-        setUsers(users.filter((u) => u._id !== userId));
-        router.refresh();
-      } else {
-        const err = await res.json();
-        alert("Error: " + err.error);
-      }
-    } catch (e) {
-      console.error(e);
-      alert("Failed to delete user");
+    if (res.ok) {
+      await alert({
+        title: "Success",
+        message: "User deleted successfully",
+        variant: "success",
+      });
+      setUsers(users.filter((u) => u._id !== userId));
+      router.refresh();
+    } else {
+      const err = await res.json();
+      await alert({
+        title: "Error",
+        message: "Error: " + err.error,
+        variant: "danger",
+      });
     }
   };
 
@@ -110,7 +118,11 @@ export default function UserManagement({ users: initialUsers }) {
 
       if (res.ok) {
         const updatedUser = await res.json();
-        alert("User updated successfully");
+        await alert({
+          title: "Success",
+          message: "User updated successfully",
+          variant: "success",
+        });
         setUsers(
           users.map((u) => (u._id === updatedUser._id ? updatedUser : u)),
         );
@@ -118,11 +130,19 @@ export default function UserManagement({ users: initialUsers }) {
         router.refresh();
       } else {
         const err = await res.json();
-        alert("Error: " + err.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + err.error,
+          variant: "danger",
+        });
       }
-    } catch (e) {
-      console.error(e);
-      alert("Failed to update user");
+    } catch (error) {
+      console.error("Error updating user:", error);
+      await alert({
+        title: "Error",
+        message: "Failed to update user status",
+        variant: "danger",
+      });
     } finally {
       setLoading(false);
     }
@@ -140,7 +160,11 @@ export default function UserManagement({ users: initialUsers }) {
       });
 
       if (res.ok) {
-        alert("User created successfully");
+        await alert({
+          title: "Success",
+          message: "User created successfully",
+          variant: "success",
+        });
         setNewUser({
           name: "",
           designation: "",
@@ -153,11 +177,19 @@ export default function UserManagement({ users: initialUsers }) {
         router.refresh();
       } else {
         const err = await res.json();
-        alert("Error: " + err.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + err.error,
+          variant: "danger",
+        });
       }
     } catch (e) {
       console.error(e);
-      alert("Failed to create user");
+      await alert({
+        title: "Error",
+        message: "Failed to create user",
+        variant: "danger",
+      });
     } finally {
       setLoading(false);
     }
@@ -284,8 +316,8 @@ export default function UserManagement({ users: initialUsers }) {
                           u.role === "admin"
                             ? u.permissions
                             : (u.permissions || []).filter(
-                                (p) => p !== "company" && p !== "users",
-                              );
+                              (p) => p !== "company" && p !== "users",
+                            );
                         setEditingUser({
                           ...u,
                           permissions: cleanedPermissions,
@@ -602,7 +634,7 @@ export default function UserManagement({ users: initialUsers }) {
                           perm.id === "notes"
                             ? true
                             : editingUser.permissions?.includes(perm.id) ||
-                              false
+                            false
                         }
                         onChange={() => togglePermission(perm.id, true)}
                         disabled={

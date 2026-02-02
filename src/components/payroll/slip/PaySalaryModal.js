@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Loader2, CheckCircle, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, CreditCard, Banknote, Calendar } from "lucide-react";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function PaySalaryModal({ isOpen, onClose, onSuccess, slip }) {
+    const { alert } = useModal();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         date: new Date().toISOString().split('T')[0],
@@ -42,11 +44,19 @@ export default function PaySalaryModal({ isOpen, onClose, onSuccess, slip }) {
                 onSuccess(data.data);
                 onClose();
             } else {
-                alert("Error: " + data.error);
+                await alert({
+                    title: "Error",
+                    message: "Error: " + data.error,
+                    variant: "danger",
+                });
             }
         } catch (error) {
-            console.error(error);
-            alert("Failed to record payment");
+            console.error("Error paying salary:", error);
+            await alert({
+                title: "Error",
+                message: "Failed to record payment",
+                variant: "danger",
+            });
         } finally {
             setLoading(false);
         }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useModal } from "@/contexts/ModalContext";
 import { useRouter } from "next/navigation";
 import { Save, ArrowLeft } from "lucide-react";
 import SalaryConfiguration from "@/components/payroll/salary/SalaryConfiguration";
@@ -10,6 +11,7 @@ import SalaryPreview from "@/components/payroll/salary/SalaryPreview";
 
 export default function SalaryStructureForm({ userId, sessionUserId }) {
   const router = useRouter();
+  const { alert } = useModal();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [user, setUser] = useState(null);
@@ -126,11 +128,19 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
         router.refresh();
       } else {
         const error = await res.json();
-        alert(error.error || "Failed to save salary structure");
+        await alert({
+          title: "Error",
+          message: error.error || "Failed to save salary structure",
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error saving salary:", error);
-      alert("An error occurred while saving");
+      await alert({
+        title: "Error",
+        message: "An error occurred while saving",
+        variant: "danger",
+      });
     } finally {
       setSaving(false);
     }
@@ -215,14 +225,14 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
         <button
           onClick={handleSubmit}
           disabled={saving}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
         >
           {saving ? (
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
           ) : (
             <Save className="w-4 h-4" />
           )}
-          Save Structure
+          Save
         </button>
       </div>
 

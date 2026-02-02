@@ -1,25 +1,26 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useModal } from "@/contexts/ModalContext";
 import {
   Plus,
+  Download,
+  Filter,
   Wallet,
-  TrendingUp,
-  TrendingDown,
   ArrowUpRight,
   ArrowDownLeft,
-  FileText,
   Search,
   Edit2,
   Trash2,
 } from "lucide-react";
 import AddTransactionModal from "@/components/accounts/AddTransactionModal";
 import AccountFilters from "@/components/accounts/AccountFilters";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function AccountsPage() {
   const { data: session } = useSession();
+  const { confirm, alert } = useModal();
   const router = useRouter();
 
   useEffect(() => {
@@ -94,9 +95,13 @@ export default function AccountsPage() {
 
   const handleDelete = async (id) => {
     if (
-      !confirm(
-        "Are you sure? This will remove the transaction and revert any linked invoice/salary status.",
-      )
+      !(await confirm({
+        title: "Delete Transaction",
+        message:
+          "Are you sure? This will remove the transaction and revert any linked invoice/salary status.",
+        variant: "danger",
+        confirmText: "Delete",
+      }))
     )
       return;
 
@@ -107,10 +112,19 @@ export default function AccountsPage() {
       if (res.ok) {
         fetchTransactions();
       } else {
-        alert("Failed to delete");
+        await alert({
+          title: "Error",
+          message: "Failed to delete",
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error(error);
+      await alert({
+        title: "Error",
+        message: "Failed to delete",
+        variant: "danger",
+      });
     }
   };
 

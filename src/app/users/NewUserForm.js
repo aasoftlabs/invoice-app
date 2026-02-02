@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { UserPlus, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/contexts/ModalContext";
 
 const AVAILABLE_PERMISSIONS = [
   { id: "invoices", label: "Invoices", description: "Access to all invoice pages" },
@@ -15,6 +16,7 @@ const AVAILABLE_PERMISSIONS = [
 
 export default function NewUserForm() {
   const router = useRouter();
+  const { alert } = useModal();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -46,7 +48,11 @@ export default function NewUserForm() {
       });
 
       if (res.ok) {
-        alert("User created successfully");
+        await alert({
+          title: "Success",
+          message: "User created successfully",
+          variant: "success",
+        });
         setFormData({
           name: "",
           designation: "",
@@ -55,14 +61,23 @@ export default function NewUserForm() {
           role: "user",
           permissions: ["invoices", "letterhead", "project", "company"]
         });
+        router.push("/users");
         router.refresh();
       } else {
         const err = await res.json();
-        alert("Error: " + err.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + err.error,
+          variant: "danger",
+        });
       }
     } catch (e) {
       console.error(e);
-      alert("Failed to create user");
+      await alert({
+        title: "Error",
+        message: "Failed to create user",
+        variant: "danger",
+      });
     } finally {
       setLoading(false);
     }

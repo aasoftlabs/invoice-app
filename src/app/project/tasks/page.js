@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
 import { ListTodo, Search, Plus, Edit2, Trash2, Filter } from "lucide-react";
 import AddTaskModal from "@/components/project/AddTaskModal";
@@ -9,6 +10,7 @@ import TaskDetailsModal from "@/components/project/TaskDetailsModal";
 
 export default function TasksPage() {
   const { data: session, status } = useSession();
+  const { confirm, alert } = useModal();
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
@@ -75,9 +77,13 @@ export default function TasksPage() {
 
   const handleDelete = async (taskId) => {
     if (
-      !window.confirm(
-        "Are you sure you want to delete this task? This will also delete all associated work logs.",
-      )
+      !(await confirm({
+        title: "Delete Task",
+        message:
+          "Are you sure you want to delete this task? This will also delete all associated work logs.",
+        variant: "danger",
+        confirmText: "Delete",
+      }))
     ) {
       return;
     }
@@ -89,14 +95,26 @@ export default function TasksPage() {
 
       const data = await res.json();
       if (data.success) {
-        alert("Task deleted successfully!");
+        await alert({
+          title: "Success",
+          message: "Task deleted successfully!",
+          variant: "success",
+        });
         fetchTasks();
       } else {
-        alert("Error: " + data.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + data.error,
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error deleting task:", error);
-      alert("Error deleting task");
+      await alert({
+        title: "Error",
+        message: "Error deleting task",
+        variant: "danger",
+      });
     }
   };
 

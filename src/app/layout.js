@@ -6,6 +6,7 @@ import NavbarWrapper from "@/components/NavbarWrapper";
 import Footer from "@/components/Footer";
 import GlobalNoteButton from "@/components/notes/GlobalNoteButton";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ModalProvider } from "@/contexts/ModalContext";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -40,10 +41,12 @@ export default async function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ToastProvider>
             <SessionProvider session={session}>
-              <NavbarWrapper />
-              {children}
-              <GlobalNoteButton />
-              <Footer />
+              <ModalProvider>
+                <NavbarWrapper />
+                {children}
+                <GlobalNoteButton />
+                <Footer />
+              </ModalProvider>
             </SessionProvider>
           </ToastProvider>
         </ThemeProvider>

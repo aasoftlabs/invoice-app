@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Building2, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Save, Loader2, Upload } from "lucide-react";
+import { useModal } from "@/contexts/ModalContext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Building2 } from "lucide-react"; // Added Building2 import
 
-export default function CompanyForm({ profile }) {
+export default function CompanyForm({ initialData }) {
     const router = useRouter();
+    const { alert } = useModal(); // Added this line
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        name: profile?.name || "",
-        email: profile?.email || "",
-        phone: profile?.phone || "",
-        address: profile?.address || "",
         website: profile?.website || "",
         logo: profile?.logo || "",
     });
@@ -29,15 +28,26 @@ export default function CompanyForm({ profile }) {
             });
 
             if (res.ok) {
-                alert("Company settings updated successfully");
-                router.refresh();
+                await alert({
+                    title: "Success",
+                    message: "Company settings updated successfully",
+                    variant: "success",
+                });
             } else {
                 const err = await res.json();
-                alert("Error: " + err.error);
+                await alert({
+                    title: "Error",
+                    message: "Error: " + err.error,
+                    variant: "danger",
+                });
             }
-        } catch (e) {
-            console.error(e);
-            alert("Failed to update company settings");
+        } catch (error) {
+            console.error("Error saving company settings:", error);
+            await alert({
+                title: "Error",
+                message: "Failed to update company settings",
+                variant: "danger",
+            });
         } finally {
             setLoading(false);
         }

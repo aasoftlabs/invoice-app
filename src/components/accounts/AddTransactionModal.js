@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useModal } from "@/contexts/ModalContext";
 import { X, Loader2, Calendar, FileText, CheckCircle } from "lucide-react";
 
 export default function AddTransactionModal({
@@ -12,6 +13,7 @@ export default function AddTransactionModal({
   const [loading, setLoading] = useState(false);
   const [invoices, setInvoices] = useState([]);
   const [fetchingInvoices, setFetchingInvoices] = useState(false);
+  const { alert } = useModal();
 
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -140,12 +142,12 @@ export default function AddTransactionModal({
         reference: editingTransaction
           ? undefined
           : {
-              type:
-                formData.isInvoicePayment && formData.type === "Credit"
-                  ? "Invoice"
-                  : "None",
-              id: formData.invoiceId || null,
-            },
+            type:
+              formData.isInvoicePayment && formData.type === "Credit"
+                ? "Invoice"
+                : "None",
+            id: formData.invoiceId || null,
+          },
       };
 
       if (editingTransaction) {
@@ -165,11 +167,19 @@ export default function AddTransactionModal({
         onSuccess();
         onClose();
       } else {
-        alert("Error: " + data.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + data.error,
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to save transaction");
+      await alert({
+        title: "Error",
+        message: "Failed to save transaction",
+        variant: "danger",
+      });
     } finally {
       setLoading(false);
     }
@@ -205,11 +215,10 @@ export default function AddTransactionModal({
                   isInvoicePayment: true,
                 })
               }
-              className={`p-3 rounded-lg border text-center font-semibold transition-all ${
-                formData.type === "Credit"
-                  ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 ring-2 ring-green-500 ring-offset-1"
-                  : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
-              }`}
+              className={`p-3 rounded-lg border text-center font-semibold transition-all ${formData.type === "Credit"
+                ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 ring-2 ring-green-500 ring-offset-1"
+                : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
+                }`}
             >
               Credit (Income)
             </button>
@@ -223,11 +232,10 @@ export default function AddTransactionModal({
                   isInvoicePayment: false,
                 })
               }
-              className={`p-3 rounded-lg border text-center font-semibold transition-all ${
-                formData.type === "Debit"
-                  ? "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 ring-2 ring-red-500 ring-offset-1"
-                  : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
-              }`}
+              className={`p-3 rounded-lg border text-center font-semibold transition-all ${formData.type === "Debit"
+                ? "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 ring-2 ring-red-500 ring-offset-1"
+                : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
+                }`}
             >
               Debit (Expense)
             </button>

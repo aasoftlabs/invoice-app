@@ -1,14 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Save } from "lucide-react";
+import { X, Briefcase, Calendar, CheckCircle, Save } from "lucide-react";
+import { useModal } from "@/contexts/ModalContext";
 
-export default function AddProjectModal({
-  isOpen,
-  onClose,
-  onSuccess,
-  editProject,
-}) {
+export default function AddProjectModal({ isOpen, onClose, onSuccess }) {
+  const { alert } = useModal();
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
@@ -74,11 +71,13 @@ export default function AddProjectModal({
 
       const data = await res.json();
       if (data.success) {
-        alert(
-          editProject
+        await alert({
+          title: "Success",
+          message: editProject
             ? "Project updated successfully!"
             : "Project created successfully!",
-        );
+          variant: "success",
+        });
         setFormData({
           name: "",
           priority: "Medium",
@@ -89,11 +88,19 @@ export default function AddProjectModal({
         onSuccess();
         onClose();
       } else {
-        alert("Error: " + data.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + data.error,
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error creating project:", error);
-      alert("Error creating project");
+      await alert({
+        title: "Error",
+        message: "Error creating project",
+        variant: "danger",
+      });
     } finally {
       setLoading(false);
     }

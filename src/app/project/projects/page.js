@@ -2,6 +2,7 @@
 
 import React, { Fragment, useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
 import {
   FolderKanban,
@@ -20,6 +21,7 @@ import AddProjectModal from "@/components/project/AddProjectModal";
 
 export default function ProjectsPage() {
   const { data: session, status } = useSession();
+  const { confirm, alert } = useModal();
   const [projects, setProjects] = useState([]);
   const [projectTasks, setProjectTasks] = useState({});
   const [expandedProjects, setExpandedProjects] = useState(new Set());
@@ -78,9 +80,13 @@ export default function ProjectsPage() {
 
   const handleDeleteProject = async (projectId) => {
     if (
-      !confirm(
-        "Are you sure you want to delete this project? This will also delete all associated tasks and work logs.",
-      )
+      !(await confirm({
+        title: "Delete Project",
+        message:
+          "Are you sure you want to delete this project? This will also delete all associated tasks and work logs.",
+        variant: "danger",
+        confirmText: "Delete",
+      }))
     ) {
       return;
     }
@@ -91,14 +97,26 @@ export default function ProjectsPage() {
       });
       const data = await res.json();
       if (data.success) {
-        alert("Project deleted successfully");
+        await alert({
+          title: "Success",
+          message: "Project deleted successfully",
+          variant: "success",
+        });
         fetchProjects();
       } else {
-        alert("Error: " + data.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + data.error,
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error deleting project:", error);
-      alert("Error deleting project");
+      await alert({
+        title: "Error",
+        message: "Error deleting project",
+        variant: "danger",
+      });
     }
   };
 
@@ -249,30 +267,30 @@ export default function ProjectsPage() {
                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {(session?.user?.role?.toLowerCase() === "admin" ||
                             project.projectManager?._id ===
-                              session?.user?.id) && (
-                            <>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEditProject(project);
-                                }}
-                                className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
-                                title="Edit Project"
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteProject(project._id);
-                                }}
-                                className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
-                                title="Delete Project"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </>
-                          )}
+                            session?.user?.id) && (
+                              <>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditProject(project);
+                                  }}
+                                  className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
+                                  title="Edit Project"
+                                >
+                                  <Pencil className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteProject(project._id);
+                                  }}
+                                  className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                                  title="Delete Project"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </>
+                            )}
                         </div>
                       </td>
                     </tr>

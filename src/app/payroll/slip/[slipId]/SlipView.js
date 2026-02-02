@@ -2,16 +2,17 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { toPng } from "html-to-image";
+import { useModal } from "@/contexts/ModalContext";
 import jsPDF from "jspdf";
 import { api } from "@/lib/api";
 import SlipTemplate from "@/components/payroll/slip/SlipTemplate";
 import SlipActions from "@/components/payroll/slip/SlipActions";
 import PaySalaryModal from "@/components/payroll/slip/PaySalaryModal";
+import { toPng } from "html-to-image"; // Added this import
 
-export default function SlipView({ slipId }) {
+export default function SlipView({ slip }) {
   const router = useRouter();
-  const [slip, setSlip] = useState(null);
+  const { alert } = useModal();
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [company, setCompany] = useState(null);
@@ -42,10 +43,15 @@ export default function SlipView({ slipId }) {
     fetchData();
   }, [fetchData]);
 
-  const handlePaySuccess = () => {
+  const handlePaySuccess = async () => {
     // Refresh data to show paid status
     fetchData();
-    alert("Payment recorded successfully!");
+    await alert({
+      title: "Success",
+      message: "Payment recorded successfully!",
+      variant: "success",
+    });
+    router.refresh();
   };
 
   const handleDownload = async () => {
@@ -85,8 +91,12 @@ export default function SlipView({ slipId }) {
       pdf.addImage(dataUrl, "PNG", 0, 0, pdfWidth, finalHeight);
       pdf.save(`Payslip_${slip.userId.name}_${slip.month}_${slip.year}.pdf`);
     } catch (error) {
-      console.error("PDF generation failed:", error);
-      alert("Failed to generate PDF. You can try printing instead.");
+      console.error("Error generating PDF:", error);
+      await alert({
+        title: "Error",
+        message: "Failed to generate PDF. You can try printing instead.",
+        variant: "danger",
+      });
     } finally {
       if (buttons) buttons.style.display = "flex";
       setDownloading(false);

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Plus, Trash2, Settings } from "lucide-react";
+import { Save, Loader2, Plus, Trash2 } from "lucide-react";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function PayrollSettingsPage() {
-    const [loading, setLoading] = useState(true);
+    const { alert } = useModal();
+    const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [settings, setSettings] = useState({
         pfRate: 12,
@@ -98,13 +100,34 @@ export default function PayrollSettingsPage() {
             });
 
             if (res.ok) {
-                alert("Settings saved successfully");
+                const data = await res.json();
+                if (data.success) {
+                    await alert({
+                        title: "Success",
+                        message: "Settings saved successfully",
+                        variant: "success",
+                    });
+                } else {
+                    await alert({
+                        title: "Error",
+                        message: "Failed to save settings",
+                        variant: "danger",
+                    });
+                }
             } else {
-                alert("Failed to save settings");
+                await alert({
+                    title: "Error",
+                    message: "Error saving settings",
+                    variant: "danger",
+                });
             }
         } catch (error) {
             console.error("Error saving settings:", error);
-            alert("Error saving settings");
+            await alert({
+                title: "Error",
+                message: "An error occurred while saving",
+                variant: "danger",
+            });
         } finally {
             setSaving(false);
         }

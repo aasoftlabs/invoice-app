@@ -1,10 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useModal } from "@/contexts/ModalContext";
 import { ArrowRight, Trash2 } from "lucide-react";
 
 export default function InvoiceRow({ invoice }) {
   const router = useRouter();
+  const { confirm, alert } = useModal();
 
   const handleRowClick = () => {
     router.push(`/invoices/${invoice._id}`);
@@ -13,8 +15,15 @@ export default function InvoiceRow({ invoice }) {
   const handleDelete = async (e) => {
     e.stopPropagation(); // Prevent row click
     if (
-      confirm(`Are you sure you want to delete invoice ${invoice.invoiceNo}?`)
-    ) {
+      !(await confirm({
+        title: "Delete Invoice",
+        message: `Are you sure you want to delete invoice ${invoice.invoiceNo}?`,
+        variant: "danger",
+        confirmText: "Delete",
+      }))
+    )
+      return;
+    {
       try {
         const res = await fetch(`/api/invoices/${invoice._id}`, {
           method: "DELETE",
@@ -23,11 +32,19 @@ export default function InvoiceRow({ invoice }) {
         if (res.ok) {
           router.refresh();
         } else {
-          alert("Failed to delete invoice");
+          await alert({
+            title: "Error",
+            message: "Failed to delete invoice",
+            variant: "danger",
+          });
         }
       } catch (error) {
         console.error("Error deleting invoice:", error);
-        alert("An error occurred");
+        await alert({
+          title: "Error",
+          message: "An error occurred",
+          variant: "danger",
+        });
       }
     }
   };
@@ -73,11 +90,10 @@ export default function InvoiceRow({ invoice }) {
       </td>
       <td className="px-6 py-4">
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-            invoice.status === "Paid"
-              ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50"
-              : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50"
-          }`}
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${invoice.status === "Paid"
+            ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50"
+            : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50"
+            }`}
         >
           {invoice.status}
         </span>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
 import { Calendar, ListTodo, Plus, Trash2, Pencil, Filter } from "lucide-react";
 import AddWorkLogModal from "@/components/project/AddWorkLogModal";
@@ -9,7 +10,7 @@ import WorkLogDetailsModal from "@/components/project/WorkLogDetailsModal";
 
 export default function WorkLogPage() {
   const { data: session, status } = useSession();
-  const [projects, setProjects] = useState([]);
+  const { confirm, alert } = useModal();
   const [workLogs, setWorkLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,25 +56,43 @@ export default function WorkLogPage() {
   }, [filters]);
 
   const handleDeleteLog = async (logId) => {
-    if (!window.confirm("Are you sure you want to delete this work log?")) {
+    if (
+      !(await confirm({
+        title: "Delete Work Log",
+        message: "Are you sure you want to delete this work log?",
+        variant: "danger",
+        confirmText: "Delete",
+      }))
+    ) {
       return;
     }
 
     try {
-      const res = await fetch(`/api/worklogs?id=${logId}`, {
+      const res = await fetch(`/api/work-logs?id=${logId}`, {
         method: "DELETE",
       });
-
       const data = await res.json();
       if (data.success) {
-        alert("Work log deleted successfully!");
+        await alert({
+          title: "Success",
+          message: "Work log deleted successfully!",
+          variant: "success",
+        });
         fetchWorkLogs();
       } else {
-        alert("Error: " + (data.error || "Failed to delete"));
+        await alert({
+          title: "Error",
+          message: "Error: " + (data.error || "Failed to delete"),
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error deleting work log:", error);
-      alert("Error deleting work log");
+      await alert({
+        title: "Error",
+        message: "Error deleting work log",
+        variant: "danger",
+      });
     }
   };
 
@@ -287,17 +306,17 @@ export default function WorkLogPage() {
                           {/* Delete button - show for log creator or admin */}
                           {(log.userId?._id === session?.user?.id ||
                             session?.user?.role === "admin") && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteLog(log._id);
-                              }}
-                              className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
-                              title="Delete work log"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteLog(log._id);
+                                }}
+                                className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                                title="Delete work log"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
                         </div>
                       </td>
                     </tr>

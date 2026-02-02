@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useModal } from "@/contexts/ModalContext";
 import {
   FileText,
   Download,
@@ -15,6 +16,7 @@ export default function MySlips({ userId }) {
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [actionLoading, setActionLoading] = useState(null);
+  const { confirm, alert } = useModal();
 
   const fetchSlips = useCallback(async () => {
     try {
@@ -37,7 +39,15 @@ export default function MySlips({ userId }) {
   }, [fetchSlips]);
 
   const handleDelete = async (slipId) => {
-    if (!confirm("Are you sure you want to delete this salary slip?")) return;
+    if (
+      !(await confirm({
+        title: "Delete Salary Slip",
+        message: "Are you sure you want to delete this salary slip?",
+        variant: "danger",
+        confirmText: "Delete",
+      }))
+    )
+      return;
 
     setActionLoading(slipId);
     try {
@@ -48,11 +58,19 @@ export default function MySlips({ userId }) {
       if (res.ok) {
         setSlips((prev) => prev.filter((s) => s._id !== slipId));
       } else {
-        alert("Failed to delete slip");
+        await alert({
+          title: "Error",
+          message: "Failed to delete slip",
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error deleting slip:", error);
-      alert("Error deleting slip");
+      await alert({
+        title: "Error",
+        message: "Error deleting slip",
+        variant: "danger",
+      });
     } finally {
       setActionLoading(null);
     }
@@ -60,9 +78,13 @@ export default function MySlips({ userId }) {
 
   const handleRecreate = async (slip) => {
     if (
-      !confirm(
-        "Are you sure you want to recreate this slip? This will recalculate values based on current settings and overwrite the existing one.",
-      )
+      !(await confirm({
+        title: "Recreate Slip",
+        message:
+          "Are you sure you want to recreate this slip? This will recalculate values based on current settings and overwrite the existing one.",
+        variant: "warning",
+        confirmText: "Recreate",
+      }))
     )
       return;
 
@@ -84,18 +106,30 @@ export default function MySlips({ userId }) {
 
       if (res.ok) {
         const data = await res.json();
-        alert("Slip recreated successfully!");
+        await alert({
+          title: "Success",
+          message: "Slip recreated successfully!",
+          variant: "success",
+        });
         // Update specific slip in list
         setSlips((prev) =>
           prev.map((s) => (s._id === slip._id ? data.slip : s)),
         );
       } else {
         const err = await res.json();
-        alert("Failed to recreate slip: " + err.error);
+        await alert({
+          title: "Error",
+          message: "Failed to recreate slip: " + err.error,
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error recreating slip:", error);
-      alert("Error recreating slip");
+      await alert({
+        title: "Error",
+        message: "Error recreating slip",
+        variant: "danger",
+      });
     } finally {
       setActionLoading(null);
     }
@@ -140,7 +174,10 @@ export default function MySlips({ userId }) {
           </span>
           <select
             value={selectedYear}
-            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedYear(val === "" ? "" : parseInt(val));
+            }}
             className="px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
           >
             <option value="">All Years</option>
@@ -191,13 +228,12 @@ export default function MySlips({ userId }) {
                   </div>
                 </div>
                 <span
-                  className={`px-2 py-1 rounded text-xs font-semibold uppercase ${
-                    slip.status === "paid"
-                      ? "bg-green-100 text-green-700"
-                      : slip.status === "finalized"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-gray-100 text-gray-600"
-                  }`}
+                  className={`px-2 py-1 rounded text-xs font-semibold uppercase ${slip.status === "paid"
+                    ? "bg-green-100 text-green-700"
+                    : slip.status === "finalized"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-gray-100 text-gray-600"
+                    }`}
                 >
                   {slip.status}
                 </span>
@@ -233,7 +269,7 @@ export default function MySlips({ userId }) {
                   onClick={() =>
                     window.open(`/payroll/slip/${slip._id}`, "_blank")
                   }
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
                   <Eye className="w-4 h-4" />
                   View

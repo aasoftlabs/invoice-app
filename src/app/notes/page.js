@@ -12,11 +12,13 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/contexts/ToastContext";
+import { useModal } from "@/contexts/ModalContext";
 import NoteModal from "@/components/notes/NoteModal";
 
 export default function NotesPage() {
   const { data: session } = useSession();
   const { addToast } = useToast();
+  const { confirm } = useModal();
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,7 +48,15 @@ export default function NotesPage() {
   }, [session, fetchNotes]);
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
+    if (
+      !(await confirm({
+        title: "Delete Note",
+        message: "Are you sure you want to delete this note?",
+        variant: "danger",
+        confirmText: "Delete",
+      }))
+    )
+      return;
     try {
       const res = await fetch(`/api/notes/${id}`, { method: "DELETE" });
       const data = await res.json();
@@ -114,11 +124,10 @@ export default function NotesPage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${
-                filter === f
-                  ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/50"
-                  : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
-              }`}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${filter === f
+                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/50"
+                : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+                }`}
             >
               {f === "all"
                 ? "All Notes"
@@ -153,11 +162,10 @@ export default function NotesPage() {
             {filteredNotes.map((note) => (
               <div
                 key={note._id}
-                className={`bg-white dark:bg-slate-800 group rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col ${
-                  note.status === "Completed"
-                    ? "opacity-75 bg-gray-50 dark:bg-slate-900"
-                    : ""
-                }`}
+                className={`bg-white dark:bg-slate-800 group rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col ${note.status === "Completed"
+                  ? "opacity-75 bg-gray-50 dark:bg-slate-900"
+                  : ""
+                  }`}
               >
                 <div className="p-6 grow">
                   <div className="flex justify-between items-start mb-4">
@@ -175,25 +183,25 @@ export default function NotesPage() {
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       {(session?.user?.id === note.createdBy?._id ||
                         session?.user?.role === "admin") && (
-                        <>
-                          <button
-                            onClick={() => {
-                              setEditingNote(note);
-                              setIsModalOpen(true);
-                            }}
-                            className="p-1.5 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition"
-                          >
-                            <Plus className="w-4 h-4 rotate-45" />{" "}
-                            {/* Use Plus as edit/update placeholder */}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(note._id)}
-                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </>
-                      )}
+                          <>
+                            <button
+                              onClick={() => {
+                                setEditingNote(note);
+                                setIsModalOpen(true);
+                              }}
+                              className="p-1.5 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition"
+                            >
+                              <Plus className="w-4 h-4 rotate-45" />{" "}
+                              {/* Use Plus as edit/update placeholder */}
+                            </button>
+                            <button
+                              onClick={() => handleDelete(note._id)}
+                              className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
                     </div>
                   </div>
 
@@ -235,11 +243,10 @@ export default function NotesPage() {
                   </div>
                   <button
                     onClick={() => handleToggleStatus(note)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                      note.status === "Completed"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 shadow-sm"
-                    }`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${note.status === "Completed"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 shadow-sm"
+                      }`}
                   >
                     <CheckCircle
                       className={`w-4 h-4 ${note.status === "Completed" ? "fill-green-700 text-white" : ""}`}

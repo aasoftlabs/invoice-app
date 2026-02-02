@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { useModal } from "@/contexts/ModalContext";
+import { Loader2, Calendar, FileText, CheckCircle, AlertTriangle, ArrowLeft } from "lucide-react";
 import GenerateFilters from "@/components/payroll/generate/GenerateFilters";
 import GenerateTable from "@/components/payroll/generate/GenerateTable";
 
 export default function GeneratePayroll() {
+  const { alert } = useModal();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [employees, setEmployees] = useState([]);
@@ -68,16 +70,26 @@ export default function GeneratePayroll() {
         }),
       });
 
-      if (res.ok) {
-        // Refresh data
+      const data = await res.json(); // Moved res.json() here
+
+      if (res.ok && data.success) {
+        setGeneratedSlip(data.data);
+        // Optionally refresh data after successful generation
         await fetchData();
       } else {
-        const error = await res.json();
-        alert(error.error || "Failed to generate slip");
+        await alert({
+          title: "Error",
+          message: data.error || "Failed to generate slip",
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error("Error generating slip:", error);
-      alert("An error occurred");
+      await alert({
+        title: "Error",
+        message: "An error occurred",
+        variant: "danger",
+      });
     } finally {
       setProcessing(false);
     }

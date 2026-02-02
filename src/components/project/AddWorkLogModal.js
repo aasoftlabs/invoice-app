@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Save } from "lucide-react";
+import { X, Calendar, Clock, FileText, CheckCircle } from "lucide-react";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function AddWorkLogModal({
   isOpen,
@@ -9,8 +10,9 @@ export default function AddWorkLogModal({
   onSuccess,
   projects,
   users,
-  editLog,
+  editLog = null,
 }) {
+  const { alert } = useModal();
   const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
@@ -91,11 +93,13 @@ export default function AddWorkLogModal({
 
       const data = await res.json();
       if (data.success) {
-        alert(
-          editLog
+        await alert({
+          title: "Success",
+          message: editLog
             ? "Work log updated successfully!"
             : "Work log created successfully!",
-        );
+          variant: "success",
+        });
         setFormData({
           date: new Date().toISOString().split("T")[0],
           projectId: "",
@@ -107,14 +111,22 @@ export default function AddWorkLogModal({
         onSuccess();
         onClose();
       } else {
-        alert("Error: " + data.error);
+        await alert({
+          title: "Error",
+          message: "Error: " + data.error,
+          variant: "danger",
+        });
       }
     } catch (error) {
       console.error(
         editLog ? "Error updating work log:" : "Error creating work log:",
         error,
       );
-      alert(editLog ? "Error updating work log" : "Error creating work log");
+      await alert({
+        title: "Error",
+        message: editLog ? "Error updating work log" : "Error creating work log",
+        variant: "danger",
+      });
     } finally {
       setLoading(false);
     }
