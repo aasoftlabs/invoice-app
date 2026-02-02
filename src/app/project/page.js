@@ -7,17 +7,16 @@ import MonthlyChart from "@/components/project/MonthlyChart";
 import ProjectFilters from "@/components/project/ProjectFilters";
 import ActiveTaskCard from "@/components/project/ActiveTaskCard";
 import WorkLogTable from "@/components/project/WorkLogTable";
-import {
-  CheckCircle,
-  ListTodo,
-  FolderKanban,
-} from "lucide-react";
+import { CheckCircle, ListTodo, FolderKanban, Plus } from "lucide-react";
+import AddWorkLogModal from "@/components/project/AddWorkLogModal";
 
 export default function ProjectDashboard() {
   const { data: session } = useSession();
   const [stats, setStats] = useState(null);
   const [workLogs, setWorkLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState([]);
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
 
   // Filters
   const currentYear = new Date().getFullYear();
@@ -40,6 +39,18 @@ export default function ProjectDashboard() {
       }
     } catch (error) {
       console.error("Error fetching users:", error);
+    }
+  }, []);
+
+  const fetchProjects = useCallback(async () => {
+    try {
+      const res = await fetch("/api/projects");
+      const data = await res.json();
+      if (data.success) {
+        setProjects(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
     }
   }, []);
 
@@ -86,11 +97,19 @@ export default function ProjectDashboard() {
       if (session.user.role === "admin" && users.length === 0) {
         fetchUsers();
       }
+      fetchProjects();
       // Re-fetch data when session exists and filters change
       fetchDashboardData();
       fetchWorkLogs();
     }
-  }, [session, filters, users.length, fetchUsers, fetchDashboardData, fetchWorkLogs]);
+  }, [
+    session,
+    filters,
+    users.length,
+    fetchUsers,
+    fetchDashboardData,
+    fetchWorkLogs,
+  ]);
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -102,28 +121,37 @@ export default function ProjectDashboard() {
 
   if (loading && !stats) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-slate-400">
+            Loading dashboard...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-full bg-gray-50 p-8">
+    <div className="min-h-full bg-gray-50 dark:bg-slate-900 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Project Tracker
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 dark:text-slate-400 mt-1">
               Monitor your project progress and daily work
             </p>
           </div>
+          <button
+            onClick={() => setIsLogModalOpen(true)}
+            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg hover:shadow-purple-500/20 active:scale-95"
+          >
+            <Plus className="w-5 h-5" />
+            Work Log
+          </button>
         </div>
 
         {/* Filters */}
@@ -174,6 +202,18 @@ export default function ProjectDashboard() {
 
         {/* Recent Work Logs */}
         <WorkLogTable workLogs={workLogs} formatDate={formatDate} />
+
+        {/* Add Work Log Modal */}
+        <AddWorkLogModal
+          isOpen={isLogModalOpen}
+          onClose={() => setIsLogModalOpen(false)}
+          onSuccess={() => {
+            fetchWorkLogs();
+            fetchDashboardData();
+          }}
+          projects={projects}
+          users={users}
+        />
       </div>
     </div>
   );

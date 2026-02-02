@@ -184,19 +184,21 @@ export default function UserManagement({ users: initialUsers }) {
   return (
     <>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+          User Management
+        </h1>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
         >
           <UserPlus className="w-5 h-5" />
           Add New User
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-semibold border-b">
+          <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b border-gray-200 dark:border-slate-700">
             <tr>
               <th className="px-6 py-3">User</th>
               <th className="px-6 py-3">Designation</th>
@@ -206,16 +208,23 @@ export default function UserManagement({ users: initialUsers }) {
               <th className="px-6 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
             {users.map((u) => (
-              <tr key={u._id} className="hover:bg-gray-50">
+              <tr
+                key={u._id}
+                className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+              >
                 <td className="px-6 py-4">
-                  <div className="font-medium text-gray-900">{u.name}</div>
-                  <div className="text-xs text-gray-500">{u.email}</div>
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    {u.name}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-slate-400">
+                    {u.email}
+                  </div>
                 </td>
                 <td className="px-6 py-4">
                   {u.designation ? (
-                    <span className="text-sm text-gray-700">
+                    <span className="text-sm text-gray-700 dark:text-slate-300">
                       {u.designation}
                     </span>
                   ) : (
@@ -226,14 +235,14 @@ export default function UserManagement({ users: initialUsers }) {
                 </td>
                 <td className="px-6 py-4">
                   <span
-                    className={`px-2 py-1 rounded text-xs font-semibold uppercase ${u.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-600"}`}
+                    className={`px-2 py-1 rounded text-xs font-semibold uppercase ${u.role === "admin" ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400" : "bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300"}`}
                   >
                     {u.role}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   {u.role === "admin" ? (
-                    <span className="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded">
+                    <span className="text-xs bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-2 py-1 rounded">
                       Full Access
                     </span>
                   ) : (
@@ -243,13 +252,13 @@ export default function UserManagement({ users: initialUsers }) {
                           {u.permissions.slice(0, 3).map((perm) => (
                             <span
                               key={perm}
-                              className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded"
+                              className="text-xs bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 px-2 py-1 rounded"
                             >
                               {perm}
                             </span>
                           ))}
                           {u.permissions.length > 3 && (
-                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                            <span className="text-xs bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 px-2 py-1 rounded">
                               +{u.permissions.length - 3}
                             </span>
                           )}
@@ -262,7 +271,7 @@ export default function UserManagement({ users: initialUsers }) {
                     </div>
                   )}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
+                <td className="px-6 py-4 text-sm text-gray-500 dark:text-slate-400">
                   {u.joiningDate
                     ? new Date(u.joiningDate).toLocaleDateString("en-GB")
                     : new Date(u.createdAt).toLocaleDateString("en-GB")}
@@ -282,14 +291,14 @@ export default function UserManagement({ users: initialUsers }) {
                           permissions: cleanedPermissions,
                         });
                       }}
-                      className="text-blue-600 hover:text-blue-800 p-1 hover:bg-blue-50 rounded transition-colors"
+                      className="text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 p-1 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded transition-colors"
                       title="Edit user"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(u._id, u.name)}
-                      className="text-red-600 hover:text-red-800 p-1 hover:bg-red-50 rounded transition-colors"
+                      className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
                       title="Delete user"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -305,15 +314,15 @@ export default function UserManagement({ users: initialUsers }) {
       {/* Add User Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                <UserPlus className="w-5 h-5 text-blue-600" />
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-slate-700">
+            <div className="sticky top-0 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between z-10">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-rose-600 dark:text-rose-400" />
                 Add New User
               </h2>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -322,7 +331,7 @@ export default function UserManagement({ users: initialUsers }) {
             <form onSubmit={handleAddSubmit} className="p-6">
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Full Name *
                   </label>
                   <input
@@ -331,12 +340,12 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setNewUser({ ...newUser, name: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Designation
                   </label>
                   <input
@@ -345,12 +354,12 @@ export default function UserManagement({ users: initialUsers }) {
                       setNewUser({ ...newUser, designation: e.target.value })
                     }
                     placeholder="e.g., Senior Developer, Manager"
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Email *
                   </label>
                   <input
@@ -360,12 +369,12 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setNewUser({ ...newUser, email: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Password *
                   </label>
                   <input
@@ -375,13 +384,13 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setNewUser({ ...newUser, password: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                     minLength={6}
                   />
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Role *
                   </label>
                   <select
@@ -402,7 +411,7 @@ export default function UserManagement({ users: initialUsers }) {
                         });
                       }
                     }}
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 border-gray-300 dark:border-slate-700"
                   >
                     <option value="user">User (Restricted)</option>
                     <option value="admin">Admin (Full Access)</option>
@@ -412,10 +421,10 @@ export default function UserManagement({ users: initialUsers }) {
 
               {/* Permissions */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Page Access Permissions
                 </label>
-                <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-700">
                   {AVAILABLE_PERMISSIONS.map((perm) => (
                     <label
                       key={perm.id}
@@ -434,13 +443,13 @@ export default function UserManagement({ users: initialUsers }) {
                           (perm.id === "users" && newUser.role !== "admin") ||
                           (perm.id === "company" && newUser.role !== "admin")
                         }
-                        className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mt-0.5"
+                        className="w-4 h-4 text-rose-600 rounded focus:ring-2 focus:ring-rose-500 mt-0.5"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                           {perm.label}
                         </span>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-slate-400">
                           {perm.id === "company" && newUser.role !== "admin"
                             ? "(Admin only)"
                             : perm.description}
@@ -449,7 +458,7 @@ export default function UserManagement({ users: initialUsers }) {
                     </label>
                   ))}
                   {newUser.role === "admin" && (
-                    <p className="col-span-2 text-xs text-blue-600 pt-2 border-t border-gray-200">
+                    <p className="col-span-2 text-xs text-rose-600 dark:text-rose-400 pt-2 border-t border-gray-200 dark:border-slate-700">
                       ✓ Admins start with full access, but individual
                       permissions can be unchecked as needed
                     </p>
@@ -461,7 +470,7 @@ export default function UserManagement({ users: initialUsers }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -472,7 +481,7 @@ export default function UserManagement({ users: initialUsers }) {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-6 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-6 py-2 border border-gray-300 dark:border-slate-600 rounded-lg font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   Cancel
                 </button>
@@ -485,12 +494,14 @@ export default function UserManagement({ users: initialUsers }) {
       {/* Edit User Modal */}
       {editingUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-800">Edit User</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-slate-700">
+            <div className="sticky top-0 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between z-10">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                Edit User
+              </h2>
               <button
                 onClick={() => setEditingUser(null)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -499,7 +510,7 @@ export default function UserManagement({ users: initialUsers }) {
             <form onSubmit={handleEditSubmit} className="p-6">
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Full Name *
                   </label>
                   <input
@@ -508,12 +519,12 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setEditingUser({ ...editingUser, name: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Designation
                   </label>
                   <input
@@ -525,12 +536,12 @@ export default function UserManagement({ users: initialUsers }) {
                       })
                     }
                     placeholder="e.g., Senior Developer, Manager"
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Email *
                   </label>
                   <input
@@ -545,7 +556,7 @@ export default function UserManagement({ users: initialUsers }) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Role *
                   </label>
                   <select
@@ -566,7 +577,7 @@ export default function UserManagement({ users: initialUsers }) {
                         });
                       }
                     }}
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white text-gray-900"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 border-gray-300 dark:border-slate-700"
                   >
                     <option value="user">User (Restricted)</option>
                     <option value="admin">Admin (Full Access)</option>
@@ -576,10 +587,10 @@ export default function UserManagement({ users: initialUsers }) {
 
               {/* Permissions */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Page Access Permissions
                 </label>
-                <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-700">
                   {AVAILABLE_PERMISSIONS.map((perm) => (
                     <label
                       key={perm.id}
@@ -601,13 +612,13 @@ export default function UserManagement({ users: initialUsers }) {
                           (perm.id === "company" &&
                             editingUser.role !== "admin")
                         }
-                        className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mt-0.5"
+                        className="w-4 h-4 text-rose-600 rounded focus:ring-2 focus:ring-rose-500 mt-0.5"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                           {perm.label}
                         </span>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-slate-400">
                           {perm.id === "company" && editingUser.role !== "admin"
                             ? "(Admin only)"
                             : perm.description}
@@ -616,7 +627,7 @@ export default function UserManagement({ users: initialUsers }) {
                     </label>
                   ))}
                   {editingUser.role === "admin" && (
-                    <p className="col-span-2 text-xs text-blue-600 pt-2 border-t border-gray-200">
+                    <p className="col-span-2 text-xs text-rose-600 dark:text-rose-400 pt-2 border-t border-gray-200 dark:border-slate-700">
                       ✓ Admins start with full access, but individual
                       permissions can be modified above
                     </p>
@@ -628,7 +639,7 @@ export default function UserManagement({ users: initialUsers }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -639,7 +650,7 @@ export default function UserManagement({ users: initialUsers }) {
                 <button
                   type="button"
                   onClick={() => setEditingUser(null)}
-                  className="px-6 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-6 py-2 border border-gray-300 dark:border-slate-600 rounded-lg font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   Cancel
                 </button>

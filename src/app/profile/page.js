@@ -21,9 +21,11 @@ export default async function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans">
       <div className="max-w-2xl mx-auto p-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">My Profile</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+          My Profile
+        </h1>
         <ProfileForm user={serializedUser} />
       </div>
     </div>

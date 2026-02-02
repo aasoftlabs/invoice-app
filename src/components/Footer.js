@@ -6,9 +6,9 @@ import Logo from "./Logo";
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-50 border-t border-gray-200 relative overflow-hidden transition-colors duration-300 print:hidden">
+    <footer className="bg-slate-50 dark:bg-slate-950 border-t border-gray-200 dark:border-white/5 relative overflow-hidden transition-colors duration-300 print:hidden">
       {/* Background Effect */}
-      <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 to-transparent pointer-events-none"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 dark:from-blue-950/5 to-transparent pointer-events-none"></div>
 
       <div className="max-w-full px-40 m-auto relative z-10">
         {/* Main Footer Content */}
@@ -18,25 +18,25 @@ const Footer = () => {
             <div className="mb-4">
               <Logo />
             </div>
-            <p className="text-sm text-slate-600 mb-4 max-w-md leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 max-w-md leading-relaxed">
               Next-Gen Web & Mobile Engineering. Building scalable solutions
               with cutting-edge technology.
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-500">
               AA SoftLabs is a trading name of ADMINASHU SOFTLABS.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 mb-4">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
               Quick Links
             </h3>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/"
-                  className="group inline-flex items-center text-sm text-slate-600 hover:text-blue-600 transition-colors"
+                  className="group inline-flex items-center text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-white transition-colors"
                 >
                   <ArrowRight className="w-4 h-4 mr-2 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all" />
                   Home
@@ -65,7 +65,7 @@ const Footer = () => {
 
           {/* Legal & Contact */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 mb-4">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
               Legal & Contact
             </h3>
             <ul className="space-y-3">
@@ -101,9 +101,9 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-200 py-6">
+        <div className="border-t border-gray-200 dark:border-white/5 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-slate-500 flex items-center gap-1">
+            <div className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
               <Image src="/logo.png" alt="Logo" width={16} height={16} />{" "}
               <span>
                 &copy; {new Date().getFullYear()} ADMINASHU SOFTLABS. All rights
@@ -115,7 +115,7 @@ const Footer = () => {
                 href="https://twitter.com/aasoftlabs"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-400 hover:text-blue-600 transition-colors"
+                className="text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-white transition-colors"
                 aria-label="X (Twitter)"
               >
                 <FaXTwitter className="w-5 h-5" />

@@ -85,14 +85,15 @@ export default function NotesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-8 pb-20 px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 pt-8 pb-20 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <StickyNote className="w-8 h-8 text-blue-600" /> Notes & Reminders
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <StickyNote className="w-8 h-8 text-amber-500 dark:text-amber-400" />{" "}
+              Notes & Reminders
             </h1>
-            <p className="text-gray-500 mt-1">
+            <p className="text-gray-500 dark:text-slate-400 mt-1">
               Keep track of your tasks and meetings
             </p>
           </div>
@@ -101,7 +102,7 @@ export default function NotesPage() {
               setEditingNote(null);
               setIsModalOpen(true);
             }}
-            className="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-blue-700 transition shadow-lg font-bold"
+            className="bg-amber-500 dark:bg-amber-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-amber-600 dark:hover:bg-amber-500 transition shadow-lg font-bold"
           >
             <Plus className="w-5 h-5" /> Note
           </button>
@@ -115,8 +116,8 @@ export default function NotesPage() {
               onClick={() => setFilter(f)}
               className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${
                 filter === f
-                  ? "bg-blue-100 text-blue-700 ring-1 ring-blue-700"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                  ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/50"
+                  : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
               }`}
             >
               {f === "all"
@@ -133,15 +134,17 @@ export default function NotesPage() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm animate-pulse h-48"
+                className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm animate-pulse h-48"
               ></div>
             ))}
           </div>
         ) : filteredNotes.length === 0 ? (
-          <div className="bg-white p-12 rounded-3xl border border-dashed border-gray-200 text-center">
-            <StickyNote className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-800">No notes found</h3>
-            <p className="text-gray-500 mt-1">
+          <div className="bg-white dark:bg-slate-800 p-12 rounded-3xl border border-dashed border-gray-200 dark:border-slate-600 text-center">
+            <StickyNote className="w-16 h-16 text-gray-300 dark:text-slate-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+              No notes found
+            </h3>
+            <p className="text-gray-500 dark:text-slate-400 mt-1">
               Start by creating your first reminder or meeting log.
             </p>
           </div>
@@ -150,8 +153,10 @@ export default function NotesPage() {
             {filteredNotes.map((note) => (
               <div
                 key={note._id}
-                className={`bg-white group rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col ${
-                  note.status === "Completed" ? "opacity-75 bg-gray-50" : ""
+                className={`bg-white dark:bg-slate-800 group rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col ${
+                  note.status === "Completed"
+                    ? "opacity-75 bg-gray-50 dark:bg-slate-900"
+                    : ""
                 }`}
               >
                 <div className="p-6 grow">
@@ -176,7 +181,7 @@ export default function NotesPage() {
                               setEditingNote(note);
                               setIsModalOpen(true);
                             }}
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                            className="p-1.5 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition"
                           >
                             <Plus className="w-4 h-4 rotate-45" />{" "}
                             {/* Use Plus as edit/update placeholder */}
@@ -193,16 +198,16 @@ export default function NotesPage() {
                   </div>
 
                   <p
-                    className={`text-gray-800 font-medium mb-4 whitespace-pre-wrap ${note.status === "Completed" ? "line-through" : ""}`}
+                    className={`text-gray-800 dark:text-slate-200 font-medium mb-4 whitespace-pre-wrap ${note.status === "Completed" ? "line-through" : ""}`}
                   >
                     {note.content}
                   </p>
 
-                  <div className="space-y-2 mt-auto text-xs text-gray-500">
-                    <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
-                      <Clock className="w-3.5 h-3.5 text-blue-500" />
+                  <div className="space-y-2 mt-auto text-xs text-gray-500 dark:text-slate-400">
+                    <div className="flex items-center gap-2 bg-gray-50 dark:bg-slate-900/50 p-2 rounded-lg">
+                      <Clock className="w-3.5 h-3.5 text-amber-500" />
                       <div>
-                        <div className="font-semibold text-gray-700">
+                        <div className="font-semibold text-gray-700 dark:text-slate-300">
                           Schedule
                         </div>
                         <div>
@@ -221,8 +226,8 @@ export default function NotesPage() {
                   </div>
                 </div>
 
-                <div className="px-6 py-4 border-t border-gray-50 flex justify-between items-center bg-gray-50/50 rounded-b-2xl">
-                  <div className="text-[11px] text-gray-400">
+                <div className="px-6 py-4 border-t border-gray-50 dark:border-slate-700 flex justify-between items-center bg-gray-50/50 dark:bg-slate-900/30 rounded-b-2xl">
+                  <div className="text-[11px] text-gray-400 dark:text-slate-500">
                     Created by:{" "}
                     <span className="font-semibold">
                       {note.createdBy?.name || "Unknown"}
@@ -233,7 +238,7 @@ export default function NotesPage() {
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                       note.status === "Completed"
                         ? "bg-green-100 text-green-700"
-                        : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 shadow-sm"
+                        : "bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 shadow-sm"
                     }`}
                   >
                     <CheckCircle

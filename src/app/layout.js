@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import Footer from "@/components/Footer";
 import GlobalNoteButton from "@/components/notes/GlobalNoteButton";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -34,16 +35,18 @@ import { auth } from "@/auth";
 export default async function RootLayout({ children }) {
   const session = await auth();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={outfit.className}>
-        <ToastProvider>
-          <SessionProvider session={session}>
-            <NavbarWrapper />
-            {children}
-            <GlobalNoteButton />
-            <Footer />
-          </SessionProvider>
-        </ToastProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ToastProvider>
+            <SessionProvider session={session}>
+              <NavbarWrapper />
+              {children}
+              <GlobalNoteButton />
+              <Footer />
+            </SessionProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

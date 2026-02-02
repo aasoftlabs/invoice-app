@@ -18,12 +18,14 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-auto">
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">Work Log Details</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-auto">
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Work Log Details
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
@@ -32,11 +34,11 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
         <div className="p-6 space-y-6">
           {/* Date */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2 flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               Date
             </label>
-            <p className="text-lg font-semibold text-gray-900">
+            <p className="text-lg font-semibold text-gray-900 dark:text-white">
               {formatDate(workLog.date)}
             </p>
           </div>
@@ -44,18 +46,18 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
           {/* Project and Task */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Project
               </label>
-              <p className="text-gray-900">
+              <p className="text-gray-900 dark:text-slate-200">
                 {workLog.projectId?.name || "N/A"}
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Task
               </label>
-              <p className="text-gray-900">
+              <p className="text-gray-900 dark:text-slate-200">
                 {workLog.taskId?.taskName || "N/A"}
               </p>
             </div>
@@ -63,7 +65,7 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Status
             </label>
             <StatusBadge status={workLog.status} />
@@ -71,11 +73,11 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
 
           {/* Work Details */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2 flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Work Details
             </label>
-            <p className="text-gray-900 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
+            <p className="text-gray-900 dark:text-slate-200 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg whitespace-pre-wrap">
               {workLog.details}
             </p>
           </div>
@@ -83,11 +85,11 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
           {/* Remarks */}
           {workLog.remarks && (
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2 flex items-center gap-2">
                 <MessageSquare className="w-4 h-4" />
                 Remarks
               </label>
-              <p className="text-gray-900 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
+              <p className="text-gray-900 dark:text-slate-200 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg whitespace-pre-wrap">
                 {workLog.remarks}
               </p>
             </div>
@@ -95,17 +97,19 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
 
           {/* User Info */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Logged By
             </label>
-            <p className="text-gray-900">{workLog.userId?.name || "N/A"}</p>
+            <p className="text-gray-900 dark:text-slate-200">
+              {workLog.userId?.name || "N/A"}
+            </p>
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+        <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-slate-700">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
           >
             Close
           </button>

@@ -5,12 +5,13 @@ import { usePathname } from "next/navigation";
 import Logo from "./Logo";
 import UserMenu from "@/components/navbar/UserMenu";
 import { getUserPermissions } from "@/lib/permissions";
+import { ThemeToggle } from "./ThemeToggle";
 
 export default function Navbar({ user, profile }) {
   const pathname = usePathname();
   const permissions = getUserPermissions(user);
   return (
-    <nav className="bg-white border-b border-gray-200 px-40 m-auto py-2 flex justify-between items-center shadow-sm print:hidden">
+    <nav className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 px-40 m-auto py-2 flex justify-between items-center shadow-sm print:hidden transition-colors">
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <Logo />
@@ -49,8 +50,8 @@ export default function Navbar({ user, profile }) {
                   href={link.href}
                   className={`hidden md:block text-sm font-semibold transition-colors ${
                     isActive
-                      ? "text-blue-600 border-b-2 border-blue-600 -mb-[22px] pb-[18px]"
-                      : "text-gray-600 hover:text-blue-600"
+                      ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 -mb-[22px] pb-[18px]"
+                      : "text-gray-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white"
                   }`}
                 >
                   {link.label}
@@ -58,6 +59,9 @@ export default function Navbar({ user, profile }) {
               );
             });
           })()}
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
 
         {/* User Menu */}
         <UserMenu user={user} />

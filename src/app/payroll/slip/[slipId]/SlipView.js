@@ -99,7 +99,7 @@ export default function SlipView({ slipId }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-slate-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
@@ -107,11 +107,13 @@ export default function SlipView({ slipId }) {
 
   if (!slip) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h2 className="text-xl font-semibold text-gray-800">Slip not found</h2>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-slate-900">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+          Slip not found
+        </h2>
         <button
           onClick={() => router.back()}
-          className="mt-4 text-blue-600 hover:underline"
+          className="mt-4 text-blue-600 dark:text-blue-400 hover:underline"
         >
           Go Back
         </button>
@@ -120,7 +122,7 @@ export default function SlipView({ slipId }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 print:p-0 print:bg-white">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-900 p-8 print:p-0 print:bg-white">
       <SlipActions
         onBack={() => router.push("/payroll")}
         onPrint={handlePrint}

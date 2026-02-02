@@ -98,15 +98,15 @@ export default function GeneratePayroll() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push("/payroll")}
-            className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-600"
+            className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full transition-colors text-gray-600 dark:text-slate-300"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
               Generate Payroll
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 dark:text-slate-400 text-sm">
               Generate or regenerate salary slips for employees
             </p>
           </div>

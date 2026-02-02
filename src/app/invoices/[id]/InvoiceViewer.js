@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, Printer, Pencil } from "lucide-react";
 import InvoicePreview from "@/components/InvoicePreview";
 
 export default function InvoiceViewer({ invoice, profile }) {
@@ -12,26 +12,26 @@ export default function InvoiceViewer({ invoice, profile }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 font-sans print:p-0 print:bg-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-8 font-sans print:p-0 print:bg-white transition-colors duration-300">
       <div className="max-w-4xl mx-auto print:max-w-none print:mx-0 print:w-full">
         {/* Toolbar (Hidden on Print) */}
         <div className="mb-6 flex justify-between items-center print:hidden">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            className="flex items-center gap-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white font-semibold transition-all hover:-translate-x-1"
           >
             <ArrowLeft className="w-5 h-5" /> Back
           </button>
           <div className="flex gap-3">
             <Link
               href={`/invoices/${invoice._id}/edit`}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-blue-700 transition-all font-bold shadow-lg hover:shadow-blue-500/20 active:scale-95"
             >
-              <Printer className="w-4 h-4" /> Edit Invoice
+              <Pencil className="w-4 h-4" /> Edit Invoice
             </Link>
             <button
               onClick={handlePrint}
-              className="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-900 transition-colors"
+              className="bg-slate-800 dark:bg-slate-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-slate-900 dark:hover:bg-slate-600 transition-all font-bold shadow-lg hover:shadow-slate-500/20 active:scale-95"
             >
               <Printer className="w-4 h-4" /> Print Invoice
             </button>

@@ -54,7 +54,6 @@ export default function WorkLogPage() {
     }
   }, [filters]);
 
-
   const handleDeleteLog = async (logId) => {
     if (!window.confirm("Are you sure you want to delete this work log?")) {
       return;
@@ -112,10 +111,10 @@ export default function WorkLogPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-slate-400">Loading...</p>
         </div>
       </div>
     );
@@ -126,23 +125,25 @@ export default function WorkLogPage() {
   }
 
   return (
-    <div className="min-h-full bg-gray-50 p-8">
+    <div className="min-h-full bg-gray-50 dark:bg-slate-900 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Daily Work Log</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Daily Work Log
+          </h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg hover:shadow-purple-500/20 active:scale-95"
           >
             <Plus className="w-5 h-5" />
-            Add Work Log
+            Work Log
           </button>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4 mb-6">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 mr-2">
+            <div className="flex items-center gap-2 text-gray-700 dark:text-slate-300 mr-2">
               <Filter className="w-4 h-4" />
               <span className="font-medium text-sm">Filters:</span>
             </div>
@@ -153,7 +154,7 @@ export default function WorkLogPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, month: parseInt(e.target.value) })
                 }
-                className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                   <option key={month} value={month}>
@@ -169,7 +170,7 @@ export default function WorkLogPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, year: parseInt(e.target.value) })
                 }
-                className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 {Array.from({ length: 5 }, (_, i) => currentYear - i).map(
                   (year) => (
@@ -185,7 +186,7 @@ export default function WorkLogPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, projectId: e.target.value })
                 }
-                className="border-gray-300 rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 <option value="">All Projects</option>
                 {projects.map((p) => (
@@ -199,46 +200,46 @@ export default function WorkLogPage() {
         </div>
 
         {/* Work Log History */}
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 overflow-hidden">
+          <div className="p-6 border-b border-gray-200 dark:border-slate-700">
+            <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-800 dark:text-white">
               <ListTodo className="w-5 h-5 text-purple-600" />
               Work Log History
             </h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+              <thead className="bg-gray-50 dark:bg-slate-900">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Project
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Task
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Details
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Remarks
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                 {workLogs.length === 0 ? (
                   <tr>
                     <td
                       colSpan="7"
-                      className="px-6 py-4 text-center text-gray-500"
+                      className="px-6 py-4 text-center text-gray-500 dark:text-slate-400"
                     >
                       No work logs found. Start by creating your first log!
                     </td>
@@ -247,25 +248,25 @@ export default function WorkLogPage() {
                   workLogs.map((log) => (
                     <tr
                       key={log._id}
-                      className="hover:bg-gray-50 group cursor-pointer"
+                      className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
                       onClick={() => handleViewLog(log)}
                     >
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-200">
                         {formatDate(log.date)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-200">
                         {log.projectId?.name || "N/A"}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-200">
                         {log.taskId?.taskName || "N/A"}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-300">
                         {log.details}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <StatusBadge status={log.status} />
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
                         {log.remarks || "-"}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
@@ -277,7 +278,7 @@ export default function WorkLogPage() {
                                 e.stopPropagation();
                                 handleEditLog(log);
                               }}
-                              className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                              className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
                               title="Edit work log"
                             >
                               <Pencil className="w-4 h-4" />
@@ -286,17 +287,17 @@ export default function WorkLogPage() {
                           {/* Delete button - show for log creator or admin */}
                           {(log.userId?._id === session?.user?.id ||
                             session?.user?.role === "admin") && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteLog(log._id);
-                                }}
-                                className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                                title="Delete work log"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            )}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteLog(log._id);
+                              }}
+                              className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                              title="Delete work log"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

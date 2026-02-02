@@ -49,7 +49,10 @@ export default function SetupPage() {
     },
   });
 
-  const { handleSubmit, formState: { isSubmitting } } = methods;
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
 
   useEffect(() => {
     // Check if system is already set up
@@ -96,28 +99,32 @@ export default function SetupPage() {
     }
   };
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-      <span className="ml-2">Verifying System Status...</span>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-900">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-500" />
+        <span className="ml-2 dark:text-slate-300">
+          Verifying System Status...
+        </span>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 font-sans">
-      <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8">
-        <div className="flex items-center gap-3 mb-8 border-b pb-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col items-center py-10 font-sans">
+      <div className="w-full max-w-4xl bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 p-8">
+        <div className="flex items-center gap-3 mb-8 border-b border-gray-200 dark:border-slate-700 pb-4">
           <Building2 className="w-8 h-8 text-blue-600" />
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
             Welcome! System Setup
           </h1>
         </div>
 
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-6">
-              <p className="text-sm text-blue-700">
-                This is a one-time setup. You will create the initial Admin account and configure the company profile.
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800 mb-6">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                This is a one-time setup. You will create the initial Admin
+                account and configure the company profile.
               </p>
             </div>
 
@@ -126,11 +133,11 @@ export default function SetupPage() {
             <BankDetailsForm />
             <BrandingForm />
 
-            <div className="pt-6 border-t flex justify-end">
+            <div className="pt-6 border-t border-gray-200 dark:border-slate-700 flex justify-end">
               <button
                 disabled={isSubmitting}
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 shadow-md transition-all disabled:opacity-50"
+                className="bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 shadow-md transition-all disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
@@ -145,7 +152,7 @@ export default function SetupPage() {
             </div>
           </form>
         </FormProvider>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 }

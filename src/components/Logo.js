@@ -7,13 +7,13 @@ const Logo = () => {
       <Image src="/logo.png" alt="Logo" width={32} height={32} />
 
       <div className="flex items-center bg-transparent">
-        <span className="text-blue-600 font-bold text-2xl mr-1">
+        <span className="text-blue-600 dark:text-blue-500 font-bold text-2xl mr-1">
           AA
         </span>
-        <span className="text-gray-600 font-bold text-2xl">
+        <span className="text-gray-600 dark:text-gray-400 font-bold text-2xl">
           SoftLabs
         </span>
-        <span className="text-gray-600 text-sm align-super ml-1">
+        <span className="text-gray-600 dark:text-gray-400 text-sm align-super ml-1">
           ™
         </span>
       </div>

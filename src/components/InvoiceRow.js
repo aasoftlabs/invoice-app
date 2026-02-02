@@ -35,34 +35,36 @@ export default function InvoiceRow({ invoice }) {
   return (
     <tr
       onClick={handleRowClick}
-      className="hover:bg-blue-50/50 transition-colors group cursor-pointer"
+      className="hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
     >
-      <td className="px-6 py-4 font-medium text-gray-900">
+      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
         {invoice.invoiceNo}
       </td>
-      <td className="px-6 py-4 text-gray-600 text-sm">
+      <td className="px-6 py-4 text-gray-600 dark:text-slate-400 text-sm">
         {new Date(invoice.date).toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "2-digit",
           year: "numeric",
         })}
       </td>
-      <td className="px-6 py-4 text-gray-800">
+      <td className="px-6 py-4 text-gray-800 dark:text-slate-200">
         <div className="font-medium text-sm">
           {invoice.client.name || invoice.client.company || "Walk-in Customer"}
         </div>
         {invoice.client.name && invoice.client.company && (
-          <div className="text-xs text-gray-400">{invoice.client.company}</div>
+          <div className="text-xs text-gray-400 dark:text-slate-500">
+            {invoice.client.company}
+          </div>
         )}
       </td>
-      <td className="px-6 py-4 text-right font-bold text-gray-800">
+      <td className="px-6 py-4 text-right font-bold text-gray-800 dark:text-white">
         ₹{" "}
         {invoice.totalAmount?.toLocaleString("en-IN", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}
       </td>
-      <td className="px-6 py-4 text-right text-gray-600 font-medium">
+      <td className="px-6 py-4 text-right text-gray-600 dark:text-slate-400 font-medium">
         ₹{" "}
         {(invoice.amountPaid || 0).toLocaleString("en-IN", {
           minimumFractionDigits: 2,
@@ -71,10 +73,11 @@ export default function InvoiceRow({ invoice }) {
       </td>
       <td className="px-6 py-4">
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${invoice.status === "Paid"
-              ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
-            }`}
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+            invoice.status === "Paid"
+              ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50"
+              : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50"
+          }`}
         >
           {invoice.status}
         </span>
@@ -83,13 +86,13 @@ export default function InvoiceRow({ invoice }) {
         <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={handleDelete}
-            className="text-gray-400 hover:text-red-600 transition-colors p-1"
+            className="text-gray-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1"
             title="Delete Invoice"
           >
             <Trash2 className="w-4 h-4" />
           </button>
-          <div className="inline-flex items-center gap-1 text-blue-600 font-medium text-sm">
-            View <ArrowRight className="w-3 h-3" />
+          <div className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-tight group-hover:translate-x-1 transition-transform">
+            View <ArrowRight className="w-3.5 h-3.5" />
           </div>
         </div>
       </td>

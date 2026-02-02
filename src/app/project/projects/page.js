@@ -112,21 +112,21 @@ export default function ProjectsPage() {
 
   if (status === "loading" || !session) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-slate-400">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-full bg-gray-50 p-8">
+    <div className="min-h-full bg-gray-50 dark:bg-slate-900 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <FolderKanban className="w-8 h-8 text-blue-600" />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <FolderKanban className="w-8 h-8 text-purple-600" />
             Projects
           </h1>
           <button
@@ -134,46 +134,49 @@ export default function ProjectsPage() {
               setEditingProject(null);
               setIsModalOpen(true);
             }}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all font-bold shadow-lg hover:shadow-purple-500/20 active:scale-95"
           >
             <Plus className="w-5 h-5" />
             Add Project
           </button>
         </div>
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow border border-gray-200 dark:border-slate-700 overflow-hidden">
           <table className="min-w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-slate-900">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
                   Project
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
                   Client
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
                   Completion
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
                   Start Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
                   End Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
                   Reference
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-4 text-center">
+                  <td
+                    colSpan="8"
+                    className="px-6 py-4 text-center text-gray-500 dark:text-slate-400"
+                  >
                     Loading...
                   </td>
                 </tr>
@@ -181,7 +184,7 @@ export default function ProjectsPage() {
                 <tr>
                   <td
                     colSpan="8"
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-4 text-center text-gray-500 dark:text-slate-400"
                   >
                     No projects found
                   </td>
@@ -190,10 +193,10 @@ export default function ProjectsPage() {
                 projects.map((project) => (
                   <React.Fragment key={project._id}>
                     <tr
-                      className="hover:bg-gray-50 group cursor-pointer"
+                      className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
                       onClick={() => toggleProject(project._id)}
                     >
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900 flex items-center gap-2">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-slate-200 flex items-center gap-2">
                         {expandedProjects.has(project._id) ? (
                           <ChevronDown className="w-4 h-4" />
                         ) : (
@@ -201,7 +204,7 @@ export default function ProjectsPage() {
                         )}
                         {project.name}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
                         {project.client || "-"}
                       </td>
                       <td className="px-6 py-4">
@@ -209,21 +212,21 @@ export default function ProjectsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                          <div className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-full h-2">
                             <div
                               className="bg-green-500 h-2 rounded-full"
                               style={{ width: `${project.completionPercent}%` }}
                             />
                           </div>
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                             {project.completionPercent}%
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
                         {formatDate(project.startDate)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-300">
                         {formatDate(project.endDate)}
                       </td>
                       <td className="px-6 py-4 text-sm">
@@ -233,7 +236,7 @@ export default function ProjectsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:underline"
+                            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline"
                           >
                             <ExternalLink className="w-4 h-4" />
                             Link
@@ -246,38 +249,41 @@ export default function ProjectsPage() {
                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {(session?.user?.role?.toLowerCase() === "admin" ||
                             project.projectManager?._id ===
-                            session?.user?.id) && (
-                              <>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEditProject(project);
-                                  }}
-                                  className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                  title="Edit Project"
-                                >
-                                  <Pencil className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteProject(project._id);
-                                  }}
-                                  className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                                  title="Delete Project"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </>
-                            )}
+                              session?.user?.id) && (
+                            <>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditProject(project);
+                                }}
+                                className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
+                                title="Edit Project"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteProject(project._id);
+                                }}
+                                className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                                title="Delete Project"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
                     {expandedProjects.has(project._id) && (
                       <tr>
-                        <td colSpan="8" className="px-6 py-4 bg-gray-50">
+                        <td
+                          colSpan="8"
+                          className="px-6 py-4 bg-gray-50 dark:bg-slate-900/50"
+                        >
                           <div className="ml-8">
-                            <h4 className="font-semibold text-gray-900 text-sm mb-4">
+                            <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-4">
                               Tasks ({projectTasks[project._id]?.length || 0})
                             </h4>
                             {projectTasks[project._id] ? (
@@ -286,7 +292,7 @@ export default function ProjectsPage() {
                                   {projectTasks[project._id].map((task) => (
                                     <div
                                       key={task._id}
-                                      className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
+                                      className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 hover:shadow-md transition-shadow"
                                     >
                                       <div className="flex items-start gap-4">
                                         {/* Status Icon */}
@@ -305,45 +311,45 @@ export default function ProjectsPage() {
                                         {/* Task Details */}
                                         <div className="flex-1 min-w-0">
                                           <div className="flex items-start justify-between gap-3 mb-2">
-                                            <h5 className="font-semibold text-gray-900 text-sm">
+                                            <h5 className="font-semibold text-gray-900 dark:text-white text-sm">
                                               {task.taskName}
                                             </h5>
                                             <StatusBadge status={task.status} />
                                           </div>
 
                                           {task.description && (
-                                            <p className="text-sm text-gray-600 mb-3">
+                                            <p className="text-sm text-gray-600 dark:text-slate-400 mb-3">
                                               {task.description}
                                             </p>
                                           )}
 
-                                          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-600">
+                                          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-600 dark:text-slate-400">
                                             {task.assignedTo && (
                                               <div className="flex items-center gap-1">
-                                                <span className="font-medium text-gray-700">
+                                                <span className="font-medium text-gray-700 dark:text-slate-400">
                                                   Assigned to:
                                                 </span>
-                                                <span className="text-gray-900">
+                                                <span className="text-gray-900 dark:text-slate-200">
                                                   {task.assignedTo.name}
                                                 </span>
                                               </div>
                                             )}
                                             {task.startDate && (
                                               <div className="flex items-center gap-1">
-                                                <span className="font-medium text-gray-700">
+                                                <span className="font-medium text-gray-700 dark:text-slate-400">
                                                   Started:
                                                 </span>
-                                                <span className="text-gray-900">
+                                                <span className="text-gray-900 dark:text-slate-200">
                                                   {formatDate(task.startDate)}
                                                 </span>
                                               </div>
                                             )}
                                             {task.completedDate && (
                                               <div className="flex items-center gap-1">
-                                                <span className="font-medium text-gray-700">
+                                                <span className="font-medium text-gray-700 dark:text-slate-400">
                                                   Completed:
                                                 </span>
-                                                <span className="text-gray-900">
+                                                <span className="text-gray-900 dark:text-slate-200">
                                                   {formatDate(
                                                     task.completedDate,
                                                   )}
@@ -352,10 +358,10 @@ export default function ProjectsPage() {
                                             )}
                                             {task.completedBy && (
                                               <div className="flex items-center gap-1">
-                                                <span className="font-medium text-gray-700">
+                                                <span className="font-medium text-gray-700 dark:text-slate-400">
                                                   by
                                                 </span>
-                                                <span className="text-gray-900">
+                                                <span className="text-gray-900 dark:text-slate-200">
                                                   {task.completedBy.name}
                                                 </span>
                                               </div>

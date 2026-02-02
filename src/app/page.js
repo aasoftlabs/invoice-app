@@ -60,23 +60,16 @@ export default async function LandingPage() {
   const userPermissions = getUserPermissions(session.user);
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-800">
+    <div className="min-h-screen bg-white dark:bg-slate-900 font-sans text-gray-800 dark:text-slate-200">
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-6 py-10 md:py-12 lg:py-12 flex flex-col items-center text-center">
-        <div className="mb-12 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Employee Dashboard
-          </h1>
-          <p className="text-gray-500 mt-2">Access your business tools</p>
-        </div>
-
         {/* Company Info Section */}
         <div className="w-full max-w-7xl mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 bg-linear-to-br from-blue-50 to-white p-8 rounded-2xl border border-blue-100 shadow-sm text-left">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Welcome to AA SoftLabs
+          <div className="md:col-span-2 bg-linear-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-slate-900 p-8 rounded-2xl border border-blue-100 dark:border-blue-900/30 shadow-sm text-left">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+              Welcome to AA SoftLabs Employee Dashboard
             </h2>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <p className="text-gray-600 dark:text-slate-400 mb-6 leading-relaxed">
               We are dedicated to delivering excellence in every project. As
               part of our team, you retain access to all the tools you need to
               manage invoices, payroll, and projects efficiently.
@@ -84,33 +77,43 @@ export default async function LandingPage() {
             <ActiveNotes notes={serializedNotes} />
           </div>
 
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-left flex flex-col justify-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm text-left flex flex-col justify-center">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Quick Stats
             </h3>
             <div className="space-y-4">
-              <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-                <span className="text-gray-500 text-sm">Active Projects</span>
-                <span className="font-bold text-gray-900">
+              <div className="flex justify-between items-center pb-3 border-b border-gray-100 dark:border-slate-700">
+                <span className="text-gray-500 dark:text-slate-400 text-sm">
+                  Active Projects
+                </span>
+                <span className="font-bold text-gray-900 dark:text-white">
                   {activeProjectsCount}
                 </span>
               </div>
-              <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-                <span className="text-gray-500 text-sm">Pending Invoices</span>
-                <span className="font-bold text-gray-900">
+              <div className="flex justify-between items-center pb-3 border-b border-gray-100 dark:border-slate-700">
+                <span className="text-gray-500 dark:text-slate-400 text-sm">
+                  Pending Invoices
+                </span>
+                <span className="font-bold text-gray-900 dark:text-white">
                   {pendingInvoicesCount}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-500 text-sm">Team Members</span>
-                <span className="font-bold text-gray-900">
+                <span className="text-gray-500 dark:text-slate-400 text-sm">
+                  Team Members
+                </span>
+                <span className="font-bold text-gray-900 dark:text-white">
                   {teamMembersCount}
                 </span>
               </div>
             </div>
           </div>
         </div>
-
+        <div className="mb-12 text-center">
+          <p className="text-gray-500 dark:text-slate-400 mt-2">
+            Access your workspace
+          </p>
+        </div>
         {/* Feature Modules Grid */}
         <div
           id="apps"
@@ -187,60 +190,80 @@ export default async function LandingPage() {
             // Mapping for Tailwind classes to ensure they are detected by the compiler
             const colorStyles = {
               blue: {
-                hover: "hover:border-blue-300",
+                hover: "hover:border-blue-300 dark:hover:border-blue-500/50",
                 bg: "bg-blue-50",
-                iconBg: "bg-blue-100",
-                text: "text-blue-600",
-                hoverText: "group-hover:text-blue-600",
+                darkBg: "dark:bg-blue-400/10",
+                iconBg: "bg-blue-100 dark:bg-blue-900/30",
+                text: "text-blue-600 dark:text-blue-400",
+                hoverText:
+                  "group-hover:text-blue-600 dark:group-hover:text-blue-400",
               },
               green: {
-                hover: "hover:border-green-300",
+                hover: "hover:border-green-300 dark:hover:border-green-500/50",
                 bg: "bg-green-50",
-                iconBg: "bg-green-100",
-                text: "text-green-600",
-                hoverText: "group-hover:text-green-600",
+                darkBg: "dark:bg-green-400/10",
+                iconBg: "bg-green-100 dark:bg-green-900/30",
+                text: "text-green-600 dark:text-green-400",
+                hoverText:
+                  "group-hover:text-green-600 dark:group-hover:text-green-400",
               },
               purple: {
-                hover: "hover:border-purple-300",
+                hover:
+                  "hover:border-purple-300 dark:hover:border-purple-500/50",
                 bg: "bg-purple-50",
-                iconBg: "bg-purple-100",
-                text: "text-purple-600",
-                hoverText: "group-hover:text-purple-600",
+                darkBg: "dark:bg-purple-400/10",
+                iconBg: "bg-purple-100 dark:bg-purple-900/30",
+                text: "text-purple-600 dark:text-purple-400",
+                hoverText:
+                  "group-hover:text-purple-600 dark:group-hover:text-purple-400",
               },
               orange: {
-                hover: "hover:border-orange-300",
+                hover:
+                  "hover:border-orange-300 dark:hover:border-orange-500/50",
                 bg: "bg-orange-50",
-                iconBg: "bg-orange-100",
-                text: "text-orange-600",
-                hoverText: "group-hover:text-orange-600",
+                darkBg: "dark:bg-orange-400/10",
+                iconBg: "bg-orange-100 dark:bg-orange-900/30",
+                text: "text-orange-600 dark:text-orange-400",
+                hoverText:
+                  "group-hover:text-orange-600 dark:group-hover:text-orange-400",
               },
               yellow: {
-                hover: "hover:border-yellow-300",
+                hover:
+                  "hover:border-yellow-300 dark:hover:border-yellow-500/50",
                 bg: "bg-yellow-50",
-                iconBg: "bg-yellow-100",
-                text: "text-yellow-600",
-                hoverText: "group-hover:text-yellow-600",
+                darkBg: "dark:bg-yellow-400/10",
+                iconBg: "bg-yellow-100 dark:bg-yellow-900/30",
+                text: "text-yellow-600 dark:text-yellow-400",
+                hoverText:
+                  "group-hover:text-yellow-600 dark:group-hover:text-yellow-400",
               },
               cyan: {
-                hover: "hover:border-cyan-300",
+                hover: "hover:border-cyan-300 dark:hover:border-cyan-500/50",
                 bg: "bg-cyan-50",
-                iconBg: "bg-cyan-100",
-                text: "text-cyan-600",
-                hoverText: "group-hover:text-cyan-600",
+                darkBg: "dark:bg-cyan-400/10",
+                iconBg: "bg-cyan-100 dark:bg-cyan-900/30",
+                text: "text-cyan-600 dark:text-cyan-400",
+                hoverText:
+                  "group-hover:text-cyan-600 dark:group-hover:text-cyan-400",
               },
               rose: {
-                hover: "hover:border-rose-300",
+                hover: "hover:border-rose-300 dark:hover:border-rose-500/50",
                 bg: "bg-rose-50",
-                iconBg: "bg-rose-100",
-                text: "text-rose-600",
-                hoverText: "group-hover:text-rose-600",
+                darkBg: "dark:bg-rose-400/10",
+                iconBg: "bg-rose-100 dark:bg-rose-900/30",
+                text: "text-rose-600 dark:text-rose-400",
+                hoverText:
+                  "group-hover:text-rose-600 dark:group-hover:text-rose-400",
               },
               indigo: {
-                hover: "hover:border-indigo-300",
+                hover:
+                  "hover:border-indigo-300 dark:hover:border-indigo-500/50",
                 bg: "bg-indigo-50",
-                iconBg: "bg-indigo-100",
-                text: "text-indigo-600",
-                hoverText: "group-hover:text-indigo-600",
+                darkBg: "dark:bg-indigo-400/10",
+                iconBg: "bg-indigo-100 dark:bg-indigo-900/30",
+                text: "text-indigo-600 dark:text-indigo-400",
+                hoverText:
+                  "group-hover:text-indigo-600 dark:group-hover:text-indigo-400",
               },
             };
 
@@ -248,10 +271,10 @@ export default async function LandingPage() {
 
             const CardContent = (
               <div
-                className={`h-full p-6 bg-white rounded-2xl border border-gray-200 shadow-xs relative overflow-hidden transition-all duration-300 ${hasAccess ? `${style.hover} hover:shadow-lg group` : "opacity-60 grayscale-[0.5]"}`}
+                className={`h-full p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-xs relative overflow-hidden transition-all duration-300 ${hasAccess ? `${style.hover} hover:shadow-lg group` : "opacity-60 grayscale-[0.5]"}`}
               >
                 <div
-                  className={`absolute top-0 right-0 w-24 h-24 ${style.bg} rounded-bl-full -mr-4 -mt-4 transition-transform ${hasAccess ? "group-hover:scale-110" : ""}`}
+                  className={`absolute top-0 right-0 w-24 h-24 ${style.bg} ${style.darkBg} rounded-bl-full -mr-4 -mt-4 transition-transform ${hasAccess ? "group-hover:scale-110" : ""}`}
                 ></div>
 
                 <div className="flex justify-between items-start mb-4 relative z-10">
@@ -261,23 +284,23 @@ export default async function LandingPage() {
                     {feature.icon}
                   </div>
                   {!hasAccess && (
-                    <div className="bg-gray-100 p-1.5 rounded-lg text-gray-400">
+                    <div className="bg-gray-100 dark:bg-slate-700 p-1.5 rounded-lg text-gray-400 dark:text-slate-500">
                       <Lock className="w-4 h-4" />
                     </div>
                   )}
                 </div>
 
                 <h3
-                  className={`text-xl font-bold text-gray-900 mb-2 relative z-10 transition-colors ${hasAccess ? style.hoverText : ""}`}
+                  className={`text-xl font-bold text-gray-900 dark:text-white mb-2 relative z-10 transition-colors ${hasAccess ? style.hoverText : ""}`}
                 >
                   {feature.label}
                 </h3>
-                <p className="text-gray-600 text-sm relative z-10 leading-relaxed mb-4">
+                <p className="text-gray-600 dark:text-slate-400 text-sm relative z-10 leading-relaxed mb-4">
                   {feature.desc}
                 </p>
 
                 {!hasAccess && (
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 mt-auto bg-gray-50 py-1 px-2 rounded-md w-max border border-gray-100 relative z-10">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 dark:text-slate-500 mt-auto bg-gray-50 dark:bg-slate-700 py-1 px-2 rounded-md w-max border border-gray-100 dark:border-slate-600 relative z-10">
                     <ShieldAlert className="w-3.5 h-3.5" />
                     ACCESS RESTRICTED
                   </div>

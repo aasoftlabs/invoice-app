@@ -115,7 +115,11 @@ const ToolbarButton = ({
     type="button"
     onClick={onClick}
     title={title}
-    className={`p-1.5 rounded-md transition-all flex items-center justify-center min-w-[32px] h-8 border shadow-sm ${isActive ? "bg-blue-50 text-blue-600 border-blue-200 font-semibold" : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300"} ${className}`}
+    className={`p-1.5 rounded-md transition-all flex items-center justify-center min-w-[32px] h-8 border shadow-sm ${
+      isActive
+        ? "bg-orange-50 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800 font-semibold"
+        : "bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-300 dark:hover:border-slate-500"
+    } ${className}`}
   >
     {children}
   </button>
@@ -159,7 +163,7 @@ const ToolbarDropdown = ({
         role="button"
         tabIndex={0}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-full flex! items-center! justify-between! px-2 bg-white border border-gray-200 rounded-md shadow-sm hover:bg-gray-50 hover:border-gray-300 text-xs font-medium text-gray-700 transition-all gap-1! cursor-pointer"
+        className="w-full h-full flex! items-center! justify-between! px-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-300 dark:hover:border-slate-500 text-xs font-medium text-gray-700 dark:text-slate-200 transition-all gap-1! cursor-pointer focus:ring-1 focus:ring-orange-500"
         title={placeholder}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") setIsOpen(!isOpen);
@@ -167,13 +171,13 @@ const ToolbarDropdown = ({
       >
         {Icon ? (
           <div className="flex items-center justify-center w-full">
-            <Icon className="w-4 h-4 text-gray-600" />
+            <Icon className="w-4 h-4 text-gray-600 dark:text-slate-400" />
           </div>
         ) : (
           <>
             <span className="truncate grow text-left">{selectedLabel}</span>
             <ChevronDown
-              className={`w-3 h-3 text-gray-400 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+              className={`w-3 h-3 text-gray-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
             />
           </>
         )}
@@ -181,7 +185,7 @@ const ToolbarDropdown = ({
 
       {isOpen && (
         <div
-          className={`absolute top-full left-0 mt-1 ${contentWidth || "w-max min-w-full"} bg-white border border-gray-200 rounded-md shadow-lg z-100 max-h-48 overflow-y-auto flex flex-col`}
+          className={`absolute top-full left-0 mt-1 ${contentWidth || "w-max min-w-full"} bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-md shadow-lg z-100 max-h-48 overflow-y-auto flex flex-col`}
         >
           {options.map((opt) => (
             <button
@@ -191,7 +195,11 @@ const ToolbarDropdown = ({
                 onChange(opt.value);
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-3 py-2 text-xs whitespace-nowrap hover:bg-blue-50 transition-colors flex items-center justify-between ${value === opt.value ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-700"}`}
+              className={`w-full text-left px-3 py-2 text-xs whitespace-nowrap hover:bg-orange-50 dark:hover:bg-orange-900/30 transition-colors flex items-center justify-between ${
+                value === opt.value
+                  ? "bg-orange-50 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400 font-semibold"
+                  : "text-gray-700 dark:text-slate-200"
+              }`}
             >
               <span>{opt.label}</span>
             </button>
@@ -248,13 +256,13 @@ const FontSizeTool = ({ quillRef, currentFormat }) => {
 
   return (
     <div
-      className="flex items-center gap-0 border border-gray-200 rounded-md bg-white h-8 overflow-visible shadow-sm relative"
+      className="flex items-center gap-0 border border-gray-200 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 h-8 overflow-visible shadow-sm relative"
       ref={wrapperRef}
     >
       <button
         type="button"
         onClick={() => changeSize(-1)}
-        className="hover:bg-gray-100 h-full px-2 text-gray-500 font-medium border-r border-gray-100 rounded-l"
+        className="hover:bg-gray-100 dark:hover:bg-slate-600 h-full px-2 text-gray-500 dark:text-slate-400 font-medium border-r border-gray-100 dark:border-slate-600 rounded-l"
       >
         {" "}
         -{" "}
@@ -263,19 +271,23 @@ const FontSizeTool = ({ quillRef, currentFormat }) => {
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full h-full flex items-center justify-center text-xs font-semibold text-gray-700 hover:bg-gray-50 bg-white"
+          className="w-full h-full flex items-center justify-center text-xs font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-600 bg-white dark:bg-slate-700"
         >
           {size.replace("px", "")}
         </button>
 
         {isOpen && (
-          <div className="absolute top-full text-center left-1/2 -translate-x-1/2 mt-1 w-16 bg-white border border-gray-200 rounded shadow-lg z-100 max-h-48 overflow-y-auto">
+          <div className="absolute top-full text-center left-1/2 -translate-x-1/2 mt-1 w-16 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded shadow-lg z-100 max-h-48 overflow-y-auto">
             {FONT_SIZES.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => handleSelect(s)}
-                className={`w-full text-center px-2 py-1.5 text-xs hover:bg-blue-50 ${size === s ? "bg-blue-50 font-bold" : ""}`}
+                className={`w-full text-center px-2 py-1.5 text-xs hover:bg-orange-50 dark:hover:bg-orange-900/30 ${
+                  size === s
+                    ? "bg-orange-50 dark:bg-orange-900/40 font-bold text-orange-700 dark:text-orange-400"
+                    : "text-gray-700 dark:text-slate-200"
+                }`}
               >
                 {s.replace("px", "")}
               </button>
@@ -286,7 +298,7 @@ const FontSizeTool = ({ quillRef, currentFormat }) => {
       <button
         type="button"
         onClick={() => changeSize(1)}
-        className="hover:bg-gray-100 h-full px-2 text-gray-500 font-medium border-l border-gray-100 rounded-r"
+        className="hover:bg-gray-100 dark:hover:bg-slate-600 h-full px-2 text-gray-500 dark:text-slate-400 font-medium border-l border-gray-100 dark:border-slate-600 rounded-r"
       >
         {" "}
         +{" "}
@@ -413,13 +425,13 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
     <div id="toolbar" className="flex flex-col gap-4 ">
       {/* History / Edit / Zoom Section */}
       <div className="flex flex-col gap-1 w-full">
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">
+        <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider text-center">
           Edit & Zoom
         </span>
-        <div className="flex flex-wrap justify-between gap-1 bg-gray-50 p-2 rounded border border-gray-200">
+        <div className="flex flex-wrap justify-between gap-1 bg-gray-50 dark:bg-slate-700/50 p-2 rounded border border-gray-200 dark:border-slate-600">
           <div className="flex gap-1">
-            <button className="ql-undo p-1 hover:bg-gray-200 rounded">
-              <svg viewBox="0 0 18 18">
+            <button className="ql-undo p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded">
+              <svg viewBox="0 0 18 18" className="dark:text-slate-300">
                 {" "}
                 <polygon
                   className="ql-fill ql-stroke"
@@ -431,8 +443,8 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
                 ></path>{" "}
               </svg>
             </button>
-            <button className="ql-redo p-1 hover:bg-gray-200 rounded">
-              <svg viewBox="0 0 18 18">
+            <button className="ql-redo p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded">
+              <svg viewBox="0 0 18 18" className="dark:text-slate-300">
                 {" "}
                 <polygon
                   className="ql-fill ql-stroke"
@@ -446,30 +458,30 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
             </button>
           </div>
           {/* Zoom Controls */}
-          <div className="flex items-center gap-1 border-l pl-2 border-gray-300">
+          <div className="flex items-center gap-1 border-l pl-2 border-gray-300 dark:border-slate-600">
             <button
               type="button"
               onClick={zoomOut}
-              className="p-1 hover:bg-gray-200 rounded"
+              className="p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded"
             >
-              <ZoomOut className="w-3 h-3 text-gray-600" />
+              <ZoomOut className="w-3 h-3 text-gray-600 dark:text-slate-400" />
             </button>
-            <span className="text-[10px] font-mono w-8 text-center">
+            <span className="text-[10px] font-mono w-8 text-center dark:text-slate-300">
               {Math.round(zoom * 100)}%
             </span>
             <button
               type="button"
               onClick={zoomIn}
-              className="p-1 hover:bg-gray-200 rounded"
+              className="p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded"
             >
-              <ZoomIn className="w-3 h-3 text-gray-600" />
+              <ZoomIn className="w-3 h-3 text-gray-600 dark:text-slate-400" />
             </button>
             <button
               type="button"
               onClick={resetZoom}
-              className="p-1 hover:bg-gray-200 rounded"
+              className="p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded"
             >
-              <RotateCcw className="w-3 h-3 text-gray-400" />
+              <RotateCcw className="w-3 h-3 text-gray-400 dark:text-slate-500" />
             </button>
           </div>
         </div>
@@ -477,10 +489,10 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
 
       {/* Typography Section (Dropdowns & Buttons) */}
       <div className="flex flex-col gap-1 w-full">
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">
+        <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider text-center">
           Typography
         </span>
-        <div className="flex flex-nowrap justify-center gap-1 bg-gray-50 p-2 rounded border border-gray-200 items-center">
+        <div className="flex flex-nowrap justify-center gap-1 bg-gray-50 dark:bg-slate-700/50 p-2 rounded border border-gray-200 dark:border-slate-600 items-center">
           <ToolbarDropdown
             value={currentFormat.font || ""}
             options={fontOptions}
@@ -506,10 +518,10 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
 
       {/* Style Section */}
       <div className="flex flex-col gap-1 w-full">
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">
+        <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider text-center">
           Style
         </span>
-        <div className="flex flex-wrap justify-center gap-1 bg-gray-50 p-2 rounded border border-gray-200">
+        <div className="flex flex-wrap justify-center gap-1 bg-gray-50 dark:bg-slate-700/50 p-2 rounded border border-gray-200 dark:border-slate-600">
           <ToolbarButton
             onClick={() => toggleFormat("bold")}
             isActive={currentFormat.bold}
@@ -551,12 +563,12 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
 
       {/* Paragraph Section (Unpacked Align & Lists) */}
       <div className="flex flex-col gap-1 w-full">
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">
+        <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider text-center">
           Paragraph
         </span>
-        <div className="flex flex-wrap justify-center gap-1 bg-gray-50 p-2 rounded border border-gray-200 items-center">
+        <div className="flex flex-wrap justify-center gap-1 bg-gray-50 dark:bg-slate-700/50 p-2 rounded border border-gray-200 dark:border-slate-600 items-center">
           {/* Alignment Buttons */}
-          <div className="flex items-center gap-0.5 border-r pr-2 border-gray-300 mr-2">
+          <div className="flex items-center gap-0.5 border-r pr-2 border-gray-300 dark:border-slate-600 mr-2">
             <ToolbarButton
               onClick={() => handleFormat("align", "")}
               isActive={!currentFormat.align}
@@ -589,16 +601,16 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
 
           <div className="flex gap-0.5 mr-2">
             <button
-              className="ql-list p-1 hover:bg-gray-200 rounded"
+              className="ql-list p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded text-gray-700 dark:text-slate-300"
               value="ordered"
             ></button>
             <button
-              className="ql-list p-1 hover:bg-gray-200 rounded"
+              className="ql-list p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded text-gray-700 dark:text-slate-300"
               value="bullet"
             ></button>
           </div>
 
-          <div className="flex gap-0.5 mr-2 border-l pl-2 border-gray-300">
+          <div className="flex gap-0.5 mr-2 border-l pl-2 border-gray-300 dark:border-slate-600">
             <button
               className="ql-indent p-1 hover:bg-gray-200 rounded"
               value="-1"
@@ -619,10 +631,10 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
 
       {/* Insert Section */}
       <div className="flex flex-col gap-1 w-full">
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">
+        <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider text-center">
           Insert
         </span>
-        <div className="flex flex-wrap justify-center gap-1 bg-gray-50 p-2 rounded border border-gray-200">
+        <div className="flex flex-wrap justify-center gap-1 bg-gray-50 dark:bg-slate-700/50 p-2 rounded border border-gray-200 dark:border-slate-600">
           <button className="ql-link"></button>
           <button className="ql-image"></button>
           {/* Image handler handles simple base64 insertion by default */}
@@ -642,7 +654,8 @@ const CustomToolbar = ({ zoom, zoomIn, zoomOut, resetZoom, quillRef }) => {
 
 export default function LetterheadView({ profile }) {
   const [content, setContent] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const [zoom, setZoom] = useState(1); // 1 = 100%
   const fileInputRef = useRef(null);
   const quillRef = useRef(null);
@@ -697,44 +710,53 @@ export default function LetterheadView({ profile }) {
   const resetZoom = () => setZoom(1);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 print:p-0 print:bg-white text-gray-900 font-sans relative transition-all duration-300">
-      {/* Sidebar Toggle Button - Always Visible (unless print) */}
-      <button
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className={`fixed top-24 z-60 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 text-gray-600 transition-all print:hidden ${isSidebarOpen ? "left-[430px]" : "left-8"}`}
-        title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
-      >
-        {isSidebarOpen ? (
-          <ChevronLeft className="w-5 h-5" />
-        ) : (
-          <Menu className="w-5 h-5" />
-        )}
-      </button>
-
-      {/* Left Sidebar Controls - Fixed */}
+    <div className="flex min-h-screen bg-gray-100 dark:bg-slate-900 print:p-0 print:bg-white text-gray-900 dark:text-slate-200 font-sans transition-all duration-300">
+      {/* Left Sidebar Controls - Document Flow (Click to toggle) */}
       <div
-        className={`fixed left-0 top-[90px] h-[80vh] bg-gray-50/50 backdrop-blur-sm z-50 p-5 w-[460px] transition-transform duration-300 ease-in-out print:hidden flex flex-col gap-4 border-r border-gray-200 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`relative bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 p-4 transition-all duration-300 ease-in-out print:hidden flex flex-col gap-4 shadow-sm overflow-hidden shrink-0 ${
+          isSidebarOpen ? "w-[460px]" : "w-16"
+        }`}
       >
-        {/* Scrollable Container for controls */}
-        <div className="pb-10 flex flex-col gap-6">
-          {/* Controls */}
-          <div>
-            {/* Top Controls Row */}
+        {/* Toggle Button Inside Sidebar */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className={`absolute top-6 z-20 p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600 text-gray-600 dark:text-slate-300 transition-all ${
+            isSidebarOpen ? "right-4" : "left-1/2 -translate-x-1/2"
+          }`}
+          title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+        >
+          {isSidebarOpen ? (
+            <ChevronLeft className="w-5 h-5" />
+          ) : (
+            <ChevronRight className="w-5 h-5" />
+          )}
+        </button>
+
+        {/* Sidebar Content with Opacity Transition */}
+        <div
+          className={`flex-1 flex flex-col gap-6 pt-2 transition-opacity duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        >
+          {/* Header */}
+          <div className="pr-12">
+            {" "}
+            {/* Space for the toggle button */}
             <div className="flex flex-row justify-between items-center mb-2">
-              <h1 className="text-2xl font-bold text-gray-800 mb-2 px-2">
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 px-2">
                 Letterhead
               </h1>
-              <button
-                onClick={handlePrint}
-                className="flex-0 flex items-center mx-4 justify-center gap-2 px-4 py-2 hover:cursor-pointer bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 text-sm transition"
-              >
-                <Printer className="w-4 h-4" /> Print
-              </button>
             </div>
+            <button
+              onClick={handlePrint}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 hover:cursor-pointer bg-orange-600 text-white rounded-lg shadow-md hover:bg-orange-700 text-sm transition font-medium"
+            >
+              <Printer className="w-4 h-4" /> Print Document
+            </button>
           </div>
 
+          <div className="border-t border-gray-200 dark:border-slate-700 my-2"></div>
+
           {/* Custom Toolbar */}
-          <div>
+          <div className="overflow-y-auto grow pr-2 custom-scrollbar">
             <CustomToolbar
               zoom={zoom}
               zoomIn={zoomIn}
@@ -748,12 +770,11 @@ export default function LetterheadView({ profile }) {
 
       {/* A4 Paper Preview Container with Zoom */}
       <div
-        className={`transition-all duration-300 flex justify-center origin-top top-0 relative print:ml-0! print:w-full! print:mx-auto! print:left-0! ${isSidebarOpen ? "ml-[470px]" : "mx-auto"}`}
+        className="transition-all duration-300 flex-1 flex justify-center origin-top-center relative print:ml-0! print:w-full! print:mx-auto! print:left-0! p-8"
         style={{
           transform: `scale(${zoom})`,
           transformOrigin: "top center",
-          // Adjust height to accommodate zoom if needed, but standard flow works well usually
-          marginBottom: `${(zoom - 1) * 300}px`, // rudimentary spacing fix
+          marginBottom: `${(zoom - 1) * 300}px`,
         }}
       >
         <div className="max-w-[210mm] w-[210mm] min-h-[297mm] bg-white shadow-2xl print:shadow-none print:w-full print:max-w-none print:m-0 flex flex-col px-12 py-10 relative box-border">
@@ -798,10 +819,9 @@ export default function LetterheadView({ profile }) {
               {/* Contact Block */}
               <div className="mb-3">
                 <span
-                  className="uppercase"
+                  className="uppercase font-bold"
                   style={{
                     color: profile.formatting?.color,
-                    fontWeight: "bold",
                   }}
                 >
                   Contact Us
@@ -877,12 +897,8 @@ export default function LetterheadView({ profile }) {
             size: auto;
           }
           body {
-            background: white;
+            background: white !important;
           }
-          /* Since toolbar is outside the print area, we just need to hide the fixed sidebar */
-          /* But we rely on print:hidden classes on the sidebar container */
-
-          /* Ensure content prints correctly */
           .ql-editor {
             padding: 0;
             overflow: visible;
@@ -893,20 +909,33 @@ export default function LetterheadView({ profile }) {
         /* Custom styles to blend editor */
         .ql-container.ql-snow {
           border: none;
-          font-size: 11pt; /* Document standard */
+          font-size: 11pt;
         }
 
-        /* Editor Content */
         .ql-editor {
           min-height: 500px;
           font-family: inherit;
+          color: #1a202c !important; /* Always dark text on white paper */
         }
 
-        /* Custom icons for Undo/Redo if needed */
         .ql-undo svg,
         .ql-redo svg {
           width: 18px;
           height: 18px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #e2e8f0;
+          border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #334155;
         }
       `}</style>
     </div>

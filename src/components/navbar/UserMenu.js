@@ -20,17 +20,17 @@ export default function UserMenu({ user }) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors border border-transparent hover:border-gray-200"
+        className="flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-slate-800 p-2 rounded-lg transition-colors border border-transparent hover:border-gray-200 dark:hover:border-slate-700"
       >
         <div className="text-right hidden md:block">
-          <div className="text-sm font-semibold text-gray-800">
+          <div className="text-sm font-semibold text-gray-800 dark:text-white">
             {user?.name || "User"}
           </div>
-          <div className="text-xs text-gray-500 capitalize">
+          <div className="text-xs text-gray-500 dark:text-slate-400 capitalize">
             {user?.role || "Admin"}
           </div>
         </div>
-        <div className="h-10 w-10 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
+        <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-slate-700 overflow-hidden border border-gray-300 dark:border-slate-600">
           {user?.image ? (
             <Image
               src={user.image}
@@ -52,15 +52,19 @@ export default function UserMenu({ user }) {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
-          <div className="px-4 py-2 border-b border-gray-100 md:hidden">
-            <div className="text-sm font-semibold">{user?.name}</div>
-            <div className="text-xs text-gray-500">{user?.role}</div>
+        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-gray-100 dark:border-slate-700 py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+          <div className="px-4 py-2 border-b border-gray-100 dark:border-slate-700 md:hidden">
+            <div className="text-sm font-semibold dark:text-white">
+              {user?.name}
+            </div>
+            <div className="text-xs text-gray-500 dark:text-slate-400">
+              {user?.role}
+            </div>
           </div>
 
           <Link
             href="/profile"
-            className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+            className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
             onClick={() => setIsOpen(false)}
           >
             <User className="w-4 h-4" /> My Profile
@@ -68,7 +72,7 @@ export default function UserMenu({ user }) {
 
           <Link
             href="/notes"
-            className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+            className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
             onClick={() => setIsOpen(false)}
           >
             <StickyNote className="w-4 h-4" /> My Notes
@@ -77,7 +81,7 @@ export default function UserMenu({ user }) {
           {user?.permissions?.includes("company") && (
             <Link
               href="/settings"
-              className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+              className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
               onClick={() => setIsOpen(false)}
             >
               <Settings className="w-4 h-4" /> Company Settings
@@ -87,7 +91,7 @@ export default function UserMenu({ user }) {
           {user?.permissions?.includes("users") && (
             <Link
               href="/users"
-              className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+              className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
               onClick={() => setIsOpen(false)}
             >
               <UserPlus className="w-4 h-4" /> Manage Users
@@ -96,7 +100,7 @@ export default function UserMenu({ user }) {
 
           <button
             onClick={() => signOut()}
-            className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100"
+            className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 border-t border-gray-100 dark:border-slate-700"
           >
             <LogOut className="w-4 h-4" /> Sign Out
           </button>

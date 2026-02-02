@@ -132,23 +132,23 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-sans text-gray-800">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col md:flex-row font-sans text-gray-800 dark:text-slate-200">
       {/* LEFT SIDE: EDITOR */}
-      <div className="w-full md:w-1/3 bg-white border-r border-gray-200 print:hidden h-[calc(100vh-4rem)] sticky top-0 flex flex-col">
+      <div className="w-full md:w-1/3 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 print:hidden h-[calc(100vh-4rem)] sticky top-0 flex flex-col">
         <FormProvider {...methods}>
           {/* Scrollable Content Area */}
-          <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200">
+          <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-slate-700">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="p-1 hover:bg-gray-100 rounded"
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded text-gray-500 dark:text-slate-400"
                 >
-                  <ArrowLeft className="w-5 h-5 text-gray-500" />
+                  <ArrowLeft className="w-5 h-5" />
                 </button>
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-blue-600" />
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   {isEditing ? "Edit Invoice" : "New Invoice"}
                 </h2>
               </div>
@@ -172,7 +172,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
       </div>
 
       {/* RIGHT SIDE: PREVIEW */}
-      <div className="w-full md:w-2/3 bg-gray-200 p-8 overflow-y-auto flex justify-center print:p-0 print:overflow-visible print:w-full">
+      <div className="w-full md:w-2/3 bg-gray-200 dark:bg-slate-900/50 p-8 overflow-y-auto flex justify-center print:p-0 print:overflow-visible print:w-full">
         <InvoicePreview
           profile={profile}
           invoiceData={initialData}

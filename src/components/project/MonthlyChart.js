@@ -20,8 +20,8 @@ export default function MonthlyChart({ data }) {
   }));
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">
+    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 p-6">
+      <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">
         Monthly Activity
       </h3>
       <ResponsiveContainer width="100%" height={300}>

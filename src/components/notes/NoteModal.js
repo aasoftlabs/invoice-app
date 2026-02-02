@@ -89,25 +89,25 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-100 flex flex-col">
+      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-100 dark:border-slate-700 flex flex-col">
         {/* Header */}
-        <div className="bg-blue-600 p-6 flex justify-between items-center text-white">
+        <div className="bg-slate-50 dark:bg-slate-900 px-6 py-5 flex justify-between items-center border-b border-gray-100 dark:border-slate-700">
           <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-xl">
-              <Calendar className="w-6 h-6" />
+            <div className="bg-amber-600/10 dark:bg-amber-500/10 p-2 rounded-xl">
+              <Calendar className="w-6 h-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
                 {initialData ? "Update Note" : "New Note / Reminder"}
               </h2>
-              <p className="text-blue-100 text-xs mt-0.5">
+              <p className="text-gray-500 dark:text-slate-400 text-xs mt-0.5">
                 Schedule meetings or take memos
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-full transition"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -116,14 +116,14 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Note Content */}
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">
+            <label className="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">
               What&#39;s on your mind?
             </label>
             <textarea
               required
               rows={4}
               placeholder="e.g. Meeting on Payroll project"
-              className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition text-gray-800 placeholder:text-gray-400 font-medium"
+              className="w-full p-4 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none transition text-gray-800 placeholder:text-gray-400 dark:placeholder:text-slate-500 font-medium"
               value={formData.content}
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
@@ -134,13 +134,13 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
           {/* Date & Time */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">
+              <label className="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">
                 From
               </label>
               <input
                 type="datetime-local"
                 required
-                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-gray-800 font-medium"
+                className="w-full p-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition text-gray-800 font-medium"
                 value={formData.startDateTime}
                 onChange={(e) =>
                   setFormData({ ...formData, startDateTime: e.target.value })
@@ -148,13 +148,13 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">
+              <label className="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">
                 To
               </label>
               <input
                 type="datetime-local"
                 required
-                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-gray-800 font-medium"
+                className="w-full p-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition text-gray-800 font-medium"
                 value={formData.endDateTime}
                 onChange={(e) =>
                   setFormData({ ...formData, endDateTime: e.target.value })
@@ -165,18 +165,18 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
 
           {/* Toggle Share & Status */}
           <div className="flex flex-col md:flex-row gap-4 pt-2">
-            <div className="flex-1 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
+            <div className="flex-1 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-gray-100 dark:border-slate-700">
+              <label className="block text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest mb-3">
                 Note Visibility
               </label>
-              <div className="flex gap-2 p-1 bg-white rounded-xl border border-gray-200">
+              <div className="flex gap-2 p-1 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600">
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, share: "private" })}
                   className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition ${
                     formData.share === "private"
                       ? "bg-gray-800 text-white shadow-md"
-                      : "text-gray-500 hover:bg-gray-50"
+                      : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700"
                   }`}
                 >
                   <Lock className="w-3.5 h-3.5" /> Private
@@ -187,7 +187,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
                   className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition ${
                     formData.share === "public"
                       ? "bg-green-600 text-white shadow-md"
-                      : "text-gray-500 hover:bg-gray-50"
+                      : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700"
                   }`}
                 >
                   <Globe className="w-3.5 h-3.5" /> Public
@@ -195,12 +195,12 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
               </div>
             </div>
 
-            <div className="w-full md:w-1/3 bg-blue-50 p-4 rounded-2xl border border-blue-100 flex flex-col justify-center">
-              <label className="block text-xs font-bold text-blue-900 uppercase tracking-widest mb-3 text-center">
+            <div className="w-full md:w-1/3 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-2xl border border-amber-100 dark:border-amber-800 flex flex-col justify-center">
+              <label className="block text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-widest mb-3 text-center">
                 Status
               </label>
               <select
-                className="w-full p-2 bg-white border border-blue-200 rounded-xl text-xs font-bold text-blue-900 outline-none shadow-sm cursor-pointer"
+                className="w-full p-2 bg-white dark:bg-slate-700 border border-amber-200 dark:border-slate-600 rounded-xl text-xs font-bold text-amber-700 dark:text-amber-400 outline-none shadow-sm cursor-pointer"
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
@@ -217,14 +217,14 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3.5 border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition"
+              className="flex-1 py-3.5 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-slate-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-slate-700 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="flex-2 py-3.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition flex justify-center items-center gap-2 shadow-lg disabled:opacity-70"
+              className="flex-2 py-3.5 bg-amber-500 dark:bg-amber-600 hover:bg-amber-600 dark:hover:bg-amber-500 text-white rounded-xl font-bold transition flex justify-center items-center gap-2 shadow-lg hover:shadow-amber-500/20 disabled:opacity-70"
             >
               {isSaving ? (
                 <>
