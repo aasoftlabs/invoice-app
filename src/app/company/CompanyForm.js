@@ -13,8 +13,12 @@ export default function CompanyForm({ initialData }) {
     const { alert } = useModal(); // Added this line
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        website: profile?.website || "",
-        logo: profile?.logo || "",
+        name: initialData?.name || "",
+        email: initialData?.email || "",
+        phone: initialData?.phone || "",
+        address: initialData?.address || "",
+        website: initialData?.website || "",
+        logo: initialData?.logo || "",
     });
 
     const handleSubmit = async (e) => {
@@ -23,7 +27,7 @@ export default function CompanyForm({ initialData }) {
 
         try {
             const res = await fetch("/api/company", {
-                method: profile ? "PUT" : "POST",
+                method: initialData ? "PUT" : "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
