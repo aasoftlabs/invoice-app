@@ -19,6 +19,8 @@ import { setupSchema } from "@/lib/schemas/setupSchema";
 import CompanyInfoForm from "@/components/setup/CompanyInfoForm";
 import BankDetailsForm from "@/components/setup/BankDetailsForm";
 import BrandingForm from "@/components/setup/BrandingForm";
+import Button from "@/components/ui/Button";
+import { useCompany } from "@/hooks/useCompany";
 
 // Tab Configuration
 const TABS = [
@@ -44,6 +46,7 @@ const TABS = [
 
 export default function SettingsPage() {
   const { addToast } = useToast();
+  const { loading: hookLoading, fetchCompany, updateCompany } = useCompany();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("company");
 
@@ -85,35 +88,24 @@ export default function SettingsPage() {
   } = methods;
 
   useEffect(() => {
-    fetch("/api/setup")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.profile) {
-          reset(data.profile);
-        }
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
-  }, [reset]);
+    async function loadData() {
+      const result = await fetchCompany();
+      if (result.success && result.profile) {
+        reset(result.profile);
+      }
+      setLoading(false);
+    }
+    loadData();
+  }, [reset, fetchCompany]);
 
   const onSubmit = async (data) => {
-    try {
-      const { adminUser, ...profileData } = data;
-      const res = await fetch("/api/setup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profileData),
-      });
+    const { adminUser, ...profileData } = data;
+    const result = await updateCompany(profileData);
 
-      if (res.ok) {
-        addToast("Company Settings Saved Successfully!", "success");
-      } else {
-        const err = await res.json();
-        addToast("Failed: " + err.error, "error");
-      }
-    } catch (err) {
-      console.error(err);
-      addToast("Error saving settings", "error");
+    if (result.success) {
+      addToast("Company Settings Saved Successfully!", "success");
+    } else {
+      addToast("Failed: " + (result.error || "Unknown error"), "error");
     }
   };
 
@@ -168,10 +160,11 @@ export default function SettingsPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-                      ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 shadow-sm"
-                      : "text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white"
-                      }`}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      isActive
+                        ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 shadow-sm"
+                        : "text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white"
+                    }`}
                   >
                     <div className="flex items-center gap-3">
                       <tab.icon

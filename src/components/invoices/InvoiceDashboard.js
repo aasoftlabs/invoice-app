@@ -78,12 +78,12 @@ export default function InvoiceDashboard({ initialInvoices }) {
     return () => {
       active = false;
     };
-  }, [filters, page, fetchInvoices]);
+  }, [filters, page, fetchInvoices, setInvoices, setHasMore, setLoadingMore]);
 
   // Reset page when filters change
   useEffect(() => {
     Promise.resolve().then(() => setPage(1));
-  }, [filters]);
+  }, [filters, setPage]);
 
   return (
     <div className="max-w-7xl mx-auto p-8">
