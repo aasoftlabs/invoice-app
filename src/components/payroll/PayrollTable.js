@@ -1,7 +1,12 @@
 import { Edit, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function PayrollTable({ employees, loading, error, lastElementRef }) {
+export default function PayrollTable({
+  employees,
+  loading,
+  error,
+  lastElementRef,
+}) {
   const router = useRouter();
 
   const formatCurrency = (amount) => {
@@ -72,7 +77,11 @@ export default function PayrollTable({ employees, loading, error, lastElementRef
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-sm text-gray-700 dark:text-slate-300">
-                    {emp.employeeId || <span className="text-gray-400 italic text-xs">Not Set</span>}
+                    {emp.employeeId || (
+                      <span className="text-gray-400 italic text-xs">
+                        Not Set
+                      </span>
+                    )}
                   </span>
                 </td>
                 <td className="px-6 py-4">
@@ -82,7 +91,17 @@ export default function PayrollTable({ employees, loading, error, lastElementRef
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-sm text-gray-700 dark:text-slate-300">
-                    {emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : <span className="text-gray-400 italic text-xs">Not Set</span>}
+                    {emp.joiningDate ? (
+                      new Date(emp.joiningDate).toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    ) : (
+                      <span className="text-gray-400 italic text-xs">
+                        Not Set
+                      </span>
+                    )}
                   </span>
                 </td>
                 <td className="px-6 py-4">
@@ -123,7 +142,7 @@ export default function PayrollTable({ employees, loading, error, lastElementRef
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => router.push(`/payroll/salary/${emp._id}`)}
-                      className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 p-1 hover:bg-green-50 dark:hover:bg-green-900/30 rounded transition-colors"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
                       title="Edit salary structure"
                     >
                       <Edit className="w-4 h-4" />
@@ -132,7 +151,7 @@ export default function PayrollTable({ employees, loading, error, lastElementRef
                       onClick={() =>
                         router.push(`/payroll/slips?userId=${emp._id}`)
                       }
-                      className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 p-1 hover:bg-green-50 dark:hover:bg-green-900/30 rounded transition-colors"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
                       title="View salary slips"
                     >
                       <FileText className="w-4 h-4" />

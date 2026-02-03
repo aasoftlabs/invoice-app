@@ -106,7 +106,7 @@ export default function AddTransactionModal({
         fetchInvoices();
       }
     }
-  }, [isOpen, editingTransaction, fetchInvoices]);
+  }, [isOpen, editingTransaction]); // Removed fetchInvoices to prevent loop on type change
 
   // Auto-fill amount when invoice is selected
   const handleInvoiceSelect = (invoiceId) => {
@@ -142,12 +142,12 @@ export default function AddTransactionModal({
         reference: editingTransaction
           ? undefined
           : {
-            type:
-              formData.isInvoicePayment && formData.type === "Credit"
-                ? "Invoice"
-                : "None",
-            id: formData.invoiceId || null,
-          },
+              type:
+                formData.isInvoicePayment && formData.type === "Credit"
+                  ? "Invoice"
+                  : "None",
+              id: formData.invoiceId || null,
+            },
       };
 
       if (editingTransaction) {
@@ -215,10 +215,11 @@ export default function AddTransactionModal({
                   isInvoicePayment: true,
                 })
               }
-              className={`p-3 rounded-lg border text-center font-semibold transition-all ${formData.type === "Credit"
-                ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 ring-2 ring-green-500 ring-offset-1"
-                : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
-                }`}
+              className={`p-3 rounded-lg border text-center font-semibold transition-all ${
+                formData.type === "Credit"
+                  ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 ring-2 ring-green-500 ring-offset-1"
+                  : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
+              }`}
             >
               Credit (Income)
             </button>
@@ -232,10 +233,11 @@ export default function AddTransactionModal({
                   isInvoicePayment: false,
                 })
               }
-              className={`p-3 rounded-lg border text-center font-semibold transition-all ${formData.type === "Debit"
-                ? "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 ring-2 ring-red-500 ring-offset-1"
-                : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
-                }`}
+              className={`p-3 rounded-lg border text-center font-semibold transition-all ${
+                formData.type === "Debit"
+                  ? "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 ring-2 ring-red-500 ring-offset-1"
+                  : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
+              }`}
             >
               Debit (Expense)
             </button>
@@ -255,7 +257,7 @@ export default function AddTransactionModal({
                   onChange={(e) =>
                     setFormData({ ...formData, date: e.target.value })
                   }
-                  className="w-full pl-9 p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none"
+                  className="w-full pl-9 p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
             </div>
@@ -268,7 +270,7 @@ export default function AddTransactionModal({
                 onChange={(e) =>
                   setFormData({ ...formData, paymentMode: e.target.value })
                 }
-                className="w-full p-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none bg-white dark:bg-slate-700 dark:text-white"
+                className="w-full p-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-700 dark:text-white"
               >
                 <option>Bank Transfer</option>
                 <option>Cash</option>
@@ -281,7 +283,7 @@ export default function AddTransactionModal({
 
           {/* Invoice Selection Logic (Only for Credit and New Entry) */}
           {formData.type === "Credit" && (
-            <div className="bg-cyan-50 dark:bg-cyan-900/20 p-4 rounded-lg border border-cyan-100 dark:border-cyan-800">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
               <label className="flex items-center gap-2 mb-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -292,7 +294,7 @@ export default function AddTransactionModal({
                       isInvoicePayment: e.target.checked,
                     })
                   }
-                  className="w-4 h-4 text-cyan-600 rounded focus:ring-cyan-500"
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                 />
                 <span className="font-medium text-gray-700 dark:text-slate-300 text-sm">
                   Link to Invoice (Payment Entry)
@@ -307,7 +309,7 @@ export default function AddTransactionModal({
                   <select
                     value={formData.invoiceId}
                     onChange={(e) => handleInvoiceSelect(e.target.value)}
-                    className="w-full p-2 border border-cyan-200 dark:border-cyan-700 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none bg-white dark:bg-slate-700 dark:text-white"
+                    className="w-full p-2 border border-blue-200 dark:border-blue-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-700 dark:text-white"
                   >
                     <option value="">-- Select Pending Invoice --</option>
                     {invoices.map((inv) => (
@@ -318,7 +320,7 @@ export default function AddTransactionModal({
                     ))}
                   </select>
                   {fetchingInvoices && (
-                    <p className="text-xs text-cyan-600 mt-1">
+                    <p className="text-xs text-blue-600 mt-1">
                       Fetching invoices...
                     </p>
                   )}
@@ -337,7 +339,7 @@ export default function AddTransactionModal({
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none"
+              className="w-full p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="e.g. Salary, Rent, Invoice Payment"
             />
             <datalist id="categories">
@@ -366,7 +368,7 @@ export default function AddTransactionModal({
                 onChange={(e) =>
                   setFormData({ ...formData, amount: e.target.value })
                 }
-                className="w-full pl-8 p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none font-medium"
+                className="w-full pl-8 p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-medium"
                 placeholder="0.00"
               />
             </div>
@@ -382,7 +384,7 @@ export default function AddTransactionModal({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none"
+              className="w-full p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Add details about this transaction..."
             />
           </div>
@@ -391,7 +393,7 @@ export default function AddTransactionModal({
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-cyan-600 dark:bg-cyan-700 hover:bg-cyan-700 dark:hover:bg-cyan-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg hover:shadow-cyan-500/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg hover:shadow-blue-500/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>

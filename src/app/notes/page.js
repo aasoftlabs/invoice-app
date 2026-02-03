@@ -96,12 +96,12 @@ export default function NotesPage() {
   });
 
   return (
-    <div className="min-h-screen pt-8 pb-20 px-4">
-      <div className="container mx-auto px-4 md:px-6">
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto p-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <StickyNote className="w-8 h-8 text-amber-500 dark:text-amber-400" />{" "}
+              <StickyNote className="w-8 h-8 text-blue-600 dark:text-blue-400" />{" "}
               Notes & Reminders
             </h1>
             <p className="text-gray-500 dark:text-slate-400 mt-1">
@@ -109,7 +109,7 @@ export default function NotesPage() {
             </p>
           </div>
           <Spotlight
-            className="bg-amber-500 dark:bg-amber-600 rounded-xl shadow-lg"
+            className="bg-blue-600 dark:bg-blue-700 rounded-xl shadow-lg"
             spotlightColor="rgba(255, 255, 255, 0.25)"
           >
             <button
@@ -117,7 +117,7 @@ export default function NotesPage() {
                 setEditingNote(null);
                 setIsModalOpen(true);
               }}
-              className="px-5 py-2.5 flex items-center gap-2 hover:bg-amber-600 dark:hover:bg-amber-500 transition font-bold text-white w-full h-full"
+              className="px-5 py-2.5 flex items-center gap-2 hover:bg-blue-700 dark:hover:bg-blue-600 transition font-bold text-white w-full h-full"
             >
               <Plus className="w-5 h-5" /> Note
             </button>
@@ -130,10 +130,11 @@ export default function NotesPage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${filter === f
-                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/50"
-                : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
-                }`}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${
+                filter === f
+                  ? "bg-blue-50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
+                  : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+              }`}
             >
               {f === "all"
                 ? "All Notes"
@@ -168,10 +169,11 @@ export default function NotesPage() {
             {filteredNotes.map((note) => (
               <Spotlight
                 key={note._id}
-                className={`bg-white dark:bg-slate-800 group rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col cursor-pointer ${note.status === "Completed"
-                  ? "opacity-75 bg-gray-50 dark:bg-slate-900"
-                  : ""
-                  }`}
+                className={`bg-white dark:bg-slate-800 group rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col cursor-pointer ${
+                  note.status === "Completed"
+                    ? "opacity-75 bg-gray-50 dark:bg-slate-900"
+                    : ""
+                }`}
               >
                 <div className="p-6 grow">
                   <div className="flex justify-between items-start mb-4">
@@ -189,25 +191,25 @@ export default function NotesPage() {
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       {(session?.user?.id === note.createdBy?._id ||
                         session?.user?.role === "admin") && (
-                          <>
-                            <button
-                              onClick={() => {
-                                setEditingNote(note);
-                                setIsModalOpen(true);
-                              }}
-                              className="p-1.5 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition"
-                            >
-                              <Plus className="w-4 h-4 rotate-45" />{" "}
-                              {/* Use Plus as edit/update placeholder */}
-                            </button>
-                            <button
-                              onClick={() => handleDelete(note._id)}
-                              className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </>
-                        )}
+                        <>
+                          <button
+                            onClick={() => {
+                              setEditingNote(note);
+                              setIsModalOpen(true);
+                            }}
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition"
+                          >
+                            <Plus className="w-4 h-4 rotate-45" />{" "}
+                            {/* Use Plus as edit/update placeholder */}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(note._id)}
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -219,7 +221,7 @@ export default function NotesPage() {
 
                   <div className="space-y-2 mt-auto text-xs text-gray-500 dark:text-slate-400">
                     <div className="flex items-center gap-2 bg-gray-50 dark:bg-slate-900/50 p-2 rounded-lg">
-                      <Clock className="w-3.5 h-3.5 text-amber-500" />
+                      <Clock className="w-3.5 h-3.5 text-blue-500" />
                       <div>
                         <div className="font-semibold text-gray-700 dark:text-slate-300">
                           Schedule
@@ -249,10 +251,11 @@ export default function NotesPage() {
                   </div>
                   <button
                     onClick={() => handleToggleStatus(note)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${note.status === "Completed"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 shadow-sm"
-                      }`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                      note.status === "Completed"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 shadow-sm"
+                    }`}
                   >
                     <CheckCircle
                       className={`w-4 h-4 ${note.status === "Completed" ? "fill-green-700 text-white" : ""}`}

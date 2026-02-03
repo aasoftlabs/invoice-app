@@ -23,7 +23,7 @@ export default function SlipActions({
         {status !== "paid" && onPay && (
           <button
             onClick={onPay}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors shadow-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm font-medium"
           >
             <CreditCard className="w-4 h-4" /> Pay & Record
           </button>

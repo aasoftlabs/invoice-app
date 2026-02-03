@@ -121,7 +121,7 @@ export default function AddTaskModal({
                 onChange={(e) =>
                   setFormData({ ...formData, projectId: e.target.value })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="">Select Project</option>
@@ -143,7 +143,7 @@ export default function AddTaskModal({
                 onChange={(e) =>
                   setFormData({ ...formData, taskName: e.target.value })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -158,7 +158,7 @@ export default function AddTaskModal({
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={3}
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Task description..."
               />
             </div>
@@ -207,7 +207,7 @@ export default function AddTaskModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-bold shadow-lg hover:shadow-purple-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg hover:shadow-blue-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
               {loading ? "Creating..." : "Create Task"}

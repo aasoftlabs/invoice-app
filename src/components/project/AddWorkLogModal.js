@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Calendar, Clock, FileText, CheckCircle } from "lucide-react";
+import { X, Calendar, Clock, FileText, CheckCircle, Save } from "lucide-react";
 import { useModal } from "@/contexts/ModalContext";
 
 export default function AddWorkLogModal({
@@ -124,7 +124,9 @@ export default function AddWorkLogModal({
       );
       await alert({
         title: "Error",
-        message: editLog ? "Error updating work log" : "Error creating work log",
+        message: editLog
+          ? "Error updating work log"
+          : "Error creating work log",
         variant: "danger",
       });
     } finally {
@@ -161,7 +163,7 @@ export default function AddWorkLogModal({
                 onChange={(e) =>
                   setFormData({ ...formData, date: e.target.value })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -175,7 +177,7 @@ export default function AddWorkLogModal({
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="Not Started">Not Started</option>
@@ -198,7 +200,7 @@ export default function AddWorkLogModal({
                     taskId: "",
                   })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="">Select Project</option>
@@ -219,7 +221,7 @@ export default function AddWorkLogModal({
                 onChange={(e) =>
                   setFormData({ ...formData, taskId: e.target.value })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
                 disabled={!formData.projectId}
               >
@@ -242,7 +244,7 @@ export default function AddWorkLogModal({
                   setFormData({ ...formData, details: e.target.value })
                 }
                 rows={4}
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Describe what you worked on..."
                 required
               />
@@ -258,7 +260,7 @@ export default function AddWorkLogModal({
                   setFormData({ ...formData, remarks: e.target.value })
                 }
                 rows={2}
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Additional notes (optional)..."
               />
             </div>
@@ -275,7 +277,7 @@ export default function AddWorkLogModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
               {loading

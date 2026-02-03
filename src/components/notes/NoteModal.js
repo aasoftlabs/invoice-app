@@ -93,8 +93,8 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
         {/* Header */}
         <div className="bg-slate-50 dark:bg-slate-900 px-6 py-5 flex justify-between items-center border-b border-gray-100 dark:border-slate-700">
           <div className="flex items-center gap-3">
-            <div className="bg-amber-600/10 dark:bg-amber-500/10 p-2 rounded-xl">
-              <Calendar className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+            <div className="bg-blue-600/10 dark:bg-blue-500/10 p-2 rounded-xl">
+              <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-800 dark:text-white">
@@ -123,7 +123,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
               required
               rows={4}
               placeholder="e.g. Meeting on Payroll project"
-              className="w-full p-4 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-2xl focus:ring-2 focus:ring-amber-500 outline-none transition text-gray-800 placeholder:text-gray-400 dark:placeholder:text-slate-500 font-medium"
+              className="w-full p-4 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition text-gray-800 placeholder:text-gray-400 dark:placeholder:text-slate-500 font-medium"
               value={formData.content}
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
@@ -140,7 +140,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
               <input
                 type="datetime-local"
                 required
-                className="w-full p-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition text-gray-800 font-medium"
+                className="w-full p-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-gray-800 font-medium"
                 value={formData.startDateTime}
                 onChange={(e) =>
                   setFormData({ ...formData, startDateTime: e.target.value })
@@ -154,7 +154,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
               <input
                 type="datetime-local"
                 required
-                className="w-full p-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition text-gray-800 font-medium"
+                className="w-full p-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-gray-800 font-medium"
                 value={formData.endDateTime}
                 onChange={(e) =>
                   setFormData({ ...formData, endDateTime: e.target.value })
@@ -224,7 +224,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
             <button
               type="submit"
               disabled={isSaving}
-              className="flex-2 py-3.5 bg-amber-500 dark:bg-amber-600 hover:bg-amber-600 dark:hover:bg-amber-500 text-white rounded-xl font-bold transition flex justify-center items-center gap-2 shadow-lg hover:shadow-amber-500/20 disabled:opacity-70"
+              className="flex-2 py-3.5 bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-white rounded-xl font-bold transition flex justify-center items-center gap-2 shadow-lg hover:shadow-blue-500/20 disabled:opacity-70"
             >
               {isSaving ? (
                 <>

@@ -228,12 +228,13 @@ export default function MySlips({ userId }) {
                   </div>
                 </div>
                 <span
-                  className={`px-2 py-1 rounded text-xs font-semibold uppercase ${slip.status === "paid"
-                    ? "bg-green-100 text-green-700"
-                    : slip.status === "finalized"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-100 text-gray-600"
-                    }`}
+                  className={`px-2 py-1 rounded text-xs font-semibold uppercase ${
+                    slip.status === "paid"
+                      ? "bg-green-100 text-green-700"
+                      : slip.status === "finalized"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-gray-100 text-gray-600"
+                  }`}
                 >
                   {slip.status}
                 </span>
@@ -269,7 +270,7 @@ export default function MySlips({ userId }) {
                   onClick={() =>
                     window.open(`/payroll/slip/${slip._id}`, "_blank")
                   }
-                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
                   <Eye className="w-4 h-4" />
                   View

@@ -221,7 +221,7 @@ export default function UserManagement({ users: initialUsers }) {
           User Management
         </h1>
         <Spotlight
-          className="bg-rose-600 rounded-lg shadow-sm hover:bg-rose-700 transition-colors cursor-pointer"
+          className="bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 transition-colors cursor-pointer"
           spotlightColor="rgba(255, 255, 255, 0.2)"
         >
           <button
@@ -290,7 +290,7 @@ export default function UserManagement({ users: initialUsers }) {
                           {u.permissions.slice(0, 3).map((perm) => (
                             <span
                               key={perm}
-                              className="text-xs bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 px-2 py-1 rounded"
+                              className="text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded"
                             >
                               {perm}
                             </span>
@@ -322,14 +322,14 @@ export default function UserManagement({ users: initialUsers }) {
                           u.role === "admin"
                             ? u.permissions
                             : (u.permissions || []).filter(
-                              (p) => p !== "company" && p !== "users",
-                            );
+                                (p) => p !== "company" && p !== "users",
+                              );
                         setEditingUser({
                           ...u,
                           permissions: cleanedPermissions,
                         });
                       }}
-                      className="text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 p-1 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded transition-colors"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
                       title="Edit user"
                     >
                       <Edit2 className="w-4 h-4" />
@@ -355,7 +355,7 @@ export default function UserManagement({ users: initialUsers }) {
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-slate-700">
             <div className="sticky top-0 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between z-10">
               <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                <UserPlus className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                <UserPlus className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 Add New User
               </h2>
               <button
@@ -378,7 +378,7 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setNewUser({ ...newUser, name: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
@@ -392,7 +392,7 @@ export default function UserManagement({ users: initialUsers }) {
                       setNewUser({ ...newUser, designation: e.target.value })
                     }
                     placeholder="e.g., Senior Developer, Manager"
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
@@ -407,7 +407,7 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setNewUser({ ...newUser, email: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
@@ -422,7 +422,7 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setNewUser({ ...newUser, password: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                     minLength={6}
                   />
                 </div>
@@ -481,7 +481,7 @@ export default function UserManagement({ users: initialUsers }) {
                           (perm.id === "users" && newUser.role !== "admin") ||
                           (perm.id === "company" && newUser.role !== "admin")
                         }
-                        className="w-4 h-4 text-rose-600 rounded focus:ring-2 focus:ring-rose-500 mt-0.5"
+                        className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mt-0.5"
                       />
                       <div>
                         <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
@@ -496,7 +496,7 @@ export default function UserManagement({ users: initialUsers }) {
                     </label>
                   ))}
                   {newUser.role === "admin" && (
-                    <p className="col-span-2 text-xs text-rose-600 dark:text-rose-400 pt-2 border-t border-gray-200 dark:border-slate-700">
+                    <p className="col-span-2 text-xs text-blue-600 dark:text-blue-400 pt-2 border-t border-gray-200 dark:border-slate-700">
                       ✓ Admins start with full access, but individual
                       permissions can be unchecked as needed
                     </p>
@@ -504,24 +504,24 @@ export default function UserManagement({ users: initialUsers }) {
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Create User"
-                  )}
-                </button>
+              <div className="flex gap-3 justify-end">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
                   className="px-6 py-2 border border-gray-300 dark:border-slate-600 rounded-lg font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Create User"
+                  )}
                 </button>
               </div>
             </form>
@@ -557,7 +557,7 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setEditingUser({ ...editingUser, name: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
@@ -574,7 +574,7 @@ export default function UserManagement({ users: initialUsers }) {
                       })
                     }
                     placeholder="e.g., Senior Developer, Manager"
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
@@ -589,7 +589,7 @@ export default function UserManagement({ users: initialUsers }) {
                     onChange={(e) =>
                       setEditingUser({ ...editingUser, email: e.target.value })
                     }
-                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-rose-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
+                    className="w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700"
                   />
                 </div>
 
@@ -640,7 +640,7 @@ export default function UserManagement({ users: initialUsers }) {
                           perm.id === "notes"
                             ? true
                             : editingUser.permissions?.includes(perm.id) ||
-                            false
+                              false
                         }
                         onChange={() => togglePermission(perm.id, true)}
                         disabled={
@@ -650,7 +650,7 @@ export default function UserManagement({ users: initialUsers }) {
                           (perm.id === "company" &&
                             editingUser.role !== "admin")
                         }
-                        className="w-4 h-4 text-rose-600 rounded focus:ring-2 focus:ring-rose-500 mt-0.5"
+                        className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mt-0.5"
                       />
                       <div>
                         <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
@@ -665,7 +665,7 @@ export default function UserManagement({ users: initialUsers }) {
                     </label>
                   ))}
                   {editingUser.role === "admin" && (
-                    <p className="col-span-2 text-xs text-rose-600 dark:text-rose-400 pt-2 border-t border-gray-200 dark:border-slate-700">
+                    <p className="col-span-2 text-xs text-blue-600 dark:text-blue-400 pt-2 border-t border-gray-200 dark:border-slate-700">
                       ✓ Admins start with full access, but individual
                       permissions can be modified above
                     </p>
@@ -684,7 +684,7 @@ export default function UserManagement({ users: initialUsers }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

@@ -123,7 +123,7 @@ export default function ProjectDashboard() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-slate-400">
             Loading dashboard...
           </p>
@@ -147,7 +147,7 @@ export default function ProjectDashboard() {
           </div>
           <button
             onClick={() => setIsLogModalOpen(true)}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg hover:shadow-purple-500/20 active:scale-95"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg hover:shadow-blue-500/20 active:scale-95"
           >
             <Plus className="w-5 h-5" />
             Work Log

@@ -24,7 +24,7 @@ export default function PayrollFilters({
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-green-500 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
           >
             <option value="all">All Status</option>
             <option value="with_salary">With Salary Structure</option>
@@ -34,7 +34,7 @@ export default function PayrollFilters({
           <select
             value={filterState}
             onChange={(e) => setFilterState(e.target.value)}
-            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-green-500 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
           >
             <option value="all">All States</option>
             {uniqueStates.map((state) => (
@@ -47,7 +47,7 @@ export default function PayrollFilters({
           <select
             value={filterDepartment}
             onChange={(e) => setFilterDepartment(e.target.value)}
-            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-green-500 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
           >
             <option value="all">All Departments</option>
             {uniqueDepartments.map((dept) => (
@@ -64,7 +64,7 @@ export default function PayrollFilters({
               placeholder="Search employees..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-500 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-500 bg-gray-50 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 transition-colors"
+              className="w-full pl-9 pr-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-500 bg-gray-50 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-600 transition-colors"
             />
           </div>
         </div>

@@ -22,23 +22,7 @@ export default function GlobalNoteButton() {
   }
 
   const getThemeColor = () => {
-    if (pathname.startsWith("/invoices"))
-      return "bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 shadow-blue-500/20";
-    if (pathname.startsWith("/payroll"))
-      return "bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 shadow-green-500/20";
-    if (pathname.startsWith("/project"))
-      return "bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 shadow-purple-500/20";
-    if (pathname.startsWith("/letterhead"))
-      return "bg-orange-600 dark:bg-orange-700 hover:bg-orange-700 dark:hover:bg-orange-600 shadow-orange-500/20";
-    if (pathname.startsWith("/notes"))
-      return "bg-amber-600 dark:bg-amber-700 hover:bg-amber-700 dark:hover:bg-amber-600 shadow-amber-500/20";
-    if (pathname.startsWith("/accounts"))
-      return "bg-cyan-600 dark:bg-cyan-700 hover:bg-cyan-700 dark:hover:bg-cyan-600 shadow-cyan-500/20";
-    if (pathname.startsWith("/users"))
-      return "bg-rose-600 dark:bg-rose-700 hover:bg-rose-700 dark:hover:bg-rose-600 shadow-rose-500/20";
-    if (pathname.startsWith("/profile"))
-      return "bg-indigo-600 dark:bg-indigo-700 hover:bg-indigo-700 dark:hover:bg-indigo-600 shadow-indigo-500/20";
-    return "bg-slate-700 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 shadow-slate-500/20";
+    return "bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 shadow-blue-500/20";
   };
 
   const themeClasses = getThemeColor();

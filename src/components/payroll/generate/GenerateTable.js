@@ -123,7 +123,7 @@ export default function GenerateTable({
                         <button
                           onClick={() => handleGenerate(emp._id)}
                           disabled={isProcessing}
-                          className="inline-flex items-center gap-1 bg-orange-600 hover:bg-orange-700 text-white text-xs px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
                         >
                           {isProcessing ? (
                             <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent" />

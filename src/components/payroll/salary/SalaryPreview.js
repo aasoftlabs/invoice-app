@@ -4,7 +4,7 @@ export default function SalaryPreview({ estimate }) {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 sticky top-6">
       <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-        <Calculator className="w-5 h-5 text-purple-600" />
+        <Calculator className="w-5 h-5 text-blue-600" />
         Monthly Estimate
       </h2>
       <div className="space-y-4">

@@ -43,15 +43,15 @@ export default async function ProfilePage() {
       grossSalary: calculated.gross,
       totalDeductions: calculated.deductions.total,
       netSalary: calculated.netSalary,
-      deductions: calculated.deductions
+      deductions: calculated.deductions,
     };
     // Serialization for client component if needed (mongoose docs to POJO)
     salaryDetails = JSON.parse(JSON.stringify(salaryDetails));
   }
 
   return (
-    <div className="min-h-screen font-sans py-8">
-      <div className="container mx-auto px-4 md:px-6">
+    <div className="min-h-screen font-sans">
+      <div className="max-w-7xl mx-auto p-8">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
           My Profile
         </h1>

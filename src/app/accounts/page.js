@@ -66,9 +66,8 @@ export default function AccountsPage() {
       });
       if (node) observer.current.observe(node);
     },
-    [loading, loadingMore, hasMore]
+    [loading, loadingMore, hasMore],
   );
-
 
   const calculateStats = (data, globalBalance) => {
     let income = 0;
@@ -96,7 +95,7 @@ export default function AccountsPage() {
           year: filters.year,
           type: filters.type,
           page: currentPage,
-          limit: 50
+          limit: 50,
         }).toString();
 
         const res = await fetch(`/api/accounts/transactions?${query}`);
@@ -108,13 +107,13 @@ export default function AccountsPage() {
           } else {
             setTransactions(data.data);
             if (data.meta?.globalBalance !== undefined) {
-              // Only update stats on first load or if needed. 
+              // Only update stats on first load or if needed.
               // Note: This logic might need adjustment if we want running balance
               calculateStats(data.data, data.meta.globalBalance);
             }
           }
 
-          // Re-calculate stats for the view? 
+          // Re-calculate stats for the view?
           // If we append data, we should probably re-run calculateStats on the whole list or handle it differently.
           // For now, let's just append. Use a memoized stats calculation if possible, or just re-run on 'transactions' list effect.
 
@@ -132,9 +131,8 @@ export default function AccountsPage() {
         setLoadingMore(false);
       }
     },
-    [filters]
+    [filters],
   );
-
 
   useEffect(() => {
     setPage(1);
@@ -195,8 +193,8 @@ export default function AccountsPage() {
   };
 
   return (
-    <div className="min-h-screen font-sans text-gray-800 dark:text-slate-200 py-8">
-      <div className="container mx-auto px-4 md:px-6">
+    <div className="min-h-screen font-sans text-gray-800 dark:text-slate-200">
+      <div className="max-w-7xl mx-auto p-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -208,7 +206,7 @@ export default function AccountsPage() {
             </p>
           </div>
           <Spotlight
-            className="bg-cyan-600 dark:bg-cyan-700 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition-all font-semibold cursor-pointer"
+            className="bg-blue-600 dark:bg-blue-700 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all font-semibold cursor-pointer"
             spotlightColor="rgba(255, 255, 255, 0.25)"
           >
             <button
@@ -216,7 +214,7 @@ export default function AccountsPage() {
                 setEditingTransaction(null);
                 setIsModalOpen(true);
               }}
-              className="flex items-center gap-2 px-5 py-3 text-white w-full h-full hover:bg-cyan-700 dark:hover:bg-cyan-600 transition-colors rounded-xl"
+              className="flex items-center gap-2 px-5 py-3 text-white w-full h-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors rounded-xl"
             >
               <Plus className="w-5 h-5" /> Transaction
             </button>
@@ -227,7 +225,7 @@ export default function AccountsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Balance */}
           <Spotlight className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center gap-4 cursor-pointer group">
-            <div className="w-12 h-12 bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center">
               <Wallet className="w-6 h-6" />
             </div>
             <div>
@@ -277,7 +275,7 @@ export default function AccountsPage() {
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-900/50 flex justify-between items-center">
             <h2 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
-              <FileText className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />{" "}
+              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />{" "}
               Transaction Ledger
             </h2>
           </div>
@@ -311,11 +309,15 @@ export default function AccountsPage() {
                     </td>
                   </tr>
                 ) : (
-                  transactions.map((t) => (
+                  transactions.map((t, index) => (
                     <tr
                       key={t._id}
                       className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
-                      ref={index === transactions.length - 1 ? lastTransactionElementRef : null}
+                      ref={
+                        index === transactions.length - 1
+                          ? lastTransactionElementRef
+                          : null
+                      }
                     >
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
                         {new Date(t.date).toLocaleDateString("en-IN")}
@@ -381,7 +383,8 @@ export default function AccountsPage() {
 
         {loadingMore && (
           <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin" /> Loading more transactions...
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading more
+            transactions...
           </div>
         )}
       </div>
@@ -392,6 +395,6 @@ export default function AccountsPage() {
         onSuccess={handleSuccess}
         editingTransaction={editingTransaction}
       />
-    </div >
+    </div>
   );
 }

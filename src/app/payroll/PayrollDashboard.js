@@ -29,9 +29,8 @@ export default function PayrollDashboard() {
       });
       if (node) observer.current.observe(node);
     },
-    [loading, loadingMore, hasMore]
+    [loading, loadingMore, hasMore],
   );
-
 
   // Filter States
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,15 +54,17 @@ export default function PayrollDashboard() {
           search: searchTerm,
           status: filterStatus,
           state: filterState,
-          department: filterDepartment
+          department: filterDepartment,
         }).toString();
 
-        const res = await fetch(`/api/payroll/employees?${query}`, { cache: "no-store" });
+        const res = await fetch(`/api/payroll/employees?${query}`, {
+          cache: "no-store",
+        });
 
         if (res.ok) {
           const data = await res.json();
           if (isLoadMore) {
-            setEmployees(prev => [...prev, ...data.employees]);
+            setEmployees((prev) => [...prev, ...data.employees]);
           } else {
             setEmployees(data.employees);
           }
@@ -73,7 +74,6 @@ export default function PayrollDashboard() {
           } else {
             setHasMore(true);
           }
-
         } else {
           const errData = await res.json();
           setError(errData.error || "Failed to fetch employees");
@@ -86,7 +86,7 @@ export default function PayrollDashboard() {
         setLoadingMore(false);
       }
     },
-    [searchTerm, filterStatus, filterState, filterDepartment]
+    [searchTerm, filterStatus, filterState, filterDepartment],
   );
 
   // Initial Fetch & Filter Change
@@ -101,7 +101,6 @@ export default function PayrollDashboard() {
       fetchEmployees(true, page);
     }
   }, [page, fetchEmployees]);
-
 
   // Get unique states from employees
   const uniqueStates = [
@@ -119,7 +118,6 @@ export default function PayrollDashboard() {
 
   // Removed client-side filtering: filteredEmployees replaced by employees state
 
-
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -133,7 +131,7 @@ export default function PayrollDashboard() {
         </div>
         <button
           onClick={() => router.push("/payroll/generate")}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
         >
           <Plus className="w-5 h-5" />
           Generate Slips

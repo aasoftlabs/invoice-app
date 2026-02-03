@@ -140,7 +140,7 @@ export default function AddProjectModal({
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -154,7 +154,7 @@ export default function AddProjectModal({
                 onChange={(e) =>
                   setFormData({ ...formData, priority: e.target.value })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="Low">Low</option>
@@ -174,7 +174,7 @@ export default function AddProjectModal({
                   setFormData({ ...formData, client: e.target.value })
                 }
                 placeholder="Enter client name"
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -188,7 +188,7 @@ export default function AddProjectModal({
                 onChange={(e) =>
                   setFormData({ ...formData, projectManager: e.target.value })
                 }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Manager</option>
                 {users.map((user) => (
@@ -210,16 +210,16 @@ export default function AddProjectModal({
                   setFormData({ ...formData, refLink: e.target.value })
                 }
                 placeholder="https://..."
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            <div className="md:col-span-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800/50 rounded-lg p-3">
-              <p className="text-sm text-purple-800 dark:text-purple-300">
+            <div className="md:col-span-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-lg p-3">
+              <p className="text-sm text-blue-800 dark:text-blue-300">
                 <strong>Note:</strong> Status, start date, and end date will be
                 automatically managed:
               </p>
-              <ul className="text-xs text-purple-700 dark:text-purple-400/80 mt-2 ml-4 list-disc space-y-1">
+              <ul className="text-xs text-blue-700 dark:text-blue-400/80 mt-2 ml-4 list-disc space-y-1">
                 <li>
                   Status starts as &quot;Not Started&quot; and updates based on
                   task completion
@@ -241,7 +241,7 @@ export default function AddProjectModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-bold shadow-lg hover:shadow-purple-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg hover:shadow-blue-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
               {loading

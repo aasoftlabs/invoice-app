@@ -41,8 +41,8 @@ export default function PayrollStats({ employees }) {
               {employeesWithSalary} with salary structure
             </p>
           </div>
-          <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg">
-            <Users className="w-6 h-6 text-green-600 dark:text-green-400" />
+          <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+            <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
       </Spotlight>
@@ -60,8 +60,8 @@ export default function PayrollStats({ employees }) {
               Gross salary total
             </p>
           </div>
-          <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg">
-            <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
+          <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+            <DollarSign className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
       </Spotlight>
@@ -98,11 +98,11 @@ export default function PayrollStats({ employees }) {
               After all deductions
             </p>
           </div>
-          <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-lg">
-            <Wallet className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+            <Wallet className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
       </Spotlight>
-    </div >
+    </div>
   );
 }

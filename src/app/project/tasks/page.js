@@ -4,7 +4,15 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
-import { ListTodo, Search, Plus, Edit2, Trash2, Filter, Loader2 } from "lucide-react";
+import {
+  ListTodo,
+  Search,
+  Plus,
+  Edit2,
+  Trash2,
+  Filter,
+  Loader2,
+} from "lucide-react";
 import AddTaskModal from "@/components/project/AddTaskModal";
 import TaskDetailsModal from "@/components/project/TaskDetailsModal";
 
@@ -32,7 +40,7 @@ export default function TasksPage() {
       });
       if (node) observer.current.observe(node);
     },
-    [loading, loadingMore, hasMore]
+    [loading, loadingMore, hasMore],
   );
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -64,7 +72,7 @@ export default function TasksPage() {
         const params = new URLSearchParams({
           ...filters,
           page: currentPage,
-          limit: 20
+          limit: 20,
         });
 
         const res = await fetch(`/api/tasks?${params}`);
@@ -91,9 +99,8 @@ export default function TasksPage() {
         setLoadingMore(false);
       }
     },
-    [filters]
+    [filters],
   );
-
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -121,7 +128,6 @@ export default function TasksPage() {
       fetchTasks(true, page);
     }
   }, [page, fetchTasks]);
-
 
   const filteredTasks = tasks.filter(
     (task) =>
@@ -194,7 +200,7 @@ export default function TasksPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-slate-400">Loading...</p>
         </div>
       </div>
@@ -206,12 +212,12 @@ export default function TasksPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <ListTodo className="w-8 h-8 text-purple-600" />
+            <ListTodo className="w-8 h-8 text-blue-600" />
             Tasks
           </h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-purple-600 dark:bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors"
+            className="flex items-center gap-2 bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-lg hover:shadow-blue-500/20"
           >
             <Plus className="w-5 h-5" />
             Add Task
@@ -234,7 +240,7 @@ export default function TasksPage() {
                   placeholder="Search tasks..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 pr-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 w-64 bg-gray-50 dark:bg-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 transition-colors"
+                  className="pl-9 pr-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 bg-gray-50 dark:bg-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 transition-colors"
                 />
               </div>
 
@@ -243,7 +249,7 @@ export default function TasksPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, projectId: e.target.value })
                 }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors cursor-pointer"
+                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
               >
                 <option value="">All Projects</option>
                 {projects.map((p) => (
@@ -258,7 +264,7 @@ export default function TasksPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, status: e.target.value })
                 }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 <option value="">All Statuses</option>
                 <option value="Completed">Completed</option>
@@ -324,7 +330,11 @@ export default function TasksPage() {
                 filteredTasks.map((task, index) => (
                   <tr
                     key={task._id}
-                    ref={index === filteredTasks.length - 1 ? lastTaskElementRef : null}
+                    ref={
+                      index === filteredTasks.length - 1
+                        ? lastTaskElementRef
+                        : null
+                    }
                     className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
                     onClick={() => handleViewTask(task)}
                   >

@@ -24,64 +24,70 @@ export default function InvoiceDashboard({ initialInvoices }) {
 
   // Observer ref
   const observer = useRef();
-  const lastInvoiceElementRef = useCallback(node => {
-    if (loadingMore) return;
-    if (observer.current) observer.current.disconnect();
+  const lastInvoiceElementRef = useCallback(
+    (node) => {
+      if (loadingMore) return;
+      if (observer.current) observer.current.disconnect();
 
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage(prevPage => prevPage + 1);
-      }
-    });
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
 
-    if (node) observer.current.observe(node);
-  }, [loadingMore, hasMore]);
+      if (node) observer.current.observe(node);
+    },
+    [loadingMore, hasMore],
+  );
 
   // Fetch Invoices Function
-  const fetchInvoices = useCallback(async (isLoadMore = false, currentPage = 1) => {
-    try {
-      if (isLoadMore) {
-        setLoadingMore(true);
-      } else {
-        setLoading(true);
-      }
-
-      const query = new URLSearchParams({
-        page: currentPage,
-        limit: 20,
-        month: filters.month,
-        year: filters.year,
-        status: filters.status
-      }).toString();
-
-      const res = await fetch(`/api/invoices?${query}`);
-      const data = await res.json();
-
-      if (data.success) {
+  const fetchInvoices = useCallback(
+    async (isLoadMore = false, currentPage = 1) => {
+      try {
         if (isLoadMore) {
-          setInvoices(prev => [...prev, ...data.data]);
+          setLoadingMore(true);
         } else {
-          setInvoices(data.data);
+          setLoading(true);
         }
 
-        // If we got fewer than limit, we reached the end
-        if (data.data.length < 20) {
-          setHasMore(false);
+        const query = new URLSearchParams({
+          page: currentPage,
+          limit: 20,
+          month: filters.month,
+          year: filters.year,
+          status: filters.status,
+        }).toString();
+
+        const res = await fetch(`/api/invoices?${query}`);
+        const data = await res.json();
+
+        if (data.success) {
+          if (isLoadMore) {
+            setInvoices((prev) => [...prev, ...data.data]);
+          } else {
+            setInvoices(data.data);
+          }
+
+          // If we got fewer than limit, we reached the end
+          if (data.data.length < 20) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
         } else {
-          setHasMore(true);
+          // API returned success: false
+          setHasMore(false);
         }
-      } else {
-        // API returned success: false
-        setHasMore(false);
+      } catch (error) {
+        console.error("Failed to fetch invoices", error);
+        setHasMore(false); // Stop infinite scroll on error
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch invoices", error);
-      setHasMore(false); // Stop infinite scroll on error
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }, [filters]);
+    },
+    [filters],
+  );
 
   // Initial Fetch & Filter Change
   useEffect(() => {
@@ -98,7 +104,7 @@ export default function InvoiceDashboard({ initialInvoices }) {
   }, [page, fetchInvoices]);
 
   return (
-    <div className="container mx-auto px-4 md:px-6 py-8">
+    <div className="max-w-7xl mx-auto p-8">
       {/* Page Header */}
       <div className="mb-8 flex justify-between items-start">
         <div>
@@ -179,9 +185,9 @@ export default function InvoiceDashboard({ initialInvoices }) {
                       key={inv._id}
                       invoice={inv}
                     />
-                  )
+                  );
                 } else {
-                  return <InvoiceRow key={inv._id} invoice={inv} />
+                  return <InvoiceRow key={inv._id} invoice={inv} />;
                 }
               })
             )}
@@ -195,7 +201,8 @@ export default function InvoiceDashboard({ initialInvoices }) {
         )}
 
         <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-xs text-gray-500 dark:text-slate-400 text-center">
-          Showing {invoices.length} records {hasMore ? "(Scroll for more)" : "(End of list)"}
+          Showing {invoices.length} records{" "}
+          {hasMore ? "(Scroll for more)" : "(End of list)"}
         </div>
       </div>
     </div>

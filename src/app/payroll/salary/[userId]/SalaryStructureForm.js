@@ -225,7 +225,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
         <button
           onClick={handleSubmit}
           disabled={saving}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
         >
           {saving ? (
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />

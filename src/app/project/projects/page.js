@@ -1,6 +1,12 @@
 "use client";
 
-import React, { Fragment, useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  Fragment,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
@@ -50,7 +56,7 @@ export default function ProjectsPage() {
       });
       if (node) observer.current.observe(node);
     },
-    [loading, loadingMore, hasMore]
+    [loading, loadingMore, hasMore],
   );
 
   // Fetch Projects Function
@@ -67,7 +73,7 @@ export default function ProjectsPage() {
         const queryParams = new URLSearchParams({
           page: currentPage,
           limit: 20,
-          ...(!showCompleted && { activeOnly: "true" })
+          ...(!showCompleted && { activeOnly: "true" }),
         });
 
         const res = await fetch(`/api/projects?${queryParams}`);
@@ -94,7 +100,7 @@ export default function ProjectsPage() {
         setLoadingMore(false);
       }
     },
-    [showCompleted]
+    [showCompleted],
   );
 
   // Initial Fetch & Filter Change
@@ -194,7 +200,7 @@ export default function ProjectsPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-slate-400">Loading...</p>
         </div>
       </div>
@@ -206,16 +212,17 @@ export default function ProjectsPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <FolderKanban className="w-8 h-8 text-purple-600" />
+            <FolderKanban className="w-8 h-8 text-blue-600" />
             Projects
           </h1>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowCompleted(!showCompleted)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${showCompleted
-                ? "bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white border-gray-300 dark:border-slate-600"
-                : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
-                }`}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                showCompleted
+                  ? "bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white border-gray-300 dark:border-slate-600"
+                  : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
+              }`}
             >
               {showCompleted ? "Hide Completed" : "Show Completed"}
             </button>
@@ -224,7 +231,7 @@ export default function ProjectsPage() {
                 setEditingProject(null);
                 setIsModalOpen(true);
               }}
-              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all font-bold shadow-lg hover:shadow-purple-500/20 active:scale-95"
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg hover:shadow-blue-500/20 active:scale-95"
             >
               <Plus className="w-5 h-5" />
               Add Project
@@ -285,7 +292,11 @@ export default function ProjectsPage() {
                   <React.Fragment key={project._id}>
                     <tr
                       className="hover:bg-gray-100 dark:hover:bg-slate-700 group cursor-pointer transition-colors"
-                      ref={index === projects.length - 1 ? lastProjectElementRef : null}
+                      ref={
+                        index === projects.length - 1
+                          ? lastProjectElementRef
+                          : null
+                      }
                       onClick={() => toggleProject(project._id)}
                     >
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-slate-200 flex items-center gap-2">
@@ -341,30 +352,30 @@ export default function ProjectsPage() {
                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {(session?.user?.role?.toLowerCase() === "admin" ||
                             project.projectManager?._id ===
-                            session?.user?.id) && (
-                              <>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEditProject(project);
-                                  }}
-                                  className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
-                                  title="Edit Project"
-                                >
-                                  <Pencil className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteProject(project._id);
-                                  }}
-                                  className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
-                                  title="Delete Project"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </>
-                            )}
+                              session?.user?.id) && (
+                            <>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditProject(project);
+                                }}
+                                className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
+                                title="Edit Project"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteProject(project._id);
+                                }}
+                                className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                                title="Delete Project"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -491,7 +502,6 @@ export default function ProjectsPage() {
           <Loader2 className="w-4 h-4 animate-spin" /> Loading more projects...
         </div>
       )}
-
 
       <AddProjectModal
         isOpen={isModalOpen}

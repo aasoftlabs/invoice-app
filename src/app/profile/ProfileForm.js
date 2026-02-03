@@ -28,7 +28,9 @@ export default function ProfileForm({ user }) {
       designation: user.designation || "",
       employeeId: user.employeeId || "",
       department: user.department || "",
-      joiningDate: user.joiningDate ? new Date(user.joiningDate).toISOString().split('T')[0] : "",
+      joiningDate: user.joiningDate
+        ? new Date(user.joiningDate).toISOString().split("T")[0]
+        : "",
       currentPassword: "",
       newPassword: "",
       confirmNewPassword: "",
@@ -47,9 +49,9 @@ export default function ProfileForm({ user }) {
         joiningDate: data.joiningDate,
         ...(data.newPassword
           ? {
-            password: data.currentPassword,
-            newPassword: data.newPassword,
-          }
+              password: data.currentPassword,
+              newPassword: data.newPassword,
+            }
           : {}),
       };
 
@@ -102,7 +104,7 @@ export default function ProfileForm({ user }) {
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-8">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <div className="h-20 w-20 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-2xl font-bold">
+          <div className="h-20 w-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl font-bold">
             {user.name?.[0]}
           </div>
           <div>
@@ -124,7 +126,9 @@ export default function ProfileForm({ user }) {
                 designation: user.designation || "",
                 employeeId: user.employeeId || "",
                 department: user.department || "",
-                joiningDate: user.joiningDate ? new Date(user.joiningDate).toISOString().split('T')[0] : "",
+                joiningDate: user.joiningDate
+                  ? new Date(user.joiningDate).toISOString().split("T")[0]
+                  : "",
                 currentPassword: "",
                 newPassword: "",
                 confirmNewPassword: "",
@@ -132,10 +136,11 @@ export default function ProfileForm({ user }) {
             }
             setIsEditing(!isEditing);
           }}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${isEditing
-            ? "bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600"
-            : "bg-indigo-600 dark:bg-indigo-700 text-white hover:bg-indigo-700 dark:hover:bg-indigo-600"
-            }`}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+            isEditing
+              ? "bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600"
+              : "bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+          }`}
         >
           {isEditing ? (
             <>
@@ -158,13 +163,15 @@ export default function ProfileForm({ user }) {
           <input
             {...register("name")}
             disabled={!isEditing}
-            className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white ${isEditing
-              ? "bg-white dark:bg-slate-700"
-              : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-              } dark:border-slate-600 ${errors.name
+            className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
+              isEditing
+                ? "bg-white dark:bg-slate-700"
+                : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
+            } dark:border-slate-600 ${
+              errors.name
                 ? "border-red-500"
                 : "border-gray-300 dark:border-slate-600"
-              }`}
+            }`}
           />
           {errors.name && (
             <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
@@ -185,17 +192,21 @@ export default function ProfileForm({ user }) {
               {...register("designation")}
               disabled={!isEditing}
               placeholder={isEditing ? "e.g., Software Engineer, Manager" : ""}
-              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white ${isEditing
-                ? "bg-white dark:bg-slate-700"
-                : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-                } dark:border-slate-600 ${errors.designation
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
+                isEditing
+                  ? "bg-white dark:bg-slate-700"
+                  : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
+              } dark:border-slate-600 ${
+                errors.designation
                   ? "border-red-500"
                   : "border-gray-300 dark:border-slate-600"
-                }`}
+              }`}
             />
           )}
           {errors.designation && (
-            <p className="text-xs text-red-500 mt-1">{errors.designation.message}</p>
+            <p className="text-xs text-red-500 mt-1">
+              {errors.designation.message}
+            </p>
           )}
         </div>
 
@@ -213,17 +224,21 @@ export default function ProfileForm({ user }) {
               {...register("employeeId")}
               disabled={!isEditing}
               placeholder={isEditing ? "e.g., EMP001" : ""}
-              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white ${isEditing
-                ? "bg-white dark:bg-slate-700"
-                : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-                } dark:border-slate-600 ${errors.employeeId
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
+                isEditing
+                  ? "bg-white dark:bg-slate-700"
+                  : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
+              } dark:border-slate-600 ${
+                errors.employeeId
                   ? "border-red-500"
                   : "border-gray-300 dark:border-slate-600"
-                }`}
+              }`}
             />
           )}
           {errors.employeeId && (
-            <p className="text-xs text-red-500 mt-1">{errors.employeeId.message}</p>
+            <p className="text-xs text-red-500 mt-1">
+              {errors.employeeId.message}
+            </p>
           )}
         </div>
 
@@ -241,17 +256,21 @@ export default function ProfileForm({ user }) {
               {...register("department")}
               disabled={!isEditing}
               placeholder={isEditing ? "e.g., Engineering, Sales" : ""}
-              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white ${isEditing
-                ? "bg-white dark:bg-slate-700"
-                : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-                } dark:border-slate-600 ${errors.department
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
+                isEditing
+                  ? "bg-white dark:bg-slate-700"
+                  : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
+              } dark:border-slate-600 ${
+                errors.department
                   ? "border-red-500"
                   : "border-gray-300 dark:border-slate-600"
-                }`}
+              }`}
             />
           )}
           {errors.department && (
-            <p className="text-xs text-red-500 mt-1">{errors.department.message}</p>
+            <p className="text-xs text-red-500 mt-1">
+              {errors.department.message}
+            </p>
           )}
         </div>
 
@@ -269,17 +288,21 @@ export default function ProfileForm({ user }) {
               type="date"
               {...register("joiningDate")}
               disabled={!isEditing}
-              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white ${isEditing
-                ? "bg-white dark:bg-slate-700"
-                : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-                } dark:border-slate-600 ${errors.joiningDate
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
+                isEditing
+                  ? "bg-white dark:bg-slate-700"
+                  : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
+              } dark:border-slate-600 ${
+                errors.joiningDate
                   ? "border-red-500"
                   : "border-gray-300 dark:border-slate-600"
-                }`}
+              }`}
             />
           )}
           {errors.joiningDate && (
-            <p className="text-xs text-red-500 mt-1">{errors.joiningDate.message}</p>
+            <p className="text-xs text-red-500 mt-1">
+              {errors.joiningDate.message}
+            </p>
           )}
         </div>
 
@@ -298,10 +321,11 @@ export default function ProfileForm({ user }) {
                 <input
                   type="password"
                   {...register("currentPassword")}
-                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${errors.currentPassword
-                    ? "border-red-500"
-                    : "border-gray-300 dark:border-slate-600"
-                    }`}
+                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${
+                    errors.currentPassword
+                      ? "border-red-500"
+                      : "border-gray-300 dark:border-slate-600"
+                  }`}
                 />
                 {errors.currentPassword && (
                   <p className="text-xs text-red-500 mt-1">
@@ -319,10 +343,11 @@ export default function ProfileForm({ user }) {
                   <input
                     type="password"
                     {...register("newPassword")}
-                    className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${errors.newPassword
-                      ? "border-red-500"
-                      : "border-gray-300 dark:border-slate-600"
-                      }`}
+                    className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${
+                      errors.newPassword
+                        ? "border-red-500"
+                        : "border-gray-300 dark:border-slate-600"
+                    }`}
                   />
                   {errors.newPassword && (
                     <p className="text-xs text-red-500 mt-1">
@@ -337,10 +362,11 @@ export default function ProfileForm({ user }) {
                   <input
                     type="password"
                     {...register("confirmNewPassword")}
-                    className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 ${errors.confirmNewPassword
-                      ? "border-red-500"
-                      : "border-gray-300 dark:border-slate-600"
-                      }`}
+                    className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 ${
+                      errors.confirmNewPassword
+                        ? "border-red-500"
+                        : "border-gray-300 dark:border-slate-600"
+                    }`}
                   />
                   {errors.confirmNewPassword && (
                     <p className="text-xs text-red-500 mt-1">
@@ -359,7 +385,7 @@ export default function ProfileForm({ user }) {
             <button
               type="submit"
               disabled={loading || !isDirty}
-              className="bg-indigo-600 dark:bg-indigo-700 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

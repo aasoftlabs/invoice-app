@@ -4,7 +4,15 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
-import { Calendar, ListTodo, Plus, Trash2, Pencil, Filter, Loader2 } from "lucide-react";
+import {
+  Calendar,
+  ListTodo,
+  Plus,
+  Trash2,
+  Pencil,
+  Filter,
+  Loader2,
+} from "lucide-react";
 import AddWorkLogModal from "@/components/project/AddWorkLogModal";
 import WorkLogDetailsModal from "@/components/project/WorkLogDetailsModal";
 
@@ -35,9 +43,8 @@ export default function WorkLogPage() {
       });
       if (node) observer.current.observe(node);
     },
-    [loading, loadingMore, hasMore]
+    [loading, loadingMore, hasMore],
   );
-
 
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
@@ -73,7 +80,7 @@ export default function WorkLogPage() {
           month: filters.month,
           year: filters.year,
           page: currentPage,
-          limit: 20
+          limit: 20,
         });
 
         const res = await fetch(`/api/worklogs?${params}`);
@@ -100,9 +107,8 @@ export default function WorkLogPage() {
         setLoadingMore(false);
       }
     },
-    [filters]
+    [filters],
   );
-
 
   const handleDeleteLog = async (logId) => {
     if (
@@ -177,7 +183,6 @@ export default function WorkLogPage() {
     }
   }, [page, fetchWorkLogs]);
 
-
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -190,7 +195,7 @@ export default function WorkLogPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-slate-400">Loading...</p>
         </div>
       </div>
@@ -210,7 +215,7 @@ export default function WorkLogPage() {
           </h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg hover:shadow-purple-500/20 active:scale-95"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg hover:shadow-blue-500/20 active:scale-95"
           >
             <Plus className="w-5 h-5" />
             Work Log
@@ -231,7 +236,7 @@ export default function WorkLogPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, month: parseInt(e.target.value) })
                 }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                   <option key={month} value={month}>
@@ -247,7 +252,7 @@ export default function WorkLogPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, year: parseInt(e.target.value) })
                 }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 {Array.from({ length: 5 }, (_, i) => currentYear - i).map(
                   (year) => (
@@ -263,7 +268,7 @@ export default function WorkLogPage() {
                 onChange={(e) =>
                   setFilters({ ...filters, projectId: e.target.value })
                 }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 <option value="">All Projects</option>
                 {projects.map((p) => (
@@ -280,7 +285,7 @@ export default function WorkLogPage() {
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 overflow-hidden">
           <div className="p-6 border-b border-gray-200 dark:border-slate-700">
             <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-800 dark:text-white">
-              <ListTodo className="w-5 h-5 text-purple-600" />
+              <ListTodo className="w-5 h-5 text-blue-600" />
               Work Log History
             </h2>
           </div>
@@ -326,7 +331,9 @@ export default function WorkLogPage() {
                     <tr
                       key={log._id}
                       className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
-                      ref={index === workLogs.length - 1 ? lastLogElementRef : null}
+                      ref={
+                        index === workLogs.length - 1 ? lastLogElementRef : null
+                      }
                       onClick={() => handleViewLog(log)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-200">
@@ -365,17 +372,17 @@ export default function WorkLogPage() {
                           {/* Delete button - show for log creator or admin */}
                           {(log.userId?._id === session?.user?.id ||
                             session?.user?.role === "admin") && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteLog(log._id);
-                                }}
-                                className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
-                                title="Delete work log"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            )}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteLog(log._id);
+                              }}
+                              className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                              title="Delete work log"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -411,6 +418,6 @@ export default function WorkLogPage() {
         }}
         workLog={viewingLog}
       />
-    </div >
+    </div>
   );
 }

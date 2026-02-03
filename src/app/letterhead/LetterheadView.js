@@ -116,10 +116,11 @@ const ToolbarButton = ({
     type="button"
     onClick={onClick}
     title={title}
-    className={`p-1.5 rounded-md transition-all flex items-center justify-center min-w-[32px] h-8 border shadow-sm ${isActive
-        ? "bg-orange-50 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800 font-semibold"
+    className={`p-1.5 rounded-md transition-all flex items-center justify-center min-w-[32px] h-8 border shadow-sm ${
+      isActive
+        ? "bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 font-semibold"
         : "bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200 border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-300 dark:hover:border-slate-500"
-      } ${className}`}
+    } ${className}`}
   >
     {children}
   </button>
@@ -163,7 +164,7 @@ const ToolbarDropdown = ({
         role="button"
         tabIndex={0}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-full flex! items-center! justify-between! px-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-300 dark:hover:border-slate-500 text-xs font-medium text-gray-700 dark:text-slate-200 transition-all gap-1! cursor-pointer focus:ring-1 focus:ring-orange-500"
+        className="w-full h-full flex! items-center! justify-between! px-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-300 dark:hover:border-slate-500 text-xs font-medium text-gray-700 dark:text-slate-200 transition-all gap-1! cursor-pointer focus:ring-1 focus:ring-blue-500"
         title={placeholder}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") setIsOpen(!isOpen);
@@ -195,10 +196,11 @@ const ToolbarDropdown = ({
                 onChange(opt.value);
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-3 py-2 text-xs whitespace-nowrap hover:bg-orange-50 dark:hover:bg-orange-900/30 transition-colors flex items-center justify-between ${value === opt.value
-                  ? "bg-orange-50 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400 font-semibold"
+              className={`w-full text-left px-3 py-2 text-xs whitespace-nowrap hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors flex items-center justify-between ${
+                value === opt.value
+                  ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 font-semibold"
                   : "text-gray-700 dark:text-slate-200"
-                }`}
+              }`}
             >
               <span>{opt.label}</span>
             </button>
@@ -282,10 +284,11 @@ const FontSizeTool = ({ quillRef, currentFormat }) => {
                 key={s}
                 type="button"
                 onClick={() => handleSelect(s)}
-                className={`w-full text-center px-2 py-1.5 text-xs hover:bg-orange-50 dark:hover:bg-orange-900/30 ${size === s
-                    ? "bg-orange-50 dark:bg-orange-900/40 font-bold text-orange-700 dark:text-orange-400"
+                className={`w-full text-center px-2 py-1.5 text-xs hover:bg-blue-50 dark:hover:bg-blue-900/30 ${
+                  size === s
+                    ? "bg-blue-50 dark:bg-blue-900/40 font-bold text-blue-700 dark:text-blue-400"
                     : "text-gray-700 dark:text-slate-200"
-                  }`}
+                }`}
               >
                 {s.replace("px", "")}
               </button>
@@ -711,14 +714,16 @@ export default function LetterheadView({ profile }) {
     <div className="flex min-h-screen bg-gray-100 dark:bg-slate-900 print:p-0 print:bg-white text-gray-900 dark:text-slate-200 font-sans transition-all duration-300">
       {/* Left Sidebar Controls - Document Flow (Click to toggle) */}
       <div
-        className={`relative bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 p-4 transition-all duration-300 ease-in-out print:hidden flex flex-col gap-4 shadow-sm overflow-hidden shrink-0 ${isSidebarOpen ? "w-[460px]" : "w-16"
-          }`}
+        className={`relative bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 p-4 transition-all duration-300 ease-in-out print:hidden flex flex-col gap-4 shadow-sm overflow-hidden shrink-0 ${
+          isSidebarOpen ? "w-[460px]" : "w-16"
+        }`}
       >
         {/* Toggle Button Inside Sidebar */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className={`absolute top-6 z-20 p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600 text-gray-600 dark:text-slate-300 transition-all ${isSidebarOpen ? "right-4" : "left-1/2 -translate-x-1/2"
-            }`}
+          className={`absolute top-6 z-20 p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600 text-gray-600 dark:text-slate-300 transition-all ${
+            isSidebarOpen ? "right-4" : "left-1/2 -translate-x-1/2"
+          }`}
           title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
         >
           {isSidebarOpen ? (
@@ -742,7 +747,7 @@ export default function LetterheadView({ profile }) {
               </h1>
             </div>
             <Spotlight
-              className="w-full bg-orange-600 rounded-lg shadow-md hover:bg-orange-700 transition-colors cursor-pointer"
+              className="w-full bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-colors cursor-pointer"
               spotlightColor="rgba(255, 255, 255, 0.25)"
             >
               <button
