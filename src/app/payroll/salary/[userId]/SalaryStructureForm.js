@@ -8,6 +8,7 @@ import SalaryConfiguration from "@/components/payroll/salary/SalaryConfiguration
 import SalaryEarnings from "@/components/payroll/salary/SalaryEarnings";
 import SalaryDeductions from "@/components/payroll/salary/SalaryDeductions";
 import SalaryPreview from "@/components/payroll/salary/SalaryPreview";
+import { usePayroll } from "@/hooks/usePayroll";
 
 export default function SalaryStructureForm({ userId, sessionUserId }) {
   const router = useRouter();
@@ -16,6 +17,10 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
   const [saving, setSaving] = useState(false);
   const [user, setUser] = useState(null);
   const [settings, setSettings] = useState(null);
+
+  // Use custom hook
+  const { getSalaryStructure, updateSalaryStructure } = usePayroll();
+
   const [salary, setSalary] = useState({
     userId: userId,
     state: "Maharashtra",
@@ -39,39 +44,42 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
   });
 
   const fetchData = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/payroll/salary/${userId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-        setSettings(data.settings);
-        if (data.salary) {
-          setSalary({
-            ...data.salary,
-            state: data.salary.state || data.user.state || "Maharashtra",
-            employeeId: data.user.employeeId || "",
-            department: data.user.department,
-            joiningDate: data.user.joiningDate,
-            otherAllowances: data.salary.otherAllowances || [],
-            otherDeductions: data.salary.otherDeductions || [],
-          });
-        } else {
-          // Initialize with defaults
-          setSalary((prev) => ({
-            ...prev,
-            state: data.user.state || "Maharashtra",
-            employeeId: data.user.employeeId || "",
-            department: data.user.department,
-            joiningDate: data.user.joiningDate,
-          }));
-        }
+    setLoading(true);
+    const result = await getSalaryStructure(userId);
+
+    if (result.success) {
+      const data = result.data;
+      setUser(data.user);
+      setSettings(data.settings);
+      if (data.salary) {
+        setSalary({
+          ...data.salary,
+          state: data.salary.state || data.user.state || "Maharashtra",
+          employeeId: data.user.employeeId || "",
+          department: data.user.department,
+          joiningDate: data.user.joiningDate,
+          otherAllowances: data.salary.otherAllowances || [],
+          otherDeductions: data.salary.otherDeductions || [],
+        });
+      } else {
+        // Initialize with defaults
+        setSalary((prev) => ({
+          ...prev,
+          state: data.user.state || "Maharashtra",
+          employeeId: data.user.employeeId || "",
+          department: data.user.department,
+          joiningDate: data.user.joiningDate,
+        }));
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
+    } else {
+      await alert({
+        title: "Error",
+        message: result.error || "Failed to load salary structure",
+        variant: "danger",
+      });
     }
-  }, [userId]);
+    setLoading(false);
+  }, [userId, getSalaryStructure, alert]);
 
   useEffect(() => {
     fetchData();
@@ -116,34 +124,25 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    try {
-      const res = await fetch(`/api/payroll/salary/${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(salary),
-      });
 
-      if (res.ok) {
-        router.push("/payroll");
-        router.refresh();
-      } else {
-        const error = await res.json();
-        await alert({
-          title: "Error",
-          message: error.error || "Failed to save salary structure",
-          variant: "danger",
-        });
-      }
-    } catch (error) {
-      console.error("Error saving salary:", error);
+    const result = await updateSalaryStructure(userId, salary);
+
+    if (result.success) {
+      await alert({
+        title: "Success",
+        message: "Salary structure saved successfully!",
+        variant: "success",
+      });
+      router.push("/payroll");
+      router.refresh();
+    } else {
       await alert({
         title: "Error",
-        message: "An error occurred while saving",
+        message: result.error || "Failed to save salary structure",
         variant: "danger",
       });
-    } finally {
-      setSaving(false);
     }
+    setSaving(false);
   };
 
   // Function to calculate estimated net pay purely on client side for quick view
@@ -225,7 +224,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
         <button
           onClick={handleSubmit}
           disabled={saving}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? (
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />

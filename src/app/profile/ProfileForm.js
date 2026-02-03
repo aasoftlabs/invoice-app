@@ -1,25 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Save, Loader2, User, Lock, X, Edit2 } from "lucide-react";
+import { useState } from "react";
+import { Save, User, Lock, X, Edit2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/contexts/ModalContext";
+import { useToast } from "@/contexts/ToastContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileSchema } from "@/lib/schemas/profileSchema";
+import { useProfile } from "@/hooks/useProfile";
+import { Input } from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 export default function ProfileForm({ user }) {
   const router = useRouter();
   const { alert } = useModal();
-  const [loading, setLoading] = useState(false);
+  const { addToast } = useToast();
+  const { loading, updateProfile } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
 
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
-    watch,
     formState: { errors, isDirty },
   } = useForm({
     resolver: zodResolver(profileSchema),
@@ -38,65 +41,40 @@ export default function ProfileForm({ user }) {
   });
 
   const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      // Prepare Payload
-      const payload = {
-        name: data.name,
-        designation: data.designation,
-        employeeId: data.employeeId,
-        department: data.department,
-        joiningDate: data.joiningDate,
-        ...(data.newPassword
-          ? {
-              password: data.currentPassword,
-              newPassword: data.newPassword,
-            }
-          : {}),
-      };
+    // Prepare Payload
+    const payload = {
+      name: data.name,
+      designation: data.designation,
+      employeeId: data.employeeId,
+      department: data.department,
+      joiningDate: data.joiningDate,
+      ...(data.newPassword
+        ? {
+            password: data.currentPassword,
+            newPassword: data.newPassword,
+          }
+        : {}),
+    };
 
-      const res = await fetch("/api/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+    const result = await updateProfile(payload);
+
+    if (result.success) {
+      addToast("Profile updated successfully", "success");
+      // Reset password fields but keep other fields
+      reset({
+        ...data,
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
       });
-
-      if (res.ok) {
-        await alert({
-          title: "Success",
-          message: "Profile updated successfully",
-          variant: "success",
-        });
-        // Reset password fields but keep other fields
-        reset({
-          name: data.name,
-          designation: data.designation,
-          employeeId: data.employeeId,
-          department: data.department,
-          joiningDate: data.joiningDate,
-          currentPassword: "",
-          newPassword: "",
-          confirmNewPassword: "",
-        });
-        setIsEditing(false);
-        router.refresh();
-      } else {
-        const err = await res.json();
-        await alert({
-          title: "Error",
-          message: "Error: " + err.error,
-          variant: "danger",
-        });
-      }
-    } catch (e) {
-      console.error(e);
+      setIsEditing(false);
+      router.refresh();
+    } else {
       await alert({
         title: "Error",
-        message: "Failed to update profile",
+        message: result.error || "Failed to update profile",
         variant: "danger",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -117,284 +95,107 @@ export default function ProfileForm({ user }) {
             </span>
           </div>
         </div>
-        <button
-          type="button"
+
+        <Button
+          variant={isEditing ? "secondary" : "primary"}
           onClick={() => {
             if (isEditing) {
-              reset({
-                name: user.name || "",
-                designation: user.designation || "",
-                employeeId: user.employeeId || "",
-                department: user.department || "",
-                joiningDate: user.joiningDate
-                  ? new Date(user.joiningDate).toISOString().split("T")[0]
-                  : "",
-                currentPassword: "",
-                newPassword: "",
-                confirmNewPassword: "",
-              });
+              reset();
             }
             setIsEditing(!isEditing);
           }}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
-            isEditing
-              ? "bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600"
-              : "bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-          }`}
+          icon={isEditing ? X : Edit2}
         >
-          {isEditing ? (
-            <>
-              <X className="w-4 h-4" /> Cancel
-            </>
-          ) : (
-            <>
-              <Edit2 className="w-4 h-4" /> Edit Profile
-            </>
-          )}
-        </button>
+          {isEditing ? "Cancel" : "Edit Profile"}
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Name Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-            <User className="inline w-4 h-4 mr-1" /> Full Name
-          </label>
-          <input
-            {...register("name")}
+        <Input
+          label="Full Name"
+          {...register("name")}
+          disabled={!isEditing}
+          error={errors.name?.message}
+          icon={User}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Input
+            label="Designation"
+            {...register("designation")}
             disabled={!isEditing}
-            className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
-              isEditing
-                ? "bg-white dark:bg-slate-700"
-                : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-            } dark:border-slate-600 ${
-              errors.name
-                ? "border-red-500"
-                : "border-gray-300 dark:border-slate-600"
-            }`}
+            error={errors.designation?.message}
+            placeholder="e.g. Software Engineer"
           />
-          {errors.name && (
-            <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
-          )}
+
+          <Input
+            label="Employee Code"
+            {...register("employeeId")}
+            disabled={!isEditing}
+            error={errors.employeeId?.message}
+            placeholder="e.g. EMP001"
+          />
+
+          <Input
+            label="Department"
+            {...register("department")}
+            disabled={!isEditing}
+            error={errors.department?.message}
+            placeholder="e.g. Engineering"
+          />
+
+          <Input
+            label="Date of Joining"
+            type="date"
+            {...register("joiningDate")}
+            disabled={!isEditing}
+            error={errors.joiningDate?.message}
+          />
         </div>
 
-        {/* Designation Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-            Designation
-          </label>
-          {!isEditing && !watch("designation") ? (
-            <div className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-slate-800 border-gray-300 dark:border-slate-600 text-gray-400 dark:text-slate-500 cursor-not-allowed">
-              Not Set
-            </div>
-          ) : (
-            <input
-              {...register("designation")}
-              disabled={!isEditing}
-              placeholder={isEditing ? "e.g., Software Engineer, Manager" : ""}
-              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
-                isEditing
-                  ? "bg-white dark:bg-slate-700"
-                  : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-              } dark:border-slate-600 ${
-                errors.designation
-                  ? "border-red-500"
-                  : "border-gray-300 dark:border-slate-600"
-              }`}
-            />
-          )}
-          {errors.designation && (
-            <p className="text-xs text-red-500 mt-1">
-              {errors.designation.message}
-            </p>
-          )}
-        </div>
-
-        {/* Employee Code Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-            Employee Code
-          </label>
-          {!isEditing && !watch("employeeId") ? (
-            <div className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-slate-800 border-gray-300 dark:border-slate-600 text-gray-400 dark:text-slate-500 cursor-not-allowed">
-              Not Set
-            </div>
-          ) : (
-            <input
-              {...register("employeeId")}
-              disabled={!isEditing}
-              placeholder={isEditing ? "e.g., EMP001" : ""}
-              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
-                isEditing
-                  ? "bg-white dark:bg-slate-700"
-                  : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-              } dark:border-slate-600 ${
-                errors.employeeId
-                  ? "border-red-500"
-                  : "border-gray-300 dark:border-slate-600"
-              }`}
-            />
-          )}
-          {errors.employeeId && (
-            <p className="text-xs text-red-500 mt-1">
-              {errors.employeeId.message}
-            </p>
-          )}
-        </div>
-
-        {/* Department Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-            Department
-          </label>
-          {!isEditing && !watch("department") ? (
-            <div className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-slate-800 border-gray-300 dark:border-slate-600 text-gray-400 dark:text-slate-500 cursor-not-allowed">
-              Not Set
-            </div>
-          ) : (
-            <input
-              {...register("department")}
-              disabled={!isEditing}
-              placeholder={isEditing ? "e.g., Engineering, Sales" : ""}
-              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
-                isEditing
-                  ? "bg-white dark:bg-slate-700"
-                  : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-              } dark:border-slate-600 ${
-                errors.department
-                  ? "border-red-500"
-                  : "border-gray-300 dark:border-slate-600"
-              }`}
-            />
-          )}
-          {errors.department && (
-            <p className="text-xs text-red-500 mt-1">
-              {errors.department.message}
-            </p>
-          )}
-        </div>
-
-        {/* Date of Joining Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-            Date of Joining
-          </label>
-          {!isEditing && !watch("joiningDate") ? (
-            <div className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-slate-800 border-gray-300 dark:border-slate-600 text-gray-400 dark:text-slate-500 cursor-not-allowed">
-              Not Set
-            </div>
-          ) : (
-            <input
-              type="date"
-              {...register("joiningDate")}
-              disabled={!isEditing}
-              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white ${
-                isEditing
-                  ? "bg-white dark:bg-slate-700"
-                  : "bg-gray-50 dark:bg-slate-800 cursor-not-allowed"
-              } dark:border-slate-600 ${
-                errors.joiningDate
-                  ? "border-red-500"
-                  : "border-gray-300 dark:border-slate-600"
-              }`}
-            />
-          )}
-          {errors.joiningDate && (
-            <p className="text-xs text-red-500 mt-1">
-              {errors.joiningDate.message}
-            </p>
-          )}
-        </div>
-
-        {/* Change Password Section */}
         {isEditing && (
           <div className="pt-6 border-t border-gray-100 dark:border-slate-700">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Lock className="w-4 h-4" /> Change Password
             </h3>
             <div className="space-y-4">
-              {/* Current Password */}
-              <div>
-                <label className="block text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">
-                  Current Password (Required to change)
-                </label>
-                <input
-                  type="password"
-                  {...register("currentPassword")}
-                  className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${
-                    errors.currentPassword
-                      ? "border-red-500"
-                      : "border-gray-300 dark:border-slate-600"
-                  }`}
-                />
-                {errors.currentPassword && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.currentPassword.message}
-                  </p>
-                )}
-              </div>
+              <Input
+                label="Current Password"
+                type="password"
+                {...register("currentPassword")}
+                error={errors.currentPassword?.message}
+                placeholder="Required to change password"
+              />
 
-              {/* New Passwords */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    {...register("newPassword")}
-                    className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 dark:border-slate-600 ${
-                      errors.newPassword
-                        ? "border-red-500"
-                        : "border-gray-300 dark:border-slate-600"
-                    }`}
-                  />
-                  {errors.newPassword && (
-                    <p className="text-xs text-red-500 mt-1">
-                      {errors.newPassword.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    {...register("confirmNewPassword")}
-                    className={`w-full p-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-white bg-white dark:bg-slate-700 ${
-                      errors.confirmNewPassword
-                        ? "border-red-500"
-                        : "border-gray-300 dark:border-slate-600"
-                    }`}
-                  />
-                  {errors.confirmNewPassword && (
-                    <p className="text-xs text-red-500 mt-1">
-                      {errors.confirmNewPassword.message}
-                    </p>
-                  )}
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="New Password"
+                  type="password"
+                  {...register("newPassword")}
+                  error={errors.newPassword?.message}
+                />
+                <Input
+                  label="Confirm New Password"
+                  type="password"
+                  {...register("confirmNewPassword")}
+                  error={errors.confirmNewPassword?.message}
+                />
               </div>
             </div>
           </div>
         )}
 
-        {/* Submit Button */}
         {isEditing && (
           <div className="pt-6 flex justify-end">
-            <button
+            <Button
               type="submit"
-              disabled={loading || !isDirty}
-              className="bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              isLoading={loading}
+              disabled={!isDirty}
+              icon={Save}
+              className="px-8"
             >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <Save className="w-4 h-4" /> Save Changes
-                </>
-              )}
-            </button>
+              Save Changes
+            </Button>
           </div>
         )}
       </form>

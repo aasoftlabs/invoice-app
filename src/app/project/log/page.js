@@ -4,23 +4,25 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
-import {
-  Calendar,
-  ListTodo,
-  Plus,
-  Trash2,
-  Pencil,
-  Filter,
-  Loader2,
-} from "lucide-react";
+import { ListTodo, Plus, Trash2, Pencil, Filter, Loader2 } from "lucide-react";
 import AddWorkLogModal from "@/components/project/AddWorkLogModal";
 import WorkLogDetailsModal from "@/components/project/WorkLogDetailsModal";
+import { useProjects } from "@/hooks/useProjects";
 
 export default function WorkLogPage() {
   const { data: session, status } = useSession();
   const { confirm, alert } = useModal();
-  const [workLogs, setWorkLogs] = useState([]);
-  const [projects, setProjects] = useState([]); // Added projects state
+
+  // Hook Integration
+  const {
+    workLogs,
+    projects,
+    loading: projectsLoading, // Optional global loading
+    fetchWorkLogs,
+    fetchProjects,
+    deleteWorkLog,
+  } = useProjects();
+
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLog, setEditingLog] = useState(null);
@@ -54,62 +56,6 @@ export default function WorkLogPage() {
     year: currentYear,
   });
 
-  const fetchProjects = useCallback(async () => {
-    try {
-      const res = await fetch("/api/projects");
-      const data = await res.json();
-      if (data.success) {
-        setProjects(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    }
-  }, []);
-
-  const fetchWorkLogs = useCallback(
-    async (isLoadMore = false, currentPage = 1) => {
-      try {
-        if (isLoadMore) {
-          setLoadingMore(true);
-        } else {
-          setLoading(true);
-        }
-
-        const params = new URLSearchParams({
-          ...(filters.projectId && { projectId: filters.projectId }),
-          month: filters.month,
-          year: filters.year,
-          page: currentPage,
-          limit: 20,
-        });
-
-        const res = await fetch(`/api/worklogs?${params}`);
-        const data = await res.json();
-
-        if (data.success) {
-          if (isLoadMore) {
-            setWorkLogs((prev) => [...prev, ...data.data]);
-          } else {
-            setWorkLogs(data.data);
-          }
-
-          if (data.data.length < 20) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching work logs:", error);
-        setHasMore(false);
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [filters],
-  );
-
   const handleDeleteLog = async (logId) => {
     if (
       !(await confirm({
@@ -122,30 +68,25 @@ export default function WorkLogPage() {
       return;
     }
 
-    try {
-      const res = await fetch(`/api/work-logs?id=${logId}`, {
-        method: "DELETE",
+    const result = await deleteWorkLog(logId);
+
+    if (result.success) {
+      await alert({
+        title: "Success",
+        message: "Work log deleted successfully!",
+        variant: "success",
       });
-      const data = await res.json();
-      if (data.success) {
-        await alert({
-          title: "Success",
-          message: "Work log deleted successfully!",
-          variant: "success",
-        });
-        fetchWorkLogs(false, 1);
-      } else {
-        await alert({
-          title: "Error",
-          message: "Error: " + (data.error || "Failed to delete"),
-          variant: "danger",
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting work log:", error);
+      // Refresh
+      setPage(1);
+      fetchWorkLogs({
+        ...filters,
+        page: 1,
+        limit: 20,
+      });
+    } else {
       await alert({
         title: "Error",
-        message: "Error deleting work log",
+        message: "Error: " + (result.error || "Failed to delete"),
         variant: "danger",
       });
     }
@@ -166,12 +107,28 @@ export default function WorkLogPage() {
     setEditingLog(null);
   };
 
+  // Initial Data Fetch
   useEffect(() => {
     if (session) {
+      setLoading(true);
       Promise.resolve().then(() => {
-        fetchProjects();
+        fetchProjects(); // Fetches all projects for the filter dropdown
         setPage(1);
-        fetchWorkLogs(false, 1);
+
+        const params = {
+          ...filters,
+          page: 1,
+          limit: 20,
+        };
+
+        fetchWorkLogs(params).then((data) => {
+          setLoading(false);
+          if (data?.data?.length < 20) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        });
       });
     }
   }, [session, filters, fetchProjects, fetchWorkLogs]);
@@ -179,9 +136,21 @@ export default function WorkLogPage() {
   // Load More
   useEffect(() => {
     if (page > 1) {
-      fetchWorkLogs(true, page);
+      setLoadingMore(true);
+      const params = {
+        ...filters,
+        page: page,
+        limit: 20,
+      };
+
+      fetchWorkLogs(params).then((data) => {
+        setLoadingMore(false);
+        if (data?.data?.length < 20) {
+          setHasMore(false);
+        }
+      });
     }
-  }, [page, fetchWorkLogs]);
+  }, [page, fetchWorkLogs]); // filters not needed here as page change implies same filters
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -317,7 +286,16 @@ export default function WorkLogPage() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
-                {workLogs.length === 0 ? (
+                {loading && workLogs.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="7"
+                      className="px-6 py-4 text-center text-gray-500 dark:text-slate-400"
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                ) : workLogs.length === 0 ? (
                   <tr>
                     <td
                       colSpan="7"
@@ -405,7 +383,11 @@ export default function WorkLogPage() {
         onClose={handleCloseModal}
         onSuccess={() => {
           setPage(1);
-          fetchWorkLogs(false, 1);
+          fetchWorkLogs({
+            ...filters,
+            page: 1,
+            limit: 20,
+          });
         }}
         projects={projects}
         editLog={editingLog}

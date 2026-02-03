@@ -1,4 +1,5 @@
 import { Filter } from "lucide-react";
+import Select from "@/components/ui/Select";
 
 export default function ProjectFilters({
   filters,
@@ -7,6 +8,30 @@ export default function ProjectFilters({
   isAdmin,
 }) {
   const currentYear = new Date().getFullYear();
+
+  const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1).map(
+    (month) => ({
+      value: month,
+      label: new Date(2024, month - 1).toLocaleString("default", {
+        month: "long",
+      }),
+    }),
+  );
+
+  const yearOptions = Array.from({ length: 6 }, (_, i) => 2025 + i).map(
+    (year) => ({
+      value: year,
+      label: year.toString(),
+    }),
+  );
+
+  const userOptions = [
+    { value: "", label: "All Users" },
+    ...users.map((user) => ({
+      value: user._id,
+      label: user.name,
+    })),
+  ];
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4 mb-6">
@@ -18,53 +43,38 @@ export default function ProjectFilters({
 
         <div className="flex flex-wrap items-center gap-3">
           {/* Month Filter */}
-          <select
-            value={filters.month}
-            onChange={(e) =>
-              setFilters({ ...filters, month: parseInt(e.target.value) })
-            }
-            className="border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors cursor-pointer"
-          >
-            {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-              <option key={month} value={month}>
-                {new Date(2024, month - 1).toLocaleString("default", {
-                  month: "long",
-                })}
-              </option>
-            ))}
-          </select>
+          <div className="w-40">
+            <Select
+              value={filters.month}
+              onChange={(e) =>
+                setFilters({ ...filters, month: parseInt(e.target.value) })
+              }
+              options={monthOptions}
+            />
+          </div>
 
           {/* Year Filter */}
-          <select
-            value={filters.year}
-            onChange={(e) =>
-              setFilters({ ...filters, year: parseInt(e.target.value) })
-            }
-            className="border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
-          >
-            {Array.from({ length: 6 }, (_, i) => 2025 + i).map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
+          <div className="w-32">
+            <Select
+              value={filters.year}
+              onChange={(e) =>
+                setFilters({ ...filters, year: parseInt(e.target.value) })
+              }
+              options={yearOptions}
+            />
+          </div>
 
           {/* User Filter (Admin Only) */}
           {isAdmin && (
-            <select
-              value={filters.userId}
-              onChange={(e) =>
-                setFilters({ ...filters, userId: e.target.value })
-              }
-              className="border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
-            >
-              <option value="">All Users</option>
-              {users.map((user) => (
-                <option key={user._id} value={user._id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
+            <div className="w-48">
+              <Select
+                value={filters.userId}
+                onChange={(e) =>
+                  setFilters({ ...filters, userId: e.target.value })
+                }
+                options={userOptions}
+              />
+            </div>
           )}
         </div>
       </div>

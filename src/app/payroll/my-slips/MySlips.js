@@ -10,33 +10,30 @@ import {
   Trash2,
   RefreshCw,
 } from "lucide-react";
+import { usePayroll } from "@/hooks/usePayroll";
 
 export default function MySlips({ userId }) {
-  const [slips, setSlips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [actionLoading, setActionLoading] = useState(null);
   const { confirm, alert } = useModal();
 
-  const fetchSlips = useCallback(async () => {
-    try {
-      const res = await fetch(
-        `/api/payroll/slips?userId=${userId}${selectedYear ? `&year=${selectedYear}` : ""}`,
-      );
-      if (res.ok) {
-        const data = await res.json();
-        setSlips(data.slips);
-      }
-    } catch (error) {
-      console.error("Error fetching slips:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, selectedYear]);
+  // Use custom hook
+  const { slips, fetchSlips, generateSlips } = usePayroll();
+
+  const loadSlips = useCallback(async () => {
+    setLoading(true);
+    await fetchSlips({
+      userId,
+      year: selectedYear || undefined,
+      mySlips: !userId, // If no userId provided, it's the user's own slips
+    });
+    setLoading(false);
+  }, [userId, selectedYear, fetchSlips]);
 
   useEffect(() => {
-    fetchSlips();
-  }, [fetchSlips]);
+    loadSlips();
+  }, [loadSlips]);
 
   const handleDelete = async (slipId) => {
     if (
@@ -56,7 +53,12 @@ export default function MySlips({ userId }) {
       });
 
       if (res.ok) {
-        setSlips((prev) => prev.filter((s) => s._id !== slipId));
+        await alert({
+          title: "Success",
+          message: "Slip deleted successfully!",
+          variant: "success",
+        });
+        loadSlips(); // Refresh list
       } else {
         await alert({
           title: "Error",
@@ -89,50 +91,30 @@ export default function MySlips({ userId }) {
       return;
 
     setActionLoading(slip._id);
-    try {
-      const res = await fetch("/api/payroll/slips", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: slip.userId._id,
-          month: slip.month,
-          year: slip.year,
-          lopDays: slip.lopDays,
-          overwrite: true,
-        }),
-      });
 
-      if (res.ok) {
-        const data = await res.json();
-        await alert({
-          title: "Success",
-          message: "Slip recreated successfully!",
-          variant: "success",
-        });
-        // Update specific slip in list
-        setSlips((prev) =>
-          prev.map((s) => (s._id === slip._id ? data.slip : s)),
-        );
-      } else {
-        const err = await res.json();
-        await alert({
-          title: "Error",
-          message: "Failed to recreate slip: " + err.error,
-          variant: "danger",
-        });
-      }
-    } catch (error) {
-      console.error("Error recreating slip:", error);
+    const result = await generateSlips({
+      userId: slip.userId._id,
+      month: slip.month,
+      year: slip.year,
+      lopDays: slip.lopDays,
+      overwrite: true,
+    });
+
+    if (result.success) {
+      await alert({
+        title: "Success",
+        message: "Slip recreated successfully!",
+        variant: "success",
+      });
+      loadSlips(); // Refresh list
+    } else {
       await alert({
         title: "Error",
-        message: "Error recreating slip",
+        message: "Failed to recreate slip: " + result.error,
         variant: "danger",
       });
-    } finally {
-      setActionLoading(null);
     }
+    setActionLoading(null);
   };
 
   const monthNames = [
@@ -214,8 +196,8 @@ export default function MySlips({ userId }) {
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="bg-blue-100 p-3 rounded-lg">
-                    <FileText className="w-6 h-6 text-blue-600" />
+                  <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+                    <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-800 dark:text-white">
@@ -230,10 +212,10 @@ export default function MySlips({ userId }) {
                 <span
                   className={`px-2 py-1 rounded text-xs font-semibold uppercase ${
                     slip.status === "paid"
-                      ? "bg-green-100 text-green-700"
+                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                       : slip.status === "finalized"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                        : "bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400"
                   }`}
                 >
                   {slip.status}
@@ -250,12 +232,14 @@ export default function MySlips({ userId }) {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Deductions:</span>
-                  <span className="text-sm text-red-600">
+                  <span className="text-sm text-gray-500 dark:text-slate-400">
+                    Deductions:
+                  </span>
+                  <span className="text-sm text-red-600 dark:text-red-400">
                     -{formatCurrency(slip.deductions.total)}
                   </span>
                 </div>
-                <div className="border-t pt-2 flex justify-between items-center">
+                <div className="border-t dark:border-slate-700 pt-2 flex justify-between items-center">
                   <span className="text-sm font-semibold text-gray-700 dark:text-slate-300">
                     Net Pay:
                   </span>
@@ -278,7 +262,7 @@ export default function MySlips({ userId }) {
                 <button
                   onClick={() => handleRecreate(slip)}
                   disabled={actionLoading === slip._id}
-                  className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Recreate/Recalculate"
                 >
                   <RefreshCw
@@ -297,7 +281,7 @@ export default function MySlips({ userId }) {
                 <button
                   onClick={() => handleDelete(slip._id)}
                   disabled={actionLoading === slip._id}
-                  className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Delete Slip"
                 >
                   <Trash2 className="w-4 h-4" />

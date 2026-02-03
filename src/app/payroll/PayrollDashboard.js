@@ -6,15 +6,56 @@ import { Plus, Loader2 } from "lucide-react";
 import PayrollStats from "@/components/payroll/PayrollStats";
 import PayrollFilters from "@/components/payroll/PayrollFilters";
 import PayrollTable from "@/components/payroll/PayrollTable";
+import { usePayroll } from "@/hooks/usePayroll";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function PayrollDashboard() {
   const router = useRouter();
-  const [employees, setEmployees] = useState([]);
+  const { alert } = useModal();
+
+  // Use custom hook
+  const {
+    employees,
+    stats,
+    loading: hookLoading,
+    error: hookError,
+    fetchEmployees,
+    fetchPayrollStats,
+  } = usePayroll();
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+
+  // Filter States
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterState, setFilterState] = useState("all");
+  const [filterDepartment, setFilterDepartment] = useState("all");
+
+  // Local state for dropdown options to avoid flickering on refetch
+  // Ideally, these could also come from an API or be derived from a larger cached dataset.
+  // For now, we derive from *all* loaded employees history or hardcode basics if list is empty?
+  // Current refactor uses server-side pagination, so "deriving from loaded" might be incomplete for filters.
+  // But let's keep the existing logic:
+  // "Get unique states from employees" -> This was bad if only page 1 is loaded.
+  // However, without a dedicated filters API, we can't do much better easily.
+  // Let's keep it as is, understanding the limitation, or pre-define common departments.
+
+  const uniqueStates =
+    employees.length > 0
+      ? [...new Set(employees.map((e) => e.salary?.state || e.state || "N/A"))]
+          .filter(Boolean)
+          .sort()
+      : [];
+
+  const uniqueDepartments =
+    employees.length > 0
+      ? [...new Set(employees.map((e) => e.department || "N/A"))]
+          .filter(Boolean)
+          .sort()
+      : [];
 
   // Observer for infinite scroll
   const observer = useRef();
@@ -32,91 +73,65 @@ export default function PayrollDashboard() {
     [loading, loadingMore, hasMore],
   );
 
-  // Filter States
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [filterState, setFilterState] = useState("all");
-  const [filterDepartment, setFilterDepartment] = useState("all");
-
-  // Fetch Employees
-  const fetchEmployees = useCallback(
-    async (isLoadMore = false, currentPage = 1) => {
-      try {
-        if (isLoadMore) {
-          setLoadingMore(true);
-        } else {
-          setLoading(true);
-        }
-
-        const query = new URLSearchParams({
-          page: currentPage,
-          limit: 20,
-          search: searchTerm,
-          status: filterStatus,
-          state: filterState,
-          department: filterDepartment,
-        }).toString();
-
-        const res = await fetch(`/api/payroll/employees?${query}`, {
-          cache: "no-store",
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (isLoadMore) {
-            setEmployees((prev) => [...prev, ...data.employees]);
-          } else {
-            setEmployees(data.employees);
-          }
-
-          if (data.employees.length < 20) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-        } else {
-          const errData = await res.json();
-          setError(errData.error || "Failed to fetch employees");
-        }
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [searchTerm, filterStatus, filterState, filterDepartment],
-  );
-
-  // Initial Fetch & Filter Change
+  // Initial Fetch & Stats
   useEffect(() => {
-    setPage(1);
-    fetchEmployees(false, 1);
-  }, [searchTerm, filterStatus, filterState, filterDepartment, fetchEmployees]);
+    const init = async () => {
+      setLoading(true);
+      // Reset page
+      setPage(1);
+
+      // Fetch Stats
+      fetchPayrollStats();
+
+      // Fetch Employees
+      const params = {
+        page: 1,
+        limit: 20,
+        search: searchTerm,
+        status: filterStatus,
+        state: filterState,
+        department: filterDepartment,
+      };
+      const data = await fetchEmployees(params);
+
+      if (data?.employees?.length < 20) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+      setLoading(false);
+    };
+
+    init();
+  }, [
+    searchTerm,
+    filterStatus,
+    filterState,
+    filterDepartment,
+    fetchEmployees,
+    fetchPayrollStats,
+  ]);
 
   // Load More
   useEffect(() => {
     if (page > 1) {
-      fetchEmployees(true, page);
+      setLoadingMore(true);
+      const params = {
+        page: page,
+        limit: 20,
+        search: searchTerm,
+        status: filterStatus,
+        state: filterState,
+        department: filterDepartment,
+      };
+      fetchEmployees(params).then((data) => {
+        setLoadingMore(false);
+        if (data?.employees?.length < 20) {
+          setHasMore(false);
+        }
+      });
     }
-  }, [page, fetchEmployees]);
-
-  // Get unique states from employees
-  const uniqueStates = [
-    ...new Set(employees.map((e) => e.salary?.state || e.state || "N/A")),
-  ]
-    .filter(Boolean)
-    .sort();
-
-  // Get unique departments from employees
-  const uniqueDepartments = [
-    ...new Set(employees.map((e) => e.department || "N/A")),
-  ]
-    .filter(Boolean)
-    .sort();
-
-  // Removed client-side filtering: filteredEmployees replaced by employees state
+  }, [page, fetchEmployees]); // filters shouldn't trigger this explicitly, as they reset page to 1
 
   return (
     <div>
@@ -138,7 +153,7 @@ export default function PayrollDashboard() {
         </button>
       </div>
 
-      <PayrollStats employees={employees} />
+      <PayrollStats stats={stats} />
 
       <PayrollFilters
         filterStatus={filterStatus}
@@ -156,7 +171,7 @@ export default function PayrollDashboard() {
       <PayrollTable
         employees={employees}
         loading={loading}
-        error={error}
+        error={hookError}
         lastElementRef={lastEmployeeElementRef}
       />
 

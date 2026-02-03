@@ -17,31 +17,36 @@ import {
   CheckCircle,
   XCircle,
   Plus,
-  Check,
-  X,
-  ExternalLink,
   Pencil,
   Trash2,
+  ExternalLink,
   Loader2,
 } from "lucide-react";
 import AddProjectModal from "@/components/project/AddProjectModal";
+import { useProjects } from "@/hooks/useProjects";
 
 export default function ProjectsPage() {
   const { data: session, status } = useSession();
   const { confirm, alert } = useModal();
-  const [projects, setProjects] = useState([]);
   const [projectTasks, setProjectTasks] = useState({});
   const [expandedProjects, setExpandedProjects] = useState(new Set());
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
   const [showCompleted, setShowCompleted] = useState(false);
 
-  // Memoize fetchProjects based on showCompleted
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+
+  // Hook Integration
+  const {
+    projects,
+    loading: projectsLoading, // Optional: use this if you want global loading
+    fetchProjects,
+    deleteProject,
+  } = useProjects();
 
   // Observer for infinite scroll
   const observer = useRef();
@@ -59,63 +64,53 @@ export default function ProjectsPage() {
     [loading, loadingMore, hasMore],
   );
 
-  // Fetch Projects Function
-  const fetchProjects = useCallback(
-    async (isLoadMore = false, currentPage = 1) => {
-      try {
-        if (isLoadMore) {
-          setLoadingMore(true);
-        } else {
-          setLoading(true);
-        }
-
-        // If showCompleted is false, pass activeOnly=true
-        const queryParams = new URLSearchParams({
-          page: currentPage,
-          limit: 20,
-          ...(!showCompleted && { activeOnly: "true" }),
-        });
-
-        const res = await fetch(`/api/projects?${queryParams}`);
-        const data = await res.json();
-
-        if (data.success) {
-          if (isLoadMore) {
-            setProjects((prev) => [...prev, ...data.data]);
-          } else {
-            setProjects(data.data);
-          }
-
-          if (data.data.length < 20) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        setHasMore(false);
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [showCompleted],
-  );
-
   // Initial Fetch & Filter Change
   useEffect(() => {
-    setPage(1);
-    fetchProjects(false, 1);
-  }, [showCompleted, fetchProjects]);
+    if (session) {
+      setLoading(true);
+      setPage(1);
+
+      const queryParams = {
+        page: 1,
+        limit: 20,
+        ...(!showCompleted && { activeOnly: "true" }),
+      };
+
+      fetchProjects(queryParams).then((data) => {
+        setLoading(false);
+        if (data?.data?.length < 20) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
+      });
+    }
+  }, [showCompleted, session, fetchProjects]);
 
   // Load More (Page Change)
   useEffect(() => {
     if (page > 1) {
-      fetchProjects(true, page);
-    }
-  }, [page, fetchProjects]);
+      setLoadingMore(true);
+      const queryParams = {
+        page: page,
+        limit: 20,
+        ...(!showCompleted && { activeOnly: "true" }),
+      };
 
+      fetchProjects(queryParams).then((data) => {
+        setLoadingMore(false);
+        if (data?.data?.length < 20) {
+          setHasMore(false);
+        }
+      });
+    }
+  }, [page, showCompleted, fetchProjects]);
+
+  // NOTE: Tasks for projects are still fetched locally because useProjects hook
+  // doesn't have a specific `fetchProjectTasks(projectId)` method exposed efficiently
+  // without filtering the main tasks list which might not be loaded.
+  // We can keep this local or add it to the hook.
+  // For now, keeping it local as it's specific to the expansion logic.
   const fetchProjectTasks = async (projectId) => {
     try {
       const res = await fetch(`/api/projects/${projectId}/tasks`);
@@ -159,30 +154,25 @@ export default function ProjectsPage() {
       return;
     }
 
-    try {
-      const res = await fetch(`/api/projects?id=${projectId}`, {
-        method: "DELETE",
+    const result = await deleteProject(projectId);
+
+    if (result.success) {
+      await alert({
+        title: "Success",
+        message: "Project deleted successfully",
+        variant: "success",
       });
-      const data = await res.json();
-      if (data.success) {
-        await alert({
-          title: "Success",
-          message: "Project deleted successfully",
-          variant: "success",
-        });
-        fetchProjects();
-      } else {
-        await alert({
-          title: "Error",
-          message: "Error: " + data.error,
-          variant: "danger",
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting project:", error);
+      // Refresh
+      setPage(1);
+      fetchProjects({
+        page: 1,
+        limit: 20,
+        ...(!showCompleted && { activeOnly: "true" }),
+      });
+    } else {
       await alert({
         title: "Error",
-        message: "Error deleting project",
+        message: "Error: " + result.error,
         variant: "danger",
       });
     }
@@ -269,7 +259,7 @@ export default function ProjectsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
-              {loading ? (
+              {loading && projects.length === 0 ? (
                 <tr>
                   <td
                     colSpan="8"
@@ -508,7 +498,11 @@ export default function ProjectsPage() {
         onClose={handleCloseModal}
         onSuccess={() => {
           setPage(1);
-          fetchProjects(false, 1);
+          fetchProjects({
+            page: 1,
+            limit: 20,
+            ...(!showCompleted && { activeOnly: "true" }),
+          });
         }}
         editProject={editingProject}
       />

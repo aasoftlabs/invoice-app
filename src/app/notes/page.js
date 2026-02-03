@@ -15,33 +15,26 @@ import { useToast } from "@/contexts/ToastContext";
 import { useModal } from "@/contexts/ModalContext";
 import NoteModal from "@/components/notes/NoteModal";
 import Spotlight from "@/components/ui/Spotlight";
+import { useNotes } from "@/hooks/useNotes";
 
 export default function NotesPage() {
   const { data: session } = useSession();
   const { addToast } = useToast();
   const { confirm } = useModal();
-  const [notes, setNotes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const [filter, setFilter] = useState("all"); // all, my, public
 
-  const fetchNotes = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/notes");
-      const data = await res.json();
-      if (data.success) {
-        setNotes(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching notes:", error);
-      addToast("Failed to fetch notes", "error");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [addToast]);
+  // Use custom hook
+  const {
+    notes,
+    loading: isLoading,
+    fetchNotes,
+    deleteNote: deleteNoteAPI,
+    toggleNoteStatus: toggleNoteStatusAPI,
+  } = useNotes();
 
+  // Fetch notes on mount
   useEffect(() => {
     if (session) {
       fetchNotes();
@@ -58,33 +51,21 @@ export default function NotesPage() {
       }))
     )
       return;
-    try {
-      const res = await fetch(`/api/notes/${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (data.success) {
-        addToast("Note deleted successfully", "success");
-        fetchNotes();
-      } else {
-        addToast(data.error || "Failed to delete note", "error");
-      }
-    } catch (error) {
-      addToast("Error deleting note", "error");
+
+    const result = await deleteNoteAPI(id);
+    if (result.success) {
+      addToast("Note deleted successfully", "success");
+      fetchNotes(); // Refresh list
+    } else {
+      addToast(result.error || "Failed to delete note", "error");
     }
   };
 
   const handleToggleStatus = async (note) => {
-    const newStatus = note.status === "Completed" ? "Pending" : "Completed";
-    try {
-      const res = await fetch(`/api/notes/${note._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        fetchNotes();
-      }
-    } catch (error) {
+    const result = await toggleNoteStatusAPI(note);
+    if (result.success) {
+      fetchNotes(); // Refresh list
+    } else {
       addToast("Error updating note", "error");
     }
   };
@@ -179,11 +160,11 @@ export default function NotesPage() {
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-2">
                       {note.share === "public" ? (
-                        <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                        <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-full">
                           <Globe className="w-3 h-3" /> Public
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                        <span className="flex items-center gap-1 text-[10px] uppercase font-bold text-gray-500 dark:text-slate-400 bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">
                           <Lock className="w-3 h-3" /> Private
                         </span>
                       )}
@@ -197,14 +178,14 @@ export default function NotesPage() {
                               setEditingNote(note);
                               setIsModalOpen(true);
                             }}
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition"
+                            className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition"
                           >
                             <Plus className="w-4 h-4 rotate-45" />{" "}
                             {/* Use Plus as edit/update placeholder */}
                           </button>
                           <button
                             onClick={() => handleDelete(note._id)}
-                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
+                            className="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -221,7 +202,7 @@ export default function NotesPage() {
 
                   <div className="space-y-2 mt-auto text-xs text-gray-500 dark:text-slate-400">
                     <div className="flex items-center gap-2 bg-gray-50 dark:bg-slate-900/50 p-2 rounded-lg">
-                      <Clock className="w-3.5 h-3.5 text-blue-500" />
+                      <Clock className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                       <div>
                         <div className="font-semibold text-gray-700 dark:text-slate-300">
                           Schedule
@@ -253,12 +234,12 @@ export default function NotesPage() {
                     onClick={() => handleToggleStatus(note)}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                       note.status === "Completed"
-                        ? "bg-green-100 text-green-700"
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
                         : "bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 shadow-sm"
                     }`}
                   >
                     <CheckCircle
-                      className={`w-4 h-4 ${note.status === "Completed" ? "fill-green-700 text-white" : ""}`}
+                      className={`w-4 h-4 ${note.status === "Completed" ? "fill-green-700 dark:fill-green-400 text-white dark:text-green-900" : ""}`}
                     />
                     {note.status}
                   </button>

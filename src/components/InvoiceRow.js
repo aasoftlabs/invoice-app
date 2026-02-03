@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/contexts/ModalContext";
 import { ArrowRight, Trash2 } from "lucide-react";
@@ -8,53 +9,55 @@ export default function InvoiceRow({ invoice, scrollRef }) {
   const router = useRouter();
   const { confirm, alert } = useModal();
 
-  const handleRowClick = () => {
+  const handleRowClick = useCallback(() => {
     router.push(`/invoices/${invoice._id}`);
-  };
+  }, [router, invoice._id]);
 
-  const handleDelete = async (e) => {
-    e.stopPropagation(); // Prevent row click
-    if (
-      !(await confirm({
-        title: "Delete Invoice",
-        message: `Are you sure you want to delete invoice ${invoice.invoiceNo}?`,
-        variant: "danger",
-        confirmText: "Delete",
-      }))
-    )
-      return;
-    {
-      try {
-        const res = await fetch(`/api/invoices/${invoice._id}`, {
-          method: "DELETE",
-        });
+  const handleDelete = useCallback(
+    async (e) => {
+      e.stopPropagation(); // Prevent row click
+      if (
+        !(await confirm({
+          title: "Delete Invoice",
+          message: `Are you sure you want to delete invoice ${invoice.invoiceNo}?`,
+          variant: "danger",
+          confirmText: "Delete",
+        }))
+      )
+        return;
+      {
+        try {
+          const res = await fetch(`/api/invoices/${invoice._id}`, {
+            method: "DELETE",
+          });
 
-        if (res.ok) {
-          router.refresh();
-        } else {
+          if (res.ok) {
+            router.refresh();
+          } else {
+            await alert({
+              title: "Error",
+              message: "Failed to delete invoice",
+              variant: "danger",
+            });
+          }
+        } catch (error) {
+          console.error("Error deleting invoice:", error);
           await alert({
             title: "Error",
-            message: "Failed to delete invoice",
+            message: "An error occurred",
             variant: "danger",
           });
         }
-      } catch (error) {
-        console.error("Error deleting invoice:", error);
-        await alert({
-          title: "Error",
-          message: "An error occurred",
-          variant: "danger",
-        });
       }
-    }
-  };
+    },
+    [confirm, alert, invoice._id, invoice.invoiceNo, router],
+  );
 
   return (
     <tr
       ref={scrollRef}
       onClick={handleRowClick}
       className="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors group cursor-pointer"
-
     >
       <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
         {invoice.invoiceNo}
@@ -92,10 +95,11 @@ export default function InvoiceRow({ invoice, scrollRef }) {
       </td>
       <td className="px-6 py-4">
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${invoice.status === "Paid"
-            ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50"
-            : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50"
-            }`}
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+            invoice.status === "Paid"
+              ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50"
+              : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50"
+          }`}
         >
           {invoice.status}
         </span>
@@ -117,6 +121,3 @@ export default function InvoiceRow({ invoice, scrollRef }) {
     </tr>
   );
 }
-
-
-

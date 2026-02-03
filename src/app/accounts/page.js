@@ -3,14 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
+import { useToast } from "@/contexts/ToastContext";
 import {
   Plus,
-  Download,
-  Filter,
   Wallet,
   ArrowUpRight,
   ArrowDownLeft,
-  Search,
   Edit2,
   Trash2,
   TrendingUp,
@@ -22,11 +20,21 @@ import Spotlight from "@/components/ui/Spotlight";
 import AddTransactionModal from "@/components/accounts/AddTransactionModal";
 import AccountFilters from "@/components/accounts/AccountFilters";
 import { useRouter } from "next/navigation";
+import { useTransactions } from "@/hooks/useTransactions";
 
 export default function AccountsPage() {
   const { data: session } = useSession();
   const { confirm, alert } = useModal();
+  const { addToast } = useToast();
   const router = useRouter();
+
+  // Use custom hook
+  const {
+    loading,
+    fetchTransactions,
+    deleteTransaction: deleteTransactionAPI,
+    saveTransaction,
+  } = useTransactions();
 
   useEffect(() => {
     if (session) {
@@ -40,12 +48,11 @@ export default function AccountsPage() {
   }, [session, router]);
 
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [stats, setStats] = useState({ income: 0, expense: 0, balance: 0 });
   const [filters, setFilters] = useState({
-    month: new Date().getMonth() + 1, // Default current month
+    month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
     type: "all",
   });
@@ -81,74 +88,61 @@ export default function AccountsPage() {
     setStats({ income, expense, balance: globalBalance });
   };
 
-  const fetchTransactions = useCallback(
+  const loadTransactions = useCallback(
     async (isLoadMore = false, currentPage = 1) => {
       try {
         if (isLoadMore) {
           setLoadingMore(true);
-        } else {
-          setLoading(true);
         }
 
-        const query = new URLSearchParams({
-          month: filters.month,
-          year: filters.year,
-          type: filters.type,
-          page: currentPage,
-          limit: 50,
-        }).toString();
+        const result = await fetchTransactions(filters, currentPage);
 
-        const res = await fetch(`/api/accounts/transactions?${query}`);
-        const data = await res.json();
-
-        if (data.success) {
+        if (result.success) {
           if (isLoadMore) {
-            setTransactions((prev) => [...prev, ...data.data]);
+            setTransactions((prev) => [...prev, ...result.data]);
           } else {
-            setTransactions(data.data);
-            if (data.meta?.globalBalance !== undefined) {
-              // Only update stats on first load or if needed.
-              // Note: This logic might need adjustment if we want running balance
-              calculateStats(data.data, data.meta.globalBalance);
+            setTransactions(result.data);
+            if (result.meta?.globalBalance !== undefined) {
+              calculateStats(result.data, result.meta.globalBalance);
             }
           }
 
-          // Re-calculate stats for the view?
-          // If we append data, we should probably re-run calculateStats on the whole list or handle it differently.
-          // For now, let's just append. Use a memoized stats calculation if possible, or just re-run on 'transactions' list effect.
-
-          if (data.data.length < 50) {
+          if (result.data.length < 50) {
             setHasMore(false);
           } else {
             setHasMore(true);
           }
+        } else {
+          addToast(result.error || "Failed to load transactions", "error");
+          setHasMore(false);
         }
       } catch (error) {
         console.error("Failed to fetch transactions", error);
+        addToast("Failed to load transactions", "error");
         setHasMore(false);
       } finally {
-        setLoading(false);
         setLoadingMore(false);
       }
     },
-    [filters],
+    [filters, fetchTransactions, addToast],
   );
 
   useEffect(() => {
     setPage(1);
-    fetchTransactions(false, 1);
-  }, [filters, fetchTransactions]);
+    loadTransactions(false, 1);
+  }, [filters, loadTransactions]);
 
   useEffect(() => {
     if (page > 1) {
-      fetchTransactions(true, page);
+      loadTransactions(true, page);
     }
-  }, [page, fetchTransactions]);
+  }, [page, loadTransactions]);
 
   const handleSuccess = () => {
     setPage(1);
-    fetchTransactions(false, 1);
+    loadTransactions(false, 1);
     setEditingTransaction(null);
+    setIsModalOpen(false);
   };
 
   const handleEdit = (transaction) => {
@@ -168,25 +162,15 @@ export default function AccountsPage() {
     )
       return;
 
-    try {
-      const res = await fetch(`/api/accounts/transactions?id=${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        setPage(1);
-        fetchTransactions(false, 1);
-      } else {
-        await alert({
-          title: "Error",
-          message: "Failed to delete",
-          variant: "danger",
-        });
-      }
-    } catch (error) {
-      console.error(error);
+    const success = await deleteTransactionAPI(id);
+    if (success) {
+      addToast("Transaction deleted successfully", "success");
+      setPage(1);
+      loadTransactions(false, 1);
+    } else {
       await alert({
         title: "Error",
-        message: "Failed to delete",
+        message: "Failed to delete transaction",
         variant: "danger",
       });
     }
@@ -293,12 +277,13 @@ export default function AccountsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
-                {loading ? (
+                {loading && transactions.length === 0 ? (
                   <tr>
                     <td
                       colSpan="6"
                       className="text-center py-8 text-gray-500 dark:text-slate-400"
                     >
+                      <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
                       Loading ledger...
                     </td>
                   </tr>
@@ -327,12 +312,12 @@ export default function AccountsPage() {
                           {t.description || "No description"}
                         </div>
                         {t.reference?.type === "Invoice" && (
-                          <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded ml-1">
+                          <span className="text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded ml-1">
                             Linked to Invoice
                           </span>
                         )}
                         {t.reference?.type === "SalarySlip" && (
-                          <span className="text-xs bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded ml-1">
+                          <span className="text-xs bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded ml-1">
                             Salary Slip
                           </span>
                         )}
@@ -347,7 +332,7 @@ export default function AccountsPage() {
                       </td>
                       <td className="px-6 py-4 text-right font-mono font-bold">
                         <div
-                          className={`flex items-center justify-end gap-1 ${t.type === "Credit" ? "text-green-600" : "text-red-600"}`}
+                          className={`flex items-center justify-end gap-1 ${t.type === "Credit" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                         >
                           {t.type === "Credit" ? (
                             <ArrowUpRight className="w-3 h-3" />
@@ -361,13 +346,13 @@ export default function AccountsPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleEdit(t)}
-                            className="text-gray-400 hover:text-blue-600 transition-colors"
+                            className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(t._id)}
-                            className="text-gray-400 hover:text-red-600 transition-colors"
+                            className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

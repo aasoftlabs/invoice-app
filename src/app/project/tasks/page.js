@@ -15,17 +15,29 @@ import {
 } from "lucide-react";
 import AddTaskModal from "@/components/project/AddTaskModal";
 import TaskDetailsModal from "@/components/project/TaskDetailsModal";
+import { useProjects } from "@/hooks/useProjects";
+import { useUsers } from "@/hooks/useUsers";
 
 export default function TasksPage() {
   const { data: session, status } = useSession();
   const { confirm, alert } = useModal();
-  const [tasks, setTasks] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+
+  // Replaced local fetching with hooks
+  const {
+    tasks,
+    projects,
+    loading: projectsLoading, // Global loading state from hook
+    fetchTasks,
+    fetchProjects,
+    deleteTask,
+  } = useProjects();
+
+  const { users, fetchUsers } = useUsers();
+
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   // Observer for infinite scroll
   const observer = useRef();
@@ -50,84 +62,48 @@ export default function TasksPage() {
   const [viewingTask, setViewingTask] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-  const fetchProjects = useCallback(async () => {
-    try {
-      const res = await fetch("/api/projects");
-      const data = await res.json();
-      if (data.success) setProjects(data.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }, []);
-
-  const fetchTasks = useCallback(
-    async (isLoadMore = false, currentPage = 1) => {
-      try {
-        if (isLoadMore) {
-          setLoadingMore(true);
-        } else {
-          setLoading(true);
-        }
-
-        const params = new URLSearchParams({
-          ...filters,
-          page: currentPage,
-          limit: 20,
-        });
-
-        const res = await fetch(`/api/tasks?${params}`);
-        const data = await res.json();
-
-        if (data.success) {
-          if (isLoadMore) {
-            setTasks((prev) => [...prev, ...data.data]);
-          } else {
-            setTasks(data.data);
-          }
-
-          if (data.data.length < 20) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        setHasMore(false);
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [filters],
-  );
-
-  const fetchUsers = useCallback(async () => {
-    try {
-      const res = await fetch("/api/users");
-      const data = await res.json();
-      if (data.success) setUsers(data.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }, []);
-
+  // Initial Fetch
   useEffect(() => {
     if (session) {
+      setLoading(true);
       fetchProjects();
-      // Initial fetch
-      setPage(1);
-      fetchTasks(false, 1);
       fetchUsers();
+
+      const fetchParams = {
+        ...filters,
+        page: 1,
+        limit: 20,
+      };
+
+      fetchTasks(fetchParams).then((data) => {
+        setLoading(false);
+        if (data?.data?.length < 20) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
+      });
     }
   }, [filters, session, fetchProjects, fetchTasks, fetchUsers]);
 
   // Load More
   useEffect(() => {
     if (page > 1) {
-      fetchTasks(true, page);
+      setLoadingMore(true);
+      const fetchParams = {
+        ...filters,
+        page: page,
+        limit: 20,
+      };
+
+      fetchTasks(fetchParams).then((data) => {
+        setLoadingMore(false);
+        if (data?.data?.length < 20) {
+          setHasMore(false);
+        }
+      });
     }
-  }, [page, fetchTasks]);
+  }, [page, filters, fetchTasks]);
 
   const filteredTasks = tasks.filter(
     (task) =>
@@ -153,31 +129,21 @@ export default function TasksPage() {
       return;
     }
 
-    try {
-      const res = await fetch(`/api/tasks?id=${taskId}`, {
-        method: "DELETE",
-      });
+    const result = await deleteTask(taskId);
 
-      const data = await res.json();
-      if (data.success) {
-        await alert({
-          title: "Success",
-          message: "Task deleted successfully!",
-          variant: "success",
-        });
-        fetchTasks(false, 1);
-      } else {
-        await alert({
-          title: "Error",
-          message: "Error: " + data.error,
-          variant: "danger",
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting task:", error);
+    if (result.success) {
+      await alert({
+        title: "Success",
+        message: "Task deleted successfully!",
+        variant: "success",
+      });
+      // Refresh tasks
+      setPage(1);
+      fetchTasks({ ...filters, page: 1, limit: 20 });
+    } else {
       await alert({
         title: "Error",
-        message: "Error deleting task",
+        message: "Error: " + result.error,
         variant: "danger",
       });
     }
@@ -308,7 +274,7 @@ export default function TasksPage() {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
-              {loading ? (
+              {loading && tasks.length === 0 ? (
                 <tr>
                   <td
                     colSpan="8"
@@ -404,7 +370,7 @@ export default function TasksPage() {
         onClose={handleCloseModal}
         onSuccess={() => {
           setPage(1);
-          fetchTasks(false, 1);
+          fetchTasks({ ...filters, page: 1, limit: 20 });
           handleCloseModal();
         }}
         projects={projects}

@@ -1,21 +1,35 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { X, Calendar, Clock, FileText, CheckCircle, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { useModal } from "@/contexts/ModalContext";
+import { useProjects } from "@/hooks/useProjects";
+import Modal from "@/components/ui/Modal";
+import { Input } from "@/components/ui/Input";
+import Select from "@/components/ui/Select";
+import Button from "@/components/ui/Button";
 
 export default function AddWorkLogModal({
   isOpen,
   onClose,
   onSuccess,
   projects,
-  users,
+  users, // Kept for consistency if passed from parent, though not used in form directly unless we add assignment here?
+  // Wait, original form didn't use 'users' prop in the form?
+  // Ah, original form didn't use 'users' in render? Let me check.
+  // Original Render:
+  // It DID NOT use users. It only used projects.
+  // Wait, AddProjectModal uses users. AddWorkLogModal... let me re-read original code.
+  // Original Props: projects, users, editLog.
+  // Original Form: Date, Status, Project, Task, Details, Remarks.
+  // It seems 'users' was passed but unused?
+  // Actually, let's keep it clean.
   editLog = null,
 }) {
   const { alert } = useModal();
+  const { fetchTasks, createWorkLog, updateWorkLog, tasks } = useProjects();
+
   const [loading, setLoading] = useState(false);
-  const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
+
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
     projectId: "",
@@ -24,6 +38,13 @@ export default function AddWorkLogModal({
     status: "In Progress",
     remarks: "",
   });
+
+  // Fetch tasks when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchTasks();
+    }
+  }, [isOpen, fetchTasks]);
 
   // Pre-populate form when editing
   useEffect(() => {
@@ -50,16 +71,13 @@ export default function AddWorkLogModal({
     }
   }, [editLog, isOpen]);
 
+  // Filter tasks by project
   useEffect(() => {
-    if (isOpen && projects.length > 0) {
-      fetchTasks();
-    }
-  }, [isOpen, projects]);
-
-  useEffect(() => {
-    if (formData.projectId) {
+    if (formData.projectId && tasks.length > 0) {
       const projectTasks = tasks.filter(
-        (t) => t.projectId?._id === formData.projectId,
+        (t) =>
+          t.projectId?._id === formData.projectId ||
+          t.projectId === formData.projectId,
       );
       setFilteredTasks(projectTasks);
     } else {
@@ -67,32 +85,19 @@ export default function AddWorkLogModal({
     }
   }, [formData.projectId, tasks]);
 
-  const fetchTasks = async () => {
-    try {
-      const res = await fetch("/api/tasks");
-      const data = await res.json();
-      if (data.success) setTasks(data.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const url = editLog ? `/api/worklogs?id=${editLog._id}` : "/api/worklogs";
-      const method = editLog ? "PUT" : "POST";
+      let result;
+      if (editLog) {
+        result = await updateWorkLog(editLog._id, formData);
+      } else {
+        result = await createWorkLog(formData);
+      }
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      if (data.success) {
+      if (result.success) {
         await alert({
           title: "Success",
           message: editLog
@@ -100,33 +105,20 @@ export default function AddWorkLogModal({
             : "Work log created successfully!",
           variant: "success",
         });
-        setFormData({
-          date: new Date().toISOString().split("T")[0],
-          projectId: "",
-          taskId: "",
-          details: "",
-          status: "In Progress",
-          remarks: "",
-        });
         onSuccess();
         onClose();
       } else {
         await alert({
           title: "Error",
-          message: "Error: " + data.error,
+          message: result.error || "Operation failed",
           variant: "danger",
         });
       }
     } catch (error) {
-      console.error(
-        editLog ? "Error updating work log:" : "Error creating work log:",
-        error,
-      );
+      console.error("Error submitting work log:", error);
       await alert({
         title: "Error",
-        message: editLog
-          ? "Error updating work log"
-          : "Error creating work log",
+        message: "An unexpected error occurred",
         variant: "danger",
       });
     } finally {
@@ -134,161 +126,110 @@ export default function AddWorkLogModal({
     }
   };
 
-  if (!isOpen) return null;
+  const projectOptions = projects.map((p) => ({ value: p._id, label: p.name }));
+  const taskOptions = filteredTasks.map((t) => ({
+    value: t._id,
+    label: t.taskName,
+  }));
+
+  const statusOptions = [
+    { value: "Not Started", label: "Not Started" },
+    { value: "In Progress", label: "In Progress" },
+    { value: "Follow-up", label: "Follow-up" },
+    { value: "Completed", label: "Completed" },
+  ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-auto">
-        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {editLog ? "Edit" : "Add"} Work Log Entry
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="w-6 h-6 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors" />
-          </button>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={editLog ? "Edit Work Log Entry" : "Add Work Log Entry"}
+      maxWidth="max-w-2xl"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Date"
+            type="date"
+            required
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          />
+
+          <Select
+            label="Status"
+            required
+            options={statusOptions}
+            value={formData.status}
+            onChange={(e) =>
+              setFormData({ ...formData, status: e.target.value })
+            }
+          />
+
+          <Select
+            label="Project"
+            required
+            options={projectOptions}
+            value={formData.projectId}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                projectId: e.target.value,
+                taskId: "", // Reset task when project changes
+              })
+            }
+            placeholder="Select Project"
+          />
+
+          <Select
+            label="Task"
+            required
+            options={taskOptions}
+            value={formData.taskId}
+            onChange={(e) =>
+              setFormData({ ...formData, taskId: e.target.value })
+            }
+            placeholder="Select Task"
+            disabled={!formData.projectId}
+          />
+
+          <div className="md:col-span-2">
+            <Input
+              label="Work Details"
+              textarea
+              rows={4}
+              required
+              placeholder="Describe what you worked on..."
+              value={formData.details}
+              onChange={(e) =>
+                setFormData({ ...formData, details: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <Input
+              label="Remarks"
+              textarea
+              rows={2}
+              placeholder="Additional notes (optional)..."
+              value={formData.remarks}
+              onChange={(e) =>
+                setFormData({ ...formData, remarks: e.target.value })
+              }
+            />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Date *
-              </label>
-              <input
-                type="date"
-                value={formData.date}
-                onChange={(e) =>
-                  setFormData({ ...formData, date: e.target.value })
-                }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Status *
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) =>
-                  setFormData({ ...formData, status: e.target.value })
-                }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              >
-                <option value="Not Started">Not Started</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Follow-up">Follow-up</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Project *
-              </label>
-              <select
-                value={formData.projectId}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    projectId: e.target.value,
-                    taskId: "",
-                  })
-                }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              >
-                <option value="">Select Project</option>
-                {projects.map((project) => (
-                  <option key={project._id} value={project._id}>
-                    {project.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Task *
-              </label>
-              <select
-                value={formData.taskId}
-                onChange={(e) =>
-                  setFormData({ ...formData, taskId: e.target.value })
-                }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-                disabled={!formData.projectId}
-              >
-                <option value="">Select Task</option>
-                {filteredTasks.map((task) => (
-                  <option key={task._id} value={task._id}>
-                    {task.taskName}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Work Details *
-              </label>
-              <textarea
-                value={formData.details}
-                onChange={(e) =>
-                  setFormData({ ...formData, details: e.target.value })
-                }
-                rows={4}
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Describe what you worked on..."
-                required
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Remarks
-              </label>
-              <textarea
-                value={formData.remarks}
-                onChange={(e) =>
-                  setFormData({ ...formData, remarks: e.target.value })
-                }
-                rows={2}
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Additional notes (optional)..."
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Save className="w-4 h-4" />
-              {loading
-                ? "Creating..."
-                : editLog
-                  ? "Update Work Log"
-                  : "Create Work Log"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-700">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" isLoading={loading} icon={Save}>
+            {editLog ? "Update Work Log" : "Create Work Log"}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

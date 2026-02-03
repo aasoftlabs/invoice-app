@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Plus, FileText, Loader2 } from "lucide-react";
 import DashboardStats from "@/components/DashboardStats";
 import InvoiceRow from "@/components/InvoiceRow";
 import InvoiceFilters from "@/components/invoices/InvoiceFilters";
 import Spotlight from "@/components/ui/Spotlight";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import { useInvoices } from "@/hooks/useInvoices";
 
 export default function InvoiceDashboard({ initialInvoices }) {
   // State for filters
@@ -17,10 +20,12 @@ export default function InvoiceDashboard({ initialInvoices }) {
   });
 
   const [invoices, setInvoices] = useState(initialInvoices);
-  const [loading, setLoading] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+
+  // Use custom hook for fetching
+  const { loading: fetchLoading, fetchInvoices } = useInvoices();
+  const [loadingMore, setLoadingMore] = useState(false);
 
   // Observer ref
   const observer = useRef();
@@ -40,68 +45,39 @@ export default function InvoiceDashboard({ initialInvoices }) {
     [loadingMore, hasMore],
   );
 
-  // Fetch Invoices Function
-  const fetchInvoices = useCallback(
-    async (isLoadMore = false, currentPage = 1) => {
-      try {
-        if (isLoadMore) {
-          setLoadingMore(true);
+  // Load data effect
+  useEffect(() => {
+    let active = true;
+
+    async function loadData() {
+      // If page is 1, it's a filter change or initial load
+      const isInitial = page === 1;
+      if (!isInitial) setLoadingMore(true);
+
+      const result = await fetchInvoices(filters, page, 20);
+
+      if (active && result.success) {
+        if (isInitial) {
+          setInvoices(result.data);
         } else {
-          setLoading(true);
+          setInvoices((prev) => [...prev, ...result.data]);
         }
-
-        const query = new URLSearchParams({
-          page: currentPage,
-          limit: 20,
-          month: filters.month,
-          year: filters.year,
-          status: filters.status,
-        }).toString();
-
-        const res = await fetch(`/api/invoices?${query}`);
-        const data = await res.json();
-
-        if (data.success) {
-          if (isLoadMore) {
-            setInvoices((prev) => [...prev, ...data.data]);
-          } else {
-            setInvoices(data.data);
-          }
-
-          // If we got fewer than limit, we reached the end
-          if (data.data.length < 20) {
-            setHasMore(false);
-          } else {
-            setHasMore(true);
-          }
-        } else {
-          // API returned success: false
-          setHasMore(false);
-        }
-      } catch (error) {
-        console.error("Failed to fetch invoices", error);
-        setHasMore(false); // Stop infinite scroll on error
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
+        setHasMore(result.data.length >= 20);
       }
-    },
-    [filters],
-  );
-
-  // Initial Fetch & Filter Change
-  useEffect(() => {
-    // Reset to page 1 and fetch fresh when filters change
-    setPage(1);
-    fetchInvoices(false, 1);
-  }, [filters, fetchInvoices]);
-
-  // Load More (Page Change)
-  useEffect(() => {
-    if (page > 1) {
-      fetchInvoices(true, page);
+      setLoadingMore(false);
     }
-  }, [page, fetchInvoices]);
+
+    loadData();
+
+    return () => {
+      active = false;
+    };
+  }, [filters, page, fetchInvoices]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [filters]);
 
   return (
     <div className="max-w-7xl mx-auto p-8">
@@ -115,29 +91,20 @@ export default function InvoiceDashboard({ initialInvoices }) {
             Create, view, and manage your invoices
           </p>
         </div>
-        <Spotlight
-          className="bg-blue-600 rounded-xl shadow-lg hover:shadow-blue-500/20 active:scale-95 transition-all cursor-pointer"
-          spotlightColor="rgba(255, 255, 255, 0.25)"
-        >
-          <Link
-            href="/invoices/create"
-            className="flex items-center gap-2 px-5 py-2.5 text-white font-bold w-full h-full"
-          >
-            <Plus className="w-5 h-5" /> Add Invoice
-          </Link>
-        </Spotlight>
+        <Link href="/invoices/create">
+          <Button icon={Plus} size="lg">
+            Add Invoice
+          </Button>
+        </Link>
       </div>
 
-      {/* Dashboard Stats (Showing stats for CURRENTLY LOADED/FILTERED view - improved logic would need separate stats API) */}
-      <DashboardStats
-        filteredInvoices={invoices}
-        allInvoices={invoices} // DashboardStats might need refactor for true totals, but keeping safe for now
-      />
+      {/* Dashboard Stats */}
+      <DashboardStats filteredInvoices={invoices} allInvoices={invoices} />
 
       {/* Filter Card */}
       <InvoiceFilters filters={filters} setFilters={setFilters} />
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
+      <Card className="overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b border-gray-100 dark:border-slate-700">
             <tr>
@@ -150,8 +117,10 @@ export default function InvoiceDashboard({ initialInvoices }) {
               <th className="px-6 py-4"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
-            {loading && page === 1 ? (
+          <tbody
+            className={`divide-y divide-gray-100 dark:divide-slate-700 ${fetchLoading ? "opacity-50 pointer-events-none transition-opacity" : ""}`}
+          >
+            {invoices.length === 0 && fetchLoading ? (
               <tr>
                 <td colSpan={7} className="py-12 text-center">
                   <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500" />
@@ -178,17 +147,14 @@ export default function InvoiceDashboard({ initialInvoices }) {
               </tr>
             ) : (
               invoices.map((inv, index) => {
-                if (invoices.length === index + 1) {
-                  return (
-                    <InvoiceRow
-                      scrollRef={lastInvoiceElementRef} // Attach ref to last element
-                      key={inv._id}
-                      invoice={inv}
-                    />
-                  );
-                } else {
-                  return <InvoiceRow key={inv._id} invoice={inv} />;
-                }
+                const isLast = invoices.length === index + 1;
+                return (
+                  <InvoiceRow
+                    key={inv._id}
+                    invoice={inv}
+                    scrollRef={isLast ? lastInvoiceElementRef : null}
+                  />
+                );
               })
             )}
           </tbody>
@@ -204,7 +170,7 @@ export default function InvoiceDashboard({ initialInvoices }) {
           Showing {invoices.length} records{" "}
           {hasMore ? "(Scroll for more)" : "(End of list)"}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

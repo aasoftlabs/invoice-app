@@ -1,8 +1,12 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { X, Briefcase, Calendar, CheckCircle, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { useModal } from "@/contexts/ModalContext";
+import { useProjects } from "@/hooks/useProjects";
+import { useUsers } from "@/hooks/useUsers";
+import Modal from "@/components/ui/Modal";
+import { Input } from "@/components/ui/Input";
+import Select from "@/components/ui/Select";
+import Button from "@/components/ui/Button";
 
 export default function AddProjectModal({
   isOpen,
@@ -11,8 +15,11 @@ export default function AddProjectModal({
   editProject,
 }) {
   const { alert } = useModal();
+  const { createProject, updateProject } = useProjects();
+  const { users, fetchUsers } = useUsers();
+
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);
+
   const [formData, setFormData] = useState({
     name: "",
     priority: "Medium",
@@ -25,6 +32,9 @@ export default function AddProjectModal({
     if (isOpen) {
       fetchUsers();
     }
+  }, [isOpen, fetchUsers]);
+
+  useEffect(() => {
     if (editProject) {
       setFormData({
         name: editProject.name || "",
@@ -43,39 +53,21 @@ export default function AddProjectModal({
         projectManager: "",
       });
     }
-  }, [isOpen, editProject]);
-
-  const fetchUsers = async () => {
-    try {
-      const res = await fetch("/api/users");
-      const data = await res.json();
-      if (data.success) {
-        setUsers(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+  }, [editProject, isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const url = editProject ? "/api/projects" : "/api/projects";
-      const method = editProject ? "PUT" : "POST";
-      const body = editProject
-        ? { ...formData, id: editProject._id }
-        : formData;
+      let result;
+      if (editProject) {
+        result = await updateProject({ ...formData, id: editProject._id });
+      } else {
+        result = await createProject(formData);
+      }
 
-      const res = await fetch(url, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-      if (data.success) {
+      if (result.success) {
         await alert({
           title: "Success",
           message: editProject
@@ -95,15 +87,15 @@ export default function AddProjectModal({
       } else {
         await alert({
           title: "Error",
-          message: "Error: " + data.error,
+          message: result.error || "Operation failed",
           variant: "danger",
         });
       }
     } catch (error) {
-      console.error("Error creating project:", error);
+      console.error("Error submitting project:", error);
       await alert({
         title: "Error",
-        message: "Error creating project",
+        message: "An unexpected error occurred",
         variant: "danger",
       });
     } finally {
@@ -111,148 +103,104 @@ export default function AddProjectModal({
     }
   };
 
-  if (!isOpen) return null;
+  const priorityOptions = [
+    { value: "Low", label: "Low" },
+    { value: "Medium", label: "Medium" },
+    { value: "High", label: "High" },
+  ];
+
+  const managerOptions = users.map((user) => ({
+    value: user._id,
+    label: `${user.name} (${user.email})`,
+  }));
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-auto">
-        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {editProject ? "Edit Project" : "Add New Project"}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="w-6 h-6 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors" />
-          </button>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={editProject ? "Edit Project" : "Add New Project"}
+      maxWidth="max-w-2xl"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
+            <Input
+              label="Project Name"
+              required
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
+          </div>
+
+          <Select
+            label="Priority"
+            required
+            options={priorityOptions}
+            value={formData.priority}
+            onChange={(e) =>
+              setFormData({ ...formData, priority: e.target.value })
+            }
+          />
+
+          <Input
+            label="Client Name"
+            required
+            placeholder="Enter client name"
+            value={formData.client}
+            onChange={(e) =>
+              setFormData({ ...formData, client: e.target.value })
+            }
+          />
+
+          <Select
+            label="Project Manager"
+            options={managerOptions}
+            value={formData.projectManager}
+            onChange={(e) =>
+              setFormData({ ...formData, projectManager: e.target.value })
+            }
+            placeholder="Select Manager"
+          />
+
+          <div className="md:col-span-2">
+            <Input
+              label="Reference Link"
+              type="url"
+              placeholder="https://..."
+              value={formData.refLink}
+              onChange={(e) =>
+                setFormData({ ...formData, refLink: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="md:col-span-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-lg p-3">
+            <p className="text-sm text-blue-800 dark:text-blue-300">
+              <strong>Note:</strong> Status, start date, and end date will be
+              automatically managed:
+            </p>
+            <ul className="text-xs text-blue-700 dark:text-blue-400/80 mt-2 ml-4 list-disc space-y-1">
+              <li>
+                Status starts as &quot;Not Started&quot; and updates based on
+                task completion
+              </li>
+              <li>Start date is set from the first work log entry</li>
+              <li>End date is set from the most recent work log entry</li>
+            </ul>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Project Name *
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Priority *
-              </label>
-              <select
-                value={formData.priority}
-                onChange={(e) =>
-                  setFormData({ ...formData, priority: e.target.value })
-                }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Client Name *
-              </label>
-              <input
-                type="text"
-                value={formData.client}
-                onChange={(e) =>
-                  setFormData({ ...formData, client: e.target.value })
-                }
-                placeholder="Enter client name"
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Project Manager
-              </label>
-              <select
-                value={formData.projectManager}
-                onChange={(e) =>
-                  setFormData({ ...formData, projectManager: e.target.value })
-                }
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Manager</option>
-                {users.map((user) => (
-                  <option key={user._id} value={user._id}>
-                    {user.name} ({user.email})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Reference Link
-              </label>
-              <input
-                type="url"
-                value={formData.refLink}
-                onChange={(e) =>
-                  setFormData({ ...formData, refLink: e.target.value })
-                }
-                placeholder="https://..."
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-slate-200 bg-white dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="md:col-span-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-lg p-3">
-              <p className="text-sm text-blue-800 dark:text-blue-300">
-                <strong>Note:</strong> Status, start date, and end date will be
-                automatically managed:
-              </p>
-              <ul className="text-xs text-blue-700 dark:text-blue-400/80 mt-2 ml-4 list-disc space-y-1">
-                <li>
-                  Status starts as &quot;Not Started&quot; and updates based on
-                  task completion
-                </li>
-                <li>Start date is set from the first work log entry</li>
-                <li>End date is set from the most recent work log entry</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg hover:shadow-blue-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Save className="w-4 h-4" />
-              {loading
-                ? "Saving..."
-                : editProject
-                  ? "Update Project"
-                  : "Create Project"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-700">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" isLoading={loading} icon={Save}>
+            {editProject ? "Update Project" : "Create Project"}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

@@ -1,22 +1,19 @@
 import { Users, DollarSign, TrendingDown, Wallet } from "lucide-react";
 import Spotlight from "@/components/ui/Spotlight";
 
-export default function PayrollStats({ employees }) {
-  // Calculate summary statistics
-  const totalEmployees = employees.length;
-  const employeesWithSalary = employees.filter((e) => e.salary).length;
-  const totalMonthlyPayroll = employees.reduce(
-    (sum, e) => sum + (e.salary?.grossSalary || 0),
-    0,
-  );
-  const totalDeductions = employees.reduce(
-    (sum, e) => sum + (e.salary?.totalDeductions || 0),
-    0,
-  );
-  const totalNetPayable = employees.reduce(
-    (sum, e) => sum + (e.salary?.netSalary || 0),
-    0,
-  );
+export default function PayrollStats({ stats }) {
+  if (!stats) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 h-32 animate-pulse"
+          ></div>
+        ))}
+      </div>
+    );
+  }
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-IN", {
@@ -35,10 +32,10 @@ export default function PayrollStats({ employees }) {
               Total Employees
             </p>
             <p className="text-3xl font-bold text-gray-800 dark:text-white mt-2">
-              {totalEmployees}
+              {stats.totalEmployees}
             </p>
             <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
-              {employeesWithSalary} with salary structure
+              {stats.employeesWithSalary} with salary structure
             </p>
           </div>
           <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
@@ -54,7 +51,7 @@ export default function PayrollStats({ employees }) {
               Monthly Payroll
             </p>
             <p className="text-2xl font-bold text-gray-800 dark:text-white mt-2">
-              {formatCurrency(totalMonthlyPayroll)}
+              {formatCurrency(stats.totalMonthlyPayroll)}
             </p>
             <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
               Gross salary total
@@ -73,7 +70,7 @@ export default function PayrollStats({ employees }) {
               Total Deductions
             </p>
             <p className="text-2xl font-bold text-gray-800 dark:text-white mt-2">
-              {formatCurrency(totalDeductions)}
+              {formatCurrency(stats.totalDeductions)}
             </p>
             <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
               PF, ESI, PT, TDS
@@ -92,7 +89,7 @@ export default function PayrollStats({ employees }) {
               Net Payable
             </p>
             <p className="text-2xl font-bold text-gray-800 dark:text-white mt-2">
-              {formatCurrency(totalNetPayable)}
+              {formatCurrency(stats.totalNetPayable)}
             </p>
             <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
               After all deductions

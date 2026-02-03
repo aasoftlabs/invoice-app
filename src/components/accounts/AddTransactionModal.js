@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useModal } from "@/contexts/ModalContext";
-import { X, Loader2, Calendar, FileText, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+import Button from "@/components/ui/Button";
+import { Input, Select } from "@/components/ui/Input";
+import Modal from "@/components/ui/Modal";
+import { useInvoices } from "@/hooks/useInvoices";
+import { useTransactions } from "@/hooks/useTransactions";
 
 export default function AddTransactionModal({
   isOpen,
@@ -10,10 +15,12 @@ export default function AddTransactionModal({
   onSuccess,
   editingTransaction,
 }) {
-  const [loading, setLoading] = useState(false);
+  const { alert } = useModal();
+  const { fetchUnpaidInvoices } = useInvoices();
+  const { saveTransaction, loading } = useTransactions();
+
   const [invoices, setInvoices] = useState([]);
   const [fetchingInvoices, setFetchingInvoices] = useState(false);
-  const { alert } = useModal();
 
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -27,55 +34,16 @@ export default function AddTransactionModal({
   });
 
   // Fetch unpaid invoices
-  const fetchInvoices = useCallback(
-    async (typeOverride) => {
-      const typeToCheck = typeOverride || formData.type;
-      if (typeToCheck !== "Credit") return;
-
-      try {
+  useEffect(() => {
+    async function loadInvoices() {
+      if (formData.type === "Credit") {
         setFetchingInvoices(true);
-        const res = await fetch("/api/invoices/unpaid");
-        const data = await res.json();
-
-        let allInvoices = [];
-        if (data.success) {
-          allInvoices = data.data;
-        }
-
-        // If editing and we have a linked invoice, ensure it's in the list
-        if (
-          editingTransaction &&
-          editingTransaction.reference?.type === "Invoice" &&
-          editingTransaction.reference.id
-        ) {
-          const linkedId = editingTransaction.reference.id;
-          const exists = allInvoices.find((inv) => inv._id === linkedId);
-
-          if (!exists) {
-            try {
-              const resLinked = await fetch(`/api/invoices/${linkedId}`);
-              const dataLinked = await resLinked.json();
-              if (dataLinked.success) {
-                allInvoices = [dataLinked.data, ...allInvoices];
-              }
-            } catch (err) {
-              console.error("Failed to fetch linked invoice", err);
-            }
-          }
-        }
-
-        setInvoices(allInvoices);
-      } catch (error) {
-        console.error("Error fetching invoices:", error);
-      } finally {
+        const data = await fetchUnpaidInvoices();
+        setInvoices(data);
         setFetchingInvoices(false);
       }
-    },
-    [formData.type, editingTransaction],
-  );
+    }
 
-  // Reset or Populate form when modal opens
-  useEffect(() => {
     if (isOpen) {
       if (editingTransaction) {
         setFormData({
@@ -88,10 +56,7 @@ export default function AddTransactionModal({
           isInvoicePayment: editingTransaction.reference?.type === "Invoice",
           invoiceId: editingTransaction.reference?.id || "",
         });
-        // Fetch invoices immediately if it's a credit transaction
-        if (editingTransaction.type === "Credit") {
-          fetchInvoices("Credit");
-        }
+        if (editingTransaction.type === "Credit") loadInvoices();
       } else {
         setFormData({
           date: new Date().toISOString().split("T")[0],
@@ -103,10 +68,11 @@ export default function AddTransactionModal({
           isInvoicePayment: true,
           invoiceId: "",
         });
-        fetchInvoices();
+        loadInvoices();
       }
     }
-  }, [isOpen, editingTransaction]); // Removed fetchInvoices to prevent loop on type change
+  }, [isOpen, editingTransaction, fetchUnpaidInvoices]);
+  // removed formData.type from dep array to avoid loop, same as previous fix
 
   // Auto-fill amount when invoice is selected
   const handleInvoiceSelect = (invoiceId) => {
@@ -126,288 +92,211 @@ export default function AddTransactionModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    try {
-      // Prepare payload
-      const payload = {
-        date: formData.date,
-        type: formData.type,
-        category: formData.category,
-        amount: formData.amount,
-        description: formData.description,
-        paymentMode: formData.paymentMode,
-        // Only send reference info on creation to avoid complexity in editing references for now
-        // Or if editing, preserve reference if not changing logic significantly
-        reference: editingTransaction
-          ? undefined
-          : {
-              type:
-                formData.isInvoicePayment && formData.type === "Credit"
-                  ? "Invoice"
-                  : "None",
-              id: formData.invoiceId || null,
-            },
-      };
+    const payload = {
+      date: formData.date,
+      type: formData.type,
+      category: formData.category,
+      amount: formData.amount,
+      description: formData.description,
+      paymentMode: formData.paymentMode,
+      reference: editingTransaction
+        ? undefined
+        : {
+            type:
+              formData.isInvoicePayment && formData.type === "Credit"
+                ? "Invoice"
+                : "None",
+            id: formData.invoiceId || null,
+          },
+    };
 
-      if (editingTransaction) {
-        payload.id = editingTransaction._id;
-      }
+    if (editingTransaction) payload._id = editingTransaction._id;
 
-      const method = editingTransaction ? "PUT" : "POST";
-      const res = await fetch("/api/accounts/transactions", {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    const result = await saveTransaction(payload, !!editingTransaction);
 
-      const data = await res.json();
-
-      if (data.success) {
-        onSuccess();
-        onClose();
-      } else {
-        await alert({
-          title: "Error",
-          message: "Error: " + data.error,
-          variant: "danger",
-        });
-      }
-    } catch (error) {
-      console.error(error);
+    if (result.success) {
+      onSuccess();
+      onClose();
+    } else {
       await alert({
         title: "Error",
-        message: "Failed to save transaction",
+        message: "Error: " + (result.error || "Failed to save"),
         variant: "danger",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
-        <div className="sticky top-0 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 px-6 py-4 flex items-center justify-between z-10">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-            {editingTransaction ? "Edit Transaction" : "Add New Transaction"}
-          </h2>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={editingTransaction ? "Edit Transaction" : "Add New Transaction"}
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Type Selection */}
+        <div className="grid grid-cols-2 gap-4">
           <button
-            onClick={onClose}
-            className="text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 transition-colors"
+            type="button"
+            onClick={() =>
+              setFormData({
+                ...formData,
+                type: "Credit",
+                category: "Invoice Payment",
+                isInvoicePayment: true,
+              })
+            }
+            className={`p-3 rounded-lg border text-center font-semibold transition-all ${
+              formData.type === "Credit"
+                ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 ring-2 ring-green-500 ring-offset-1"
+                : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
+            }`}
           >
-            <X className="w-5 h-5" />
+            Credit (Income)
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setFormData({
+                ...formData,
+                type: "Debit",
+                category: "Expense",
+                isInvoicePayment: false,
+              })
+            }
+            className={`p-3 rounded-lg border text-center font-semibold transition-all ${
+              formData.type === "Debit"
+                ? "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 ring-2 ring-red-500 ring-offset-1"
+                : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
+            }`}
+          >
+            Debit (Expense)
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Type Selection */}
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              type="button"
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  type: "Credit",
-                  category: "Invoice Payment",
-                  isInvoicePayment: true,
-                })
-              }
-              className={`p-3 rounded-lg border text-center font-semibold transition-all ${
-                formData.type === "Credit"
-                  ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 ring-2 ring-green-500 ring-offset-1"
-                  : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
-              }`}
-            >
-              Credit (Income)
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  type: "Debit",
-                  category: "Expense",
-                  isInvoicePayment: false,
-                })
-              }
-              className={`p-3 rounded-lg border text-center font-semibold transition-all ${
-                formData.type === "Debit"
-                  ? "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 ring-2 ring-red-500 ring-offset-1"
-                  : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600"
-              }`}
-            >
-              Debit (Expense)
-            </button>
-          </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="DATE"
+            type="date"
+            required
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          />
+          <Select
+            label="PAYMENT MODE"
+            value={formData.paymentMode}
+            onChange={(e) =>
+              setFormData({ ...formData, paymentMode: e.target.value })
+            }
+          >
+            <option>Bank Transfer</option>
+            <option>Cash</option>
+            <option>UPI</option>
+            <option>Cheque</option>
+            <option>Other</option>
+          </Select>
+        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider mb-1">
-                Date
-              </label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-400 dark:text-slate-500" />
-                <input
-                  type="date"
-                  required
-                  value={formData.date}
-                  onChange={(e) =>
-                    setFormData({ ...formData, date: e.target.value })
-                  }
-                  className="w-full pl-9 p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
-                Payment Mode
-              </label>
-              <select
-                value={formData.paymentMode}
-                onChange={(e) =>
-                  setFormData({ ...formData, paymentMode: e.target.value })
-                }
-                className="w-full p-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-700 dark:text-white"
-              >
-                <option>Bank Transfer</option>
-                <option>Cash</option>
-                <option>UPI</option>
-                <option>Cheque</option>
-                <option>Other</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Invoice Selection Logic (Only for Credit and New Entry) */}
-          {formData.type === "Credit" && (
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
-              <label className="flex items-center gap-2 mb-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.isInvoicePayment}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      isInvoicePayment: e.target.checked,
-                    })
-                  }
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                />
-                <span className="font-medium text-gray-700 dark:text-slate-300 text-sm">
-                  Link to Invoice (Payment Entry)
-                </span>
-              </label>
-
-              {formData.isInvoicePayment && (
-                <div className="animate-in fade-in slide-in-from-top-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-                    Select Invoice
-                  </label>
-                  <select
-                    value={formData.invoiceId}
-                    onChange={(e) => handleInvoiceSelect(e.target.value)}
-                    className="w-full p-2 border border-blue-200 dark:border-blue-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-700 dark:text-white"
-                  >
-                    <option value="">-- Select Pending Invoice --</option>
-                    {invoices.map((inv) => (
-                      <option key={inv._id} value={inv._id}>
-                        {inv.invoiceNo} - {inv.client.name} (Due: ₹
-                        {inv.totalAmount - (inv.amountPaid || 0)})
-                      </option>
-                    ))}
-                  </select>
-                  {fetchingInvoices && (
-                    <p className="text-xs text-blue-600 mt-1">
-                      Fetching invoices...
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
-              Category
-            </label>
-            <input
-              list="categories"
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-              className="w-full p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="e.g. Salary, Rent, Invoice Payment"
-            />
-            <datalist id="categories">
-              <option value="Invoice Payment" />
-              <option value="Salary" />
-              <option value="Office Rent" />
-              <option value="Utilities" />
-              <option value="Travel Expense" />
-            </datalist>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
-              Amount
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-2.5 text-gray-500 font-bold">
-                ₹
-              </span>
+        {/* Invoice Selection Logic (Only for Credit) */}
+        {formData.type === "Credit" && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+            <label className="flex items-center gap-2 mb-3 cursor-pointer">
               <input
-                type="number"
-                required
-                min="0"
-                step="any"
-                value={formData.amount}
+                type="checkbox"
+                checked={formData.isInvoicePayment}
                 onChange={(e) =>
-                  setFormData({ ...formData, amount: e.target.value })
+                  setFormData({
+                    ...formData,
+                    isInvoicePayment: e.target.checked,
+                  })
                 }
-                className="w-full pl-8 p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-medium"
-                placeholder="0.00"
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
               />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
-              Description / Notes
+              <span className="font-medium text-gray-700 dark:text-slate-300 text-sm">
+                Link to Invoice (Payment Entry)
+              </span>
             </label>
-            <textarea
-              rows={3}
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              className="w-full p-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Add details about this transaction..."
-            />
-          </div>
 
-          <div className="pt-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg hover:shadow-blue-500/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" /> Process...
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="w-5 h-5" /> Record Transaction
-                </>
-              )}
-            </button>
+            {formData.isInvoicePayment && (
+              <div className="animate-in fade-in slide-in-from-top-2">
+                <Select
+                  label="SELECT INVOICE"
+                  value={formData.invoiceId}
+                  onChange={(e) => handleInvoiceSelect(e.target.value)}
+                  className="border-blue-200 dark:border-blue-700 focus:ring-blue-500"
+                >
+                  <option value="">-- Select Pending Invoice --</option>
+                  {invoices.map((inv) => (
+                    <option key={inv._id} value={inv._id}>
+                      {inv.invoiceNo} - {inv.client.name} (Due: ₹
+                      {inv.totalAmount - (inv.amountPaid || 0)})
+                    </option>
+                  ))}
+                </Select>
+                {fetchingInvoices && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    Fetching invoices...
+                  </p>
+                )}
+              </div>
+            )}
           </div>
-        </form>
-      </div>
-    </div>
+        )}
+
+        <Input
+          label="CATEGORY"
+          list="categories"
+          value={formData.category}
+          onChange={(e) =>
+            setFormData({ ...formData, category: e.target.value })
+          }
+          placeholder="e.g. Salary, Rent, Invoice Payment"
+        />
+        <datalist id="categories">
+          <option value="Invoice Payment" />
+          <option value="Salary" />
+          <option value="Office Rent" />
+          <option value="Utilities" />
+          <option value="Travel Expense" />
+        </datalist>
+
+        <Input
+          label="AMOUNT"
+          type="number"
+          required
+          min="0"
+          step="any"
+          value={formData.amount}
+          onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+          placeholder="0.00"
+        />
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+            DESCRIPTION / NOTES
+          </label>
+          <textarea
+            rows={3}
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            className="w-full px-4 py-2 bg-white dark:bg-slate-800 border rounded-lg outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-slate-500 text-gray-900 dark:text-white border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500"
+            placeholder="Add details about this transaction..."
+          />
+        </div>
+
+        <div className="pt-2">
+          <Button
+            type="submit"
+            className="w-full"
+            isLoading={loading}
+            icon={CheckCircle}
+          >
+            Record Transaction
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { DollarSign, FileText, Clock, TrendingUp } from "lucide-react";
 import Spotlight from "@/components/ui/Spotlight";
 
@@ -5,27 +6,24 @@ export default function DashboardStats({
   filteredInvoices = [],
   allInvoices = [],
 }) {
-  // 1. Total Revenue (Filtered Period) - Corresponds to Income
-  const totalInvoicesCount = filteredInvoices.length;
-  const totalRevenue = filteredInvoices.reduce(
-    (sum, inv) => sum + (inv.totalAmount || 0),
-    0,
-  );
-  const paidInFiltered = filteredInvoices.filter(
-    (inv) => inv.status === "Paid",
-  );
+  // 1. Total Revenue (Filtered Period)
+  const statsData = useMemo(() => {
+    const totalInvoicesCount = filteredInvoices.length;
+    const totalRevenue = filteredInvoices.reduce(
+      (sum, inv) => sum + (inv.totalAmount || 0),
+      0,
+    );
 
-  // 2. Pending Dues (Global/All-time) - Corresponds to Net Balance
-  // Sum of (Total - Paid) for ALL invoices
-  const pendingAmount = allInvoices.reduce(
-    (sum, inv) => sum + ((inv.totalAmount || 0) - (inv.amountPaid || 0)),
-    0,
-  );
-  // Count of invoices with any pending amount
-  const pendingCount = allInvoices.filter((inv) => {
-    const due = (inv.totalAmount || 0) - (inv.amountPaid || 0);
-    return due > 0; // Floating point safety? Usually integers here but > 1 is safer if float issues. 0 is fine for now.
-  }).length;
+    // 2. Pending Dues (Global/All-time)
+    const pendingAmount = allInvoices.reduce(
+      (sum, inv) => sum + ((inv.totalAmount || 0) - (inv.amountPaid || 0)),
+      0,
+    );
+
+    return { totalInvoicesCount, totalRevenue, pendingAmount };
+  }, [filteredInvoices, allInvoices]);
+
+  const { totalInvoicesCount, totalRevenue, pendingAmount } = statsData;
 
   const stats = [
     {

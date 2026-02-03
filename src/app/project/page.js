@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import StatsCard from "@/components/project/StatsCard";
 import MonthlyChart from "@/components/project/MonthlyChart";
@@ -9,13 +9,11 @@ import ActiveTaskCard from "@/components/project/ActiveTaskCard";
 import WorkLogTable from "@/components/project/WorkLogTable";
 import { CheckCircle, ListTodo, FolderKanban, Plus } from "lucide-react";
 import AddWorkLogModal from "@/components/project/AddWorkLogModal";
+import { useProjects } from "@/hooks/useProjects";
+import { useUsers } from "@/hooks/useUsers";
 
 export default function ProjectDashboard() {
   const { data: session } = useSession();
-  const [stats, setStats] = useState(null);
-  const [workLogs, setWorkLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState([]);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
 
   // Filters
@@ -28,88 +26,47 @@ export default function ProjectDashboard() {
     userId: session?.user?.role === "admin" ? "" : session?.user?.id,
   });
 
-  const [users, setUsers] = useState([]);
+  // Hooks
+  const {
+    projects,
+    workLogs,
+    stats,
+    loading: projectsLoading,
+    fetchProjects,
+    fetchWorkLogs,
+    fetchDashboardStats,
+  } = useProjects();
 
-  const fetchUsers = useCallback(async () => {
-    try {
-      const res = await fetch("/api/users");
-      const data = await res.json();
-      if (data.success) {
-        setUsers(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  }, []);
+  const { users, fetchUsers } = useUsers();
 
-  const fetchProjects = useCallback(async () => {
-    try {
-      const res = await fetch("/api/projects");
-      const data = await res.json();
-      if (data.success) {
-        setProjects(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    }
-  }, []);
-
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams({
-        year: filters.year,
-        ...(filters.userId && { userId: filters.userId }),
-      });
-
-      const res = await fetch(`/api/dashboard/stats?${params}`);
-      const data = await res.json();
-      if (data.success) {
-        setStats(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
-
-  const fetchWorkLogs = useCallback(async () => {
-    try {
-      const params = new URLSearchParams({
-        month: filters.month,
-        year: filters.year,
-        ...(filters.userId && { userId: filters.userId }),
-      });
-
-      const res = await fetch(`/api/worklogs?${params}`);
-      const data = await res.json();
-      if (data.success) {
-        setWorkLogs(data.data.slice(0, 10)); // Latest 10 logs
-      }
-    } catch (error) {
-      console.error("Error fetching work logs:", error);
-    }
-  }, [filters]);
-
+  // Initial Data Fetch
   useEffect(() => {
     if (session) {
-      if (session.user.role === "admin" && users.length === 0) {
+      if (session.user.role === "admin") {
         fetchUsers();
       }
       fetchProjects();
-      // Re-fetch data when session exists and filters change
-      fetchDashboardData();
-      fetchWorkLogs();
     }
-  }, [
-    session,
-    filters,
-    users.length,
-    fetchUsers,
-    fetchDashboardData,
-    fetchWorkLogs,
-  ]);
+  }, [session, fetchUsers, fetchProjects]);
+
+  // Fetch Dashboard Data on filter change
+  useEffect(() => {
+    if (session) {
+      const dashboardFilters = {
+        year: filters.year,
+        ...(filters.userId && { userId: filters.userId }),
+      };
+
+      const logFilters = {
+        month: filters.month,
+        year: filters.year,
+        ...(filters.userId && { userId: filters.userId }),
+      };
+
+      fetchDashboardStats(dashboardFilters);
+      fetchWorkLogs(logFilters);
+    }
+  }, [session, filters, fetchDashboardStats, fetchWorkLogs]);
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {
@@ -119,7 +76,9 @@ export default function ProjectDashboard() {
     });
   };
 
-  if (loading && !stats) {
+  const isLoading = projectsLoading && !stats;
+
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
@@ -201,15 +160,28 @@ export default function ProjectDashboard() {
         )}
 
         {/* Recent Work Logs */}
-        <WorkLogTable workLogs={workLogs} formatDate={formatDate} />
+        <WorkLogTable
+          workLogs={workLogs.slice(0, 10)}
+          formatDate={formatDate}
+        />
 
         {/* Add Work Log Modal */}
         <AddWorkLogModal
           isOpen={isLogModalOpen}
           onClose={() => setIsLogModalOpen(false)}
           onSuccess={() => {
-            fetchWorkLogs();
-            fetchDashboardData();
+            // Re-fetch data on success
+            const dashboardFilters = {
+              year: filters.year,
+              ...(filters.userId && { userId: filters.userId }),
+            };
+            const logFilters = {
+              month: filters.month,
+              year: filters.year,
+              ...(filters.userId && { userId: filters.userId }),
+            };
+            fetchDashboardStats(dashboardFilters);
+            fetchWorkLogs(logFilters);
           }}
           projects={projects}
           users={users}
