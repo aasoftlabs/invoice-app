@@ -30,10 +30,22 @@ export default async function Dashboard() {
     redirect("/"); // Redirect to home if no access
   }
 
-  // Parallel fetch for performance using .lean()
+  // 3. Parallel fetch for performance using .lean()
+  // Synchronize initial load with current month/year to prevent flicker
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const startDate = new Date(currentYear, currentMonth, 1);
+  const endDate = new Date(currentYear, currentMonth + 1, 1);
+
   const [profile, invoices] = await Promise.all([
     CompanyProfile.findOne({}).lean(),
-    Invoice.find({}).sort({ date: -1 }).limit(10).lean(), // Initial fast load
+    Invoice.find({
+      date: { $gte: startDate, $lt: endDate },
+    })
+      .sort({ date: -1 })
+      .limit(20)
+      .lean(),
   ]);
 
   // Check if profile exists, if not redirect to setup

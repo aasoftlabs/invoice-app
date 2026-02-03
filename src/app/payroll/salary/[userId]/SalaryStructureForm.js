@@ -82,7 +82,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
   }, [userId, getSalaryStructure, alert]);
 
   useEffect(() => {
-    fetchData();
+    Promise.resolve().then(() => fetchData());
   }, [fetchData]);
 
   const handleChange = (e) => {

@@ -65,23 +65,25 @@ export default function TasksPage() {
   // Initial Fetch
   useEffect(() => {
     if (session) {
-      setLoading(true);
-      fetchProjects();
-      fetchUsers();
+      Promise.resolve().then(() => {
+        setLoading(true);
+        fetchProjects();
+        fetchUsers();
 
-      const fetchParams = {
-        ...filters,
-        page: 1,
-        limit: 20,
-      };
+        const fetchParams = {
+          ...filters,
+          page: 1,
+          limit: 20,
+        };
 
-      fetchTasks(fetchParams).then((data) => {
-        setLoading(false);
-        if (data?.data?.length < 20) {
-          setHasMore(false);
-        } else {
-          setHasMore(true);
-        }
+        fetchTasks(fetchParams).then((data) => {
+          setLoading(false);
+          if (data?.data?.length < 20) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        });
       });
     }
   }, [filters, session, fetchProjects, fetchTasks, fetchUsers]);
@@ -89,7 +91,7 @@ export default function TasksPage() {
   // Load More
   useEffect(() => {
     if (page > 1) {
-      setLoadingMore(true);
+      Promise.resolve().then(() => setLoadingMore(true));
       const fetchParams = {
         ...filters,
         page: page,

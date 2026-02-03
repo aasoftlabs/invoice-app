@@ -115,7 +115,7 @@ export default function PayrollDashboard() {
   // Load More
   useEffect(() => {
     if (page > 1) {
-      setLoadingMore(true);
+      Promise.resolve().then(() => setLoadingMore(true));
       const params = {
         page: page,
         limit: 20,
@@ -131,7 +131,14 @@ export default function PayrollDashboard() {
         }
       });
     }
-  }, [page, fetchEmployees]); // filters shouldn't trigger this explicitly, as they reset page to 1
+  }, [
+    page,
+    fetchEmployees,
+    searchTerm,
+    filterStatus,
+    filterState,
+    filterDepartment,
+  ]);
 
   return (
     <div>

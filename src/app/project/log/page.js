@@ -110,8 +110,8 @@ export default function WorkLogPage() {
   // Initial Data Fetch
   useEffect(() => {
     if (session) {
-      setLoading(true);
       Promise.resolve().then(() => {
+        setLoading(true);
         fetchProjects(); // Fetches all projects for the filter dropdown
         setPage(1);
 
@@ -136,7 +136,7 @@ export default function WorkLogPage() {
   // Load More
   useEffect(() => {
     if (page > 1) {
-      setLoadingMore(true);
+      Promise.resolve().then(() => setLoadingMore(true));
       const params = {
         ...filters,
         page: page,
@@ -150,7 +150,7 @@ export default function WorkLogPage() {
         }
       });
     }
-  }, [page, fetchWorkLogs]); // filters not needed here as page change implies same filters
+  }, [page, fetchWorkLogs, filters]); // filters not needed here as page change implies same filters
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {

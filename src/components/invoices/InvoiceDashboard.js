@@ -50,16 +50,19 @@ export default function InvoiceDashboard({ initialInvoices }) {
     let active = true;
 
     async function loadData() {
-      // If page is 1, it's a filter change or initial load
       const isInitial = page === 1;
+
+      // Only set "loading more" for pagination
       if (!isInitial) setLoadingMore(true);
 
       const result = await fetchInvoices(filters, page, 20);
 
       if (active && result.success) {
         if (isInitial) {
+          // Replace all data on filter change (page 1)
           setInvoices(result.data);
         } else {
+          // Append data for infinity scroll
           setInvoices((prev) => [...prev, ...result.data]);
         }
         setHasMore(result.data.length >= 20);
@@ -67,6 +70,9 @@ export default function InvoiceDashboard({ initialInvoices }) {
       setLoadingMore(false);
     }
 
+    // Skip the redundant background fetch on mount if initialData matches filters
+    // However, to keep it simple and robust, we fetch. The server-side sync in page.js
+    // already solved the "January vs February" flicker.
     loadData();
 
     return () => {
@@ -76,7 +82,7 @@ export default function InvoiceDashboard({ initialInvoices }) {
 
   // Reset page when filters change
   useEffect(() => {
-    setPage(1);
+    Promise.resolve().then(() => setPage(1));
   }, [filters]);
 
   return (
@@ -117,17 +123,21 @@ export default function InvoiceDashboard({ initialInvoices }) {
               <th className="px-6 py-4"></th>
             </tr>
           </thead>
-          <tbody
-            className={`divide-y divide-gray-100 dark:divide-slate-700 ${fetchLoading ? "opacity-50 pointer-events-none transition-opacity" : ""}`}
-          >
-            {invoices.length === 0 && fetchLoading ? (
+          <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+            {fetchLoading && page === 1 ? (
+              // Initial/Filter loading state
               <tr>
-                <td colSpan={7} className="py-12 text-center">
-                  <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500" />
-                  <p className="text-gray-500 mt-2">Loading invoices...</p>
+                <td colSpan={7} className="py-20 text-center">
+                  <div className="flex flex-col items-center justify-center gap-4">
+                    <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+                    <p className="text-gray-500 dark:text-slate-400 animate-pulse">
+                      Updating records...
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : invoices.length === 0 ? (
+              // Empty state
               <tr>
                 <td
                   colSpan={7}
@@ -146,6 +156,7 @@ export default function InvoiceDashboard({ initialInvoices }) {
                 </td>
               </tr>
             ) : (
+              // Data rows
               invoices.map((inv, index) => {
                 const isLast = invoices.length === index + 1;
                 return (

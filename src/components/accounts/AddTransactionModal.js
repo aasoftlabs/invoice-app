@@ -46,29 +46,33 @@ export default function AddTransactionModal({
 
     if (isOpen) {
       if (editingTransaction) {
-        setFormData({
-          date: new Date(editingTransaction.date).toISOString().split("T")[0],
-          type: editingTransaction.type,
-          category: editingTransaction.category,
-          amount: editingTransaction.amount,
-          description: editingTransaction.description,
-          paymentMode: editingTransaction.paymentMode,
-          isInvoicePayment: editingTransaction.reference?.type === "Invoice",
-          invoiceId: editingTransaction.reference?.id || "",
+        Promise.resolve().then(() => {
+          setFormData({
+            date: new Date(editingTransaction.date).toISOString().split("T")[0],
+            type: editingTransaction.type,
+            category: editingTransaction.category,
+            amount: editingTransaction.amount,
+            description: editingTransaction.description,
+            paymentMode: editingTransaction.paymentMode,
+            isInvoicePayment: editingTransaction.reference?.type === "Invoice",
+            invoiceId: editingTransaction.reference?.id || "",
+          });
+          if (editingTransaction.type === "Credit") loadInvoices();
         });
-        if (editingTransaction.type === "Credit") loadInvoices();
       } else {
-        setFormData({
-          date: new Date().toISOString().split("T")[0],
-          type: "Credit",
-          category: "Invoice Payment",
-          amount: "",
-          description: "",
-          paymentMode: "Bank Transfer",
-          isInvoicePayment: true,
-          invoiceId: "",
+        Promise.resolve().then(() => {
+          setFormData({
+            date: new Date().toISOString().split("T")[0],
+            type: "Credit",
+            category: "Invoice Payment",
+            amount: "",
+            description: "",
+            paymentMode: "Bank Transfer",
+            isInvoicePayment: true,
+            invoiceId: "",
+          });
+          loadInvoices();
         });
-        loadInvoices();
       }
     }
   }, [isOpen, editingTransaction, fetchUnpaidInvoices]);

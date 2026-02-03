@@ -67,22 +67,24 @@ export default function ProjectsPage() {
   // Initial Fetch & Filter Change
   useEffect(() => {
     if (session) {
-      setLoading(true);
-      setPage(1);
+      Promise.resolve().then(() => {
+        setLoading(true);
+        setPage(1);
 
-      const queryParams = {
-        page: 1,
-        limit: 20,
-        ...(!showCompleted && { activeOnly: "true" }),
-      };
+        const queryParams = {
+          page: 1,
+          limit: 20,
+          ...(!showCompleted && { activeOnly: "true" }),
+        };
 
-      fetchProjects(queryParams).then((data) => {
-        setLoading(false);
-        if (data?.data?.length < 20) {
-          setHasMore(false);
-        } else {
-          setHasMore(true);
-        }
+        fetchProjects(queryParams).then((data) => {
+          setLoading(false);
+          if (data?.data?.length < 20) {
+            setHasMore(false);
+          } else {
+            setHasMore(true);
+          }
+        });
       });
     }
   }, [showCompleted, session, fetchProjects]);
@@ -90,7 +92,7 @@ export default function ProjectsPage() {
   // Load More (Page Change)
   useEffect(() => {
     if (page > 1) {
-      setLoadingMore(true);
+      Promise.resolve().then(() => setLoadingMore(true));
       const queryParams = {
         page: page,
         limit: 20,

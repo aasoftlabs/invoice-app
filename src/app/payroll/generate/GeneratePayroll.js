@@ -25,33 +25,38 @@ export default function GeneratePayroll() {
   const fetchData = useCallback(async () => {
     setLoading(true);
 
-    // Fetch all employees (no pagination for generation page)
-    await fetchEmployees({ all: true });
+    try {
+      // Fetch data in parallel
+      const [employeeData, slipData] = await Promise.all([
+        fetchEmployees({ all: true }),
+        fetchSlips({
+          month: selectedMonth,
+          year: selectedYear,
+        }),
+      ]);
 
-    // Fetch existing slips for selected period
-    const slipData = await fetchSlips({
-      month: selectedMonth,
-      year: selectedYear,
-    });
-    setSlips(slipData || []);
+      const currentEmployees = employeeData?.employees || [];
+      const currentSlips = slipData || [];
 
-    // Initialize LOP data
-    const initialLop = {};
-    employees.forEach((e) => {
-      const slip = slipData?.find((s) => s.userId._id === e._id);
-      if (slip) {
-        initialLop[e._id] = slip.lopDays;
-      } else {
-        initialLop[e._id] = 0;
-      }
-    });
-    setLopData(initialLop);
-    setLoading(false);
-  }, [selectedMonth, selectedYear, fetchEmployees, fetchSlips, employees]);
+      setSlips(currentSlips);
+
+      // Initialize LOP data using the fresh data from the fetches
+      const initialLop = {};
+      currentEmployees.forEach((e) => {
+        const slip = currentSlips.find((s) => s.userId._id === e._id);
+        initialLop[e._id] = slip ? slip.lopDays : 0;
+      });
+      setLopData(initialLop);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedMonth, selectedYear, fetchEmployees, fetchSlips]);
 
   useEffect(() => {
     fetchData();
-  }, [selectedMonth, selectedYear]); // Re-fetch when month/year changes
+  }, [fetchData]); // Re-fetch when month/year changes
 
   const handleGenerate = async (userId) => {
     setProcessing(userId);
