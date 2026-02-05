@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/schemas/loginSchema";
 import Logo from "@/components/Logo";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [state, dispatch, isPending] = useActionState(authenticate, undefined);
@@ -78,7 +79,7 @@ export default function LoginPage() {
           </div>
           <div className="mb-6">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 dark:text-slate-300 text-sm font-bold mb-2"
               htmlFor="password"
             >
               Password
@@ -108,6 +109,14 @@ export default function LoginPage() {
                 {errors.password.message}
               </p>
             )}
+          </div>
+          <div className="flex items-center justify-between mb-4">
+            <Link
+              href="/forgot-password"
+              className="inline-block align-baseline font-bold text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Forgot Password?
+            </Link>
           </div>
           <div className="flex items-center justify-between">
             <LoginButton />

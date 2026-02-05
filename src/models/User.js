@@ -23,11 +23,13 @@ const UserSchema = new mongoose.Schema({
     // All users can see their own payroll data regardless of permission
   },
   avatar: { type: String }, // URL or Base64
+  resetToken: { type: String },
+  resetTokenExpiry: { type: Date },
+  lastResetRequest: { type: Date }, // For rate limiting
   createdAt: { type: Date, default: Date.now },
 });
 
 // Indexes
 UserSchema.index({ role: 1 });
-
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);

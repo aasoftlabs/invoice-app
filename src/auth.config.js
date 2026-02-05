@@ -13,6 +13,11 @@ export const authConfig = {
       }
       // Allow access to setup page (for first run)
       if (nextUrl.pathname.startsWith("/setup")) return true;
+
+      // Allow access to forgot/reset password pages
+      if (nextUrl.pathname.startsWith("/forgot-password")) return true;
+      if (nextUrl.pathname.startsWith("/reset-password")) return true;
+
       // Allow access to API routes
       if (nextUrl.pathname.startsWith("/api")) return true;
 

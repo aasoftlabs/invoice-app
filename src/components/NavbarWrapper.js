@@ -15,6 +15,8 @@ export default function NavbarWrapper() {
   const hideNavbar =
     pathname === "/setup" ||
     pathname === "/login" ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password" ||
     pathname.startsWith("/verify");
 
   useEffect(() => {

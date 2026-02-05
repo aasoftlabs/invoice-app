@@ -37,11 +37,22 @@ body {
 
   /* Grid Pattern & Footer-like Gradient Effect */
   background-image:
-    linear-gradient(to right, var(--grid-color, rgba(0, 0, 0, 0.03)) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-color, rgba(0, 0, 0, 0.03)) 1px, transparent 1px),
+    linear-gradient(
+      to right,
+      var(--grid-color, rgba(0, 0, 0, 0.03)) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      var(--grid-color, rgba(0, 0, 0, 0.03)) 1px,
+      transparent 1px
+    ),
     linear-gradient(to bottom, rgba(59, 130, 246, 0.03), transparent);
   /* Subtle blue tint */
-  background-size: 40px 40px, 40px 40px, 100% 100vh;
+  background-size:
+    40px 40px,
+    40px 40px,
+    100% 100vh;
   background-attachment: fixed;
   /* Keep pattern fixed while scrolling */
 }
@@ -78,4 +89,16 @@ body {
 .dark .glass {
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hide browser's native password reveal button */
+::-ms-reveal {
+  display: none !important;
+}
+::-ms-clear {
+  display: none !important;
+}
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
 }
