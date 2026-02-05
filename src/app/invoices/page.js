@@ -10,13 +10,7 @@ import InvoiceDashboard from "@/components/invoices/InvoiceDashboard";
 export default async function Dashboard() {
   await connectDB();
 
-  // 1. Check if ANY users exist (First Run Check)
-  // We do this BEFORE auth check because if no users exist, no one can login.
-  // Using .estimatedDocumentCount() is faster but .countDocuments() is safer for small sets.
-  const userCount = await Invoice.db.collection("users").countDocuments();
-  if (userCount === 0) {
-    redirect("/setup");
-  }
+
 
   // 2. Now check authentication
   const session = await auth();
@@ -48,8 +42,7 @@ export default async function Dashboard() {
       .lean(),
   ]);
 
-  // Check if profile exists, if not redirect to setup
-  if (!profile) redirect("/setup");
+
 
   // Serialize for Client Components
   const serializedInvoices = JSON.parse(JSON.stringify(invoices));

@@ -110,54 +110,59 @@ const SlipTemplate = forwardRef(({ slip, company }, ref) => {
             ref={ref}
             className="max-w-[210mm] min-h-[297mm] print:min-h-0 print:h-auto mx-auto bg-white shadow-lg print:shadow-none p-12 print:px-8 print:py-2 text-sm flex flex-col"
         >
-            <div className="border-b-2 border-gray-200 pb-6 mb-8 mt-5 print:mt-0">
-                <div className="flex flex-col items-center">
-                    <div className="flex items-center gap-3 mb-4">
-                        {company?.logo ? (
-                            <Image
-                                src={company.logo}
-                                alt="Logo"
-                                width={100}
-                                height={64}
-                                unoptimized
-                                className="h-16 w-auto object-contain"
-                            />
-                        ) : (
-                            <div className="h-16 w-16 bg-blue-100 rounded flex items-center justify-center text-blue-600 font-bold text-2xl">
-                                {company?.name?.[0] || "C"}
-                            </div>
-                        )}
-                        <div className="leading-tight text-left">
-                            <BrandName
-                                name={company?.name}
-                                color={company?.formatting?.color}
-                            />
-                            {company?.slogan && (
-                                <p className="text-[9px] text-gray-500 uppercase mt-0.5 font-medium tracking-wider">
-                                    {company.slogan}
-                                </p>
-                            )}
-                            {company?.tagline && (
-                                <p
-                                    className="text-[10px] font-bold uppercase mt-0.5"
-                                    style={{ color: company?.formatting?.color || "#1d4ed8" }}
-                                >
-                                    {company.tagline}
-                                </p>
-                            )}
+            {/* Header - Logo/Name left, Address right, inline */}
+            <div className="flex justify-between items-start pb-6 mb-8 border-b-2 border-gray-200">
+                {/* Left side - Logo and Company Name */}
+                <div className="flex items-center gap-3">
+                    {company?.logo ? (
+                        <Image
+                            src={company.logo}
+                            alt="Logo"
+                            width={100}
+                            height={64}
+                            unoptimized
+                            className="h-16 w-auto object-contain"
+                        />
+                    ) : (
+                        <div className="h-16 w-16 bg-blue-100 rounded flex items-center justify-center text-blue-600 font-bold text-2xl">
+                            {company?.name?.[0] || "C"}
                         </div>
+                    )}
+                    <div className="leading-tight text-left">
+                        <BrandName
+                            name={company?.name}
+                            color={company?.formatting?.color}
+                        />
+                        {company?.slogan && (
+                            <p className="text-[9px] text-gray-500 uppercase mt-0.5 font-medium tracking-wider">
+                                {company.slogan}
+                            </p>
+                        )}
+                        {company?.tagline && (
+                            <p
+                                className="text-[10px] font-bold uppercase mt-0.5"
+                                style={{ color: company?.formatting?.color || "#1d4ed8" }}
+                            >
+                                {company.tagline}
+                            </p>
+                        )}
                     </div>
+                </div>
 
-                    <p className="text-gray-500 mt-1 whitespace-pre-line text-sm text-center">
+                {/* Right side - Address */}
+                <div className="text-right max-w-xs">
+                    <p className="text-gray-500 text-sm whitespace-pre-line">
                         <span className="font-semibold text-gray-600">Reg. Office:</span>{" "}
                         {company?.address ||
                             "Company Address, City, State, Zip Code\nContact: contact@company.com"}
                     </p>
-                    <h2 className="text-lg font-semibold text-blue-800 mt-6 uppercase text-center">
-                        Payslip for {monthNames[slip.month - 1]} {slip.year}
-                    </h2>
                 </div>
             </div>
+
+            {/* Title */}
+            <h2 className="text-lg font-semibold text-blue-800 mb-8 uppercase text-center">
+                Payslip for {monthNames[slip.month - 1]} {slip.year}
+            </h2>
 
             {/* Employee Details */}
             <div className="grid grid-cols-2 gap-x-12 gap-y-4 mb-8">
@@ -324,11 +329,12 @@ const SlipTemplate = forwardRef(({ slip, company }, ref) => {
                 </div>
             </div>
 
-            {/* Footer / Signatures - Removed as per request */}
-            <div className="mt-12"></div>
+            {/* Footer */}
+            <div className="mt-auto pt-4 border-t border-gray-200">
+                <p className="text-center text-[10px] text-gray-400 uppercase tracking-widest">
+                    This is a Computer Generated Document - No Signature Required
+                </p>
 
-            <div className="mt-4 text-center text-[10px] text-gray-400 uppercase tracking-widest">
-                Computer Generated Document
             </div>
         </div>
     );

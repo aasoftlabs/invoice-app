@@ -11,8 +11,7 @@ export const authConfig = {
         if (isLoggedIn) return Response.redirect(new URL("/", nextUrl));
         return true;
       }
-      // Allow access to setup page (for first run)
-      if (nextUrl.pathname.startsWith("/setup")) return true;
+
 
       // Allow access to forgot/reset password pages
       if (nextUrl.pathname.startsWith("/forgot-password")) return true;

@@ -85,6 +85,14 @@ export default function SendBulkSlipsModal({ isOpen, onClose, onSuccess }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div className="bg-amber-50 p-4 rounded-lg border border-amber-200 mb-4">
+            <p className="text-sm font-semibold text-amber-800 mb-2">⚠️ Important Notice</p>
+            <p className="text-xs text-amber-700">
+              Bulk emails use a simplified PDF format. For the full SlipTemplate format,
+              please send emails individually from each slip view or slip card.
+            </p>
+          </div>
+
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4">
             <p className="text-sm text-blue-800">
               This will send salary slip emails to all employees who have a

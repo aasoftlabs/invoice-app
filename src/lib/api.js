@@ -42,9 +42,9 @@ export const api = {
 
   // Company / Setup
   setup: {
-    getProfile: () => fetchHelper("/api/setup"),
+    getProfile: () => fetchHelper("/api/profile"),
     updateProfile: (data) =>
-      fetchHelper("/api/setup", {
+      fetchHelper("/api/profile", {
         method: "POST",
         body: JSON.stringify(data),
       }),

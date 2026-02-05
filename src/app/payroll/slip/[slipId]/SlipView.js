@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useModal } from "@/contexts/ModalContext";
 import { useSession } from "next-auth/react";
 import jsPDF from "jspdf";
@@ -13,7 +13,8 @@ import { toPng } from "html-to-image"; // Added this import
 
 export default function SlipView({ slipId }) {
   const router = useRouter();
-  const { alert } = useModal();
+  const searchParams = useSearchParams();
+  const { alert, confirm } = useModal();
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -22,6 +23,7 @@ export default function SlipView({ slipId }) {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
   const slipRef = useRef(null);
+  const emailTriggered = useRef(false); // Prevent duplicate email sends
 
   const fetchData = useCallback(async () => {
     try {
@@ -33,8 +35,8 @@ export default function SlipView({ slipId }) {
 
       // Fetch company details (for header)
       const compData = await api.setup.getProfile();
-      if (compData.profile) {
-        setCompany(compData.profile || compData.data || null);
+      if (compData.data || compData.profile) {
+        setCompany(compData.data || compData.profile || null);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -58,11 +60,36 @@ export default function SlipView({ slipId }) {
     router.refresh();
   };
 
-  const handleDownload = async () => {
-    if (!slipRef.current) return;
-    setDownloading(true);
+  // Check if redirect from card with sendEmail parameter
+  useEffect(() => {
+    const shouldSendEmail = searchParams.get("sendEmail") === "true";
+    if (
+      shouldSendEmail &&
+      session?.user?.role === "admin" &&
+      !emailTriggered.current &&
+      slip &&
+      company &&
+      !loading
+    ) {
+      emailTriggered.current = true; // Mark as triggered
+      // Wait for component to fully render and ref to be available
+      const timer = setTimeout(() => {
+        if (slipRef.current) {
+          handleSendEmailAction();
+        }
+      }, 1500); // Increased delay to ensure ref is ready
 
-    // Hide buttons for capture and ensure print styles
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, session, slip, company, loading]);
+
+  // Generate PDF as base64 string (reusable for download and email)
+  const generatePdfBase64 = async () => {
+    if (!slipRef.current) {
+      throw new Error("Slip reference not available");
+    }
+
+    // Hide buttons for capture
     const buttons = document.getElementById("action-buttons");
     if (buttons) buttons.style.display = "none";
 
@@ -80,10 +107,6 @@ export default function SlipView({ slipId }) {
 
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
-      const img = new Image();
-      img.src = dataUrl;
 
       const imgProps = pdf.getImageProperties(dataUrl);
       const imgWidth = imgProps.width;
@@ -93,6 +116,30 @@ export default function SlipView({ slipId }) {
       const finalHeight = imgHeight * ratio;
 
       pdf.addImage(dataUrl, "PNG", 0, 0, pdfWidth, finalHeight);
+
+      // Get PDF as ArrayBuffer and convert to base64
+      const pdfArrayBuffer = pdf.output("arraybuffer");
+      const pdfBytes = new Uint8Array(pdfArrayBuffer);
+
+      // Convert to base64 using browser's btoa
+      let binary = '';
+      const len = pdfBytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(pdfBytes[i]);
+      }
+      const pdfBase64 = btoa(binary);
+
+      return { pdf, pdfBase64 };
+    } finally {
+      if (buttons) buttons.style.display = "flex";
+    }
+  };
+
+  const handleDownload = async () => {
+    setDownloading(true);
+
+    try {
+      const { pdf } = await generatePdfBase64();
       pdf.save(`Payslip_${slip.userId.name}_${slip.month}_${slip.year}.pdf`);
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -102,7 +149,6 @@ export default function SlipView({ slipId }) {
         variant: "danger",
       });
     } finally {
-      if (buttons) buttons.style.display = "flex";
       setDownloading(false);
     }
   };
@@ -111,25 +157,36 @@ export default function SlipView({ slipId }) {
     window.print();
   };
 
-  // Handle email sending
+  // Handle email sending with client-side PDF generation
   const handleSendEmailAction = async () => {
     setSendingEmail(true);
+    const startTime = Date.now();
+
     try {
+      // Generate PDF client-side using the SAME code as download
+      const pdfStartTime = Date.now();
+      const { pdfBase64 } = await generatePdfBase64();
+      const pdfEndTime = Date.now();
+
+      // Send email with client-generated PDF
+      const apiStartTime = Date.now();
       const res = await fetch("/api/payroll/email/single", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slipId }),
+        body: JSON.stringify({ slipId, pdfBase64 }),
       });
+      const apiEndTime = Date.now();
 
       const data = await res.json();
 
       if (res.ok) {
+        const totalTime = Date.now() - startTime;
         await alert({
           title: "Success",
           message: "Salary slip emailed successfully!",
           variant: "success",
         });
-        // Refresh data to show sent status if we added UI for it
+        // Refresh data to show sent status
         fetchData();
       } else {
         throw new Error(data.message || "Failed to send email");
@@ -176,7 +233,8 @@ export default function SlipView({ slipId }) {
         onBack={() => router.push("/payroll")}
         onPrint={handlePrint}
         onDownload={handleDownload}
-        loading={downloading || sendingEmail}
+        downloadLoading={downloading}
+        emailLoading={sendingEmail}
         onPay={
           session?.user?.role === "admin"
             ? () => setIsPayModalOpen(true)

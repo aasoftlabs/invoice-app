@@ -6,7 +6,8 @@ export default function SlipActions({
   onDownload,
   onPay,
   onSendEmail,
-  loading,
+  downloadLoading,
+  emailLoading,
   status,
 }) {
   return (
@@ -33,10 +34,15 @@ export default function SlipActions({
         {onSendEmail && (
           <button
             onClick={onSendEmail}
-            disabled={loading}
+            disabled={emailLoading}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm font-medium disabled:opacity-50"
           >
-            <Mail className="w-4 h-4" /> Send Email
+            {emailLoading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+            ) : (
+              <Mail className="w-4 h-4" />
+            )}
+            Send Email
           </button>
         )}
 
@@ -48,10 +54,10 @@ export default function SlipActions({
         </button>
         <button
           onClick={onDownload}
-          disabled={loading}
+          disabled={downloadLoading}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm disabled:opacity-50"
         >
-          {loading ? (
+          {downloadLoading ? (
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
           ) : (
             <Download className="w-4 h-4" />

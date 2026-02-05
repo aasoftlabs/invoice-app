@@ -1,10 +1,6 @@
 import { Resend } from "resend";
 import { getPasswordResetTemplate } from "./emailTemplates/passwordReset";
-import {
-  getSalarySlipPdfTemplate,
-  getSalarySlipEmailBody,
-} from "./emailTemplates/salarySlip";
-import { generatePdf } from "./pdfGenerator";
+import { getSalarySlipEmailBody } from "./emailTemplates/salarySlip";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -19,18 +15,22 @@ export const sendPasswordResetEmail = async (email, token) => {
   });
 };
 
-export const sendSalarySlipEmail = async (email, slipData) => {
+export const sendSalarySlipEmail = async (email, slipData, pdfBase64 = null) => {
   const monthName = new Date(slipData.year, slipData.month - 1).toLocaleString(
     "default",
     { month: "long" },
   );
 
   try {
-    // Generate PDF
-    const pdfHtml = getSalarySlipPdfTemplate(slipData);
-    const pdfBuffer = await generatePdf(pdfHtml);
+    if (!pdfBase64) {
+      throw new Error("PDF must be generated client-side. Please open the slip view to send email.");
+    }
+
+
 
     // Send email with attachment
+    // Send email with attachment
+    const resendStartTime = Date.now();
     await resend.emails.send({
       from: "hrd@aasoftlabs.com",
       to: email,
@@ -39,10 +39,12 @@ export const sendSalarySlipEmail = async (email, slipData) => {
       attachments: [
         {
           filename: `Payslip_${monthName}_${slipData.year}.pdf`,
-          content: pdfBuffer,
+          content: pdfBase64,
         },
       ],
     });
+    const resendEndTime = Date.now();
+
   } catch (error) {
     console.error("Error in sendSalarySlipEmail:", error);
     throw error;
@@ -60,6 +62,9 @@ export const sendBulkSalarySlipEmails = async (items) => {
       slipData.month - 1,
     ).toLocaleString("default", { month: "long" });
 
+    // Convert buffer to base64 string (required by Resend API)
+    const pdfBase64 = pdfBuffer.toString('base64');
+
     return {
       from: "hrd@aasoftlabs.com",
       to: email,
@@ -68,7 +73,7 @@ export const sendBulkSalarySlipEmails = async (items) => {
       attachments: [
         {
           filename: `Payslip_${monthName}_${slipData.year}.pdf`,
-          content: pdfBuffer,
+          content: pdfBase64,
         },
       ],
     };

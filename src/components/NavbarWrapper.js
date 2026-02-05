@@ -13,7 +13,7 @@ export default function NavbarWrapper() {
 
   // Don't show navbar on setup, login, and verify pages
   const hideNavbar =
-    pathname === "/setup" ||
+
     pathname === "/login" ||
     pathname === "/forgot-password" ||
     pathname === "/reset-password" ||
@@ -60,12 +60,12 @@ export default function NavbarWrapper() {
   // Merge session user with fetched user data
   const enrichedUser = userData
     ? {
-        ...session?.user,
-        name: userData.name,
-        email: userData.email,
-        role: userData.role,
-        permissions: userData.permissions,
-      }
+      ...session?.user,
+      name: userData.name,
+      email: userData.email,
+      role: userData.role,
+      permissions: userData.permissions,
+    }
     : session?.user;
 
   return <Navbar user={enrichedUser} profile={profile} />;

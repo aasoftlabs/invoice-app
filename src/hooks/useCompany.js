@@ -6,12 +6,12 @@ export function useCompany() {
   const fetchCompany = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/setup");
+      const res = await fetch("/api/profile");
       const data = await res.json();
       if (res.ok) {
         return {
           success: true,
-          profile: data.profile,
+          profile: data.data,
           userCount: data.userCount,
         };
       }
@@ -27,7 +27,7 @@ export function useCompany() {
   const updateCompany = useCallback(async (formData) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/setup", {
+      const res = await fetch("/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -35,7 +35,7 @@ export function useCompany() {
       const data = await res.json();
       return {
         success: res.ok,
-        data: data.profile,
+        data: data.user, // updateProfile in route returns user, not full profile. But wait, update logic might need check.
         error: res.ok
           ? null
           : data.error || "Failed to update company settings",

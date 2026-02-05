@@ -17,7 +17,7 @@ export async function POST(req) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { slipId } = await req.json();
+    const { slipId, pdfBase64 } = await req.json();
 
     if (!slipId) {
       return NextResponse.json(
@@ -66,10 +66,8 @@ export async function POST(req) {
       );
     }
 
-    // Prepare slip data for email template (flatten userId object if needed or pass as is because populate works)
-    // The template expects slip.userId.name etc, which populate provides.
-
-    await sendSalarySlipEmail(slip.userId.email, slip);
+    // Send email with client-generated PDF
+    await sendSalarySlipEmail(slip.userId.email, slip, pdfBase64);
 
     // Update status
     slip.emailSent = true;

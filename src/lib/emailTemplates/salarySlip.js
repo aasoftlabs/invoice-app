@@ -37,9 +37,13 @@ export const getSalarySlipPdfTemplate = (slip) => {
 <body>
   <div class="container">
     <div class="header">
-      <div style="margin-bottom: 10px;">
-         <span style="color: #2563eb; font-size: 24px; font-weight: bold;">AA</span>
-         <span style="color: #4b5563; font-size: 24px; font-weight: bold;">SoftLabs</span>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px;">
+        <img src="https://aasoftlabs.com/logo.png" alt="AASoftLabs" style="height: 50px; width: auto;" />
+        <div>
+          <span style="color: #2563eb; font-size: 24px; font-weight: bold;">AA</span>
+          <span style="color: #4b5563; font-size: 24px; font-weight: bold;">SoftLabs</span>
+          <sup style="color: #9ca3af; font-size: 10px; margin-left: 2px;">™</sup>
+        </div>
       </div>
       <div class="title">Payslip for ${monthName} ${slip.year}</div>
     </div>
@@ -83,42 +87,36 @@ export const getSalarySlipPdfTemplate = (slip) => {
               <td>DA</td>
               <td class="amount-col">${formatCurrency(slip.earnings.da)}</td>
             </tr>
-            ${
-              slip.earnings.conveyanceAllowance > 0
-                ? `<tr><td>Conveyance</td><td class="amount-col">${formatCurrency(slip.earnings.conveyanceAllowance)}</td></tr>`
-                : ""
-            }
-            ${
-              slip.earnings.medicalAllowance > 0
-                ? `<tr><td>Medical</td><td class="amount-col">${formatCurrency(slip.earnings.medicalAllowance)}</td></tr>`
-                : ""
-            }
-            ${
-              slip.earnings.specialAllowance > 0
-                ? `<tr><td>Special Allowance</td><td class="amount-col">${formatCurrency(slip.earnings.specialAllowance)}</td></tr>`
-                : ""
-            }
-             ${
-               slip.earnings.mobileExpense > 0
-                 ? `<tr><td>Mobile Expense</td><td class="amount-col">${formatCurrency(slip.earnings.mobileExpense)}</td></tr>`
-                 : ""
-             }
-            ${
-              slip.earnings.bonus > 0
-                ? `<tr><td>Bonus</td><td class="amount-col">${formatCurrency(slip.earnings.bonus)}</td></tr>`
-                : ""
-            }
-             ${
-               slip.earnings.arrears > 0
-                 ? `<tr><td>Arrears</td><td class="amount-col">${formatCurrency(slip.earnings.arrears)}</td></tr>`
-                 : ""
-             }
+            ${slip.earnings.conveyanceAllowance > 0
+      ? `<tr><td>Conveyance</td><td class="amount-col">${formatCurrency(slip.earnings.conveyanceAllowance)}</td></tr>`
+      : ""
+    }
+            ${slip.earnings.medicalAllowance > 0
+      ? `<tr><td>Medical</td><td class="amount-col">${formatCurrency(slip.earnings.medicalAllowance)}</td></tr>`
+      : ""
+    }
+            ${slip.earnings.specialAllowance > 0
+      ? `<tr><td>Special Allowance</td><td class="amount-col">${formatCurrency(slip.earnings.specialAllowance)}</td></tr>`
+      : ""
+    }
+             ${slip.earnings.mobileExpense > 0
+      ? `<tr><td>Mobile Expense</td><td class="amount-col">${formatCurrency(slip.earnings.mobileExpense)}</td></tr>`
+      : ""
+    }
+            ${slip.earnings.bonus > 0
+      ? `<tr><td>Bonus</td><td class="amount-col">${formatCurrency(slip.earnings.bonus)}</td></tr>`
+      : ""
+    }
+             ${slip.earnings.arrears > 0
+      ? `<tr><td>Arrears</td><td class="amount-col">${formatCurrency(slip.earnings.arrears)}</td></tr>`
+      : ""
+    }
             ${slip.earnings.otherAllowances
-              .map(
-                (allowance) =>
-                  `<tr><td>${allowance.name}</td><td class="amount-col">${formatCurrency(allowance.amount)}</td></tr>`,
-              )
-              .join("")}
+      .map(
+        (allowance) =>
+          `<tr><td>${allowance.name}</td><td class="amount-col">${formatCurrency(allowance.amount)}</td></tr>`,
+      )
+      .join("")}
           </table>
         </td>
         <td width="50%" valign="top">
@@ -136,32 +134,28 @@ export const getSalarySlipPdfTemplate = (slip) => {
               <td>TDS</td>
               <td class="amount-col">${formatCurrency(slip.deductions.tds)}</td>
             </tr>
-             ${
-               slip.deductions.esi > 0
-                 ? `<tr><td>ESI</td><td class="amount-col">${formatCurrency(slip.deductions.esi)}</td></tr>`
-                 : ""
-             }
-             ${
-               slip.deductions.loan > 0
-                 ? `<tr><td>Loan Repayment</td><td class="amount-col">${formatCurrency(slip.deductions.loan)}</td></tr>`
-                 : ""
-             }
-              ${
-                slip.deductions.advance > 0
-                  ? `<tr><td>Salary Advance</td><td class="amount-col">${formatCurrency(slip.deductions.advance)}</td></tr>`
-                  : ""
-              }
-               ${
-                 slip.deductions.lop > 0
-                   ? `<tr><td>Loss of Pay</td><td class="amount-col">${formatCurrency(slip.deductions.lop)}</td></tr>`
-                   : ""
-               }
+             ${slip.deductions.esi > 0
+      ? `<tr><td>ESI</td><td class="amount-col">${formatCurrency(slip.deductions.esi)}</td></tr>`
+      : ""
+    }
+             ${slip.deductions.loan > 0
+      ? `<tr><td>Loan Repayment</td><td class="amount-col">${formatCurrency(slip.deductions.loan)}</td></tr>`
+      : ""
+    }
+              ${slip.deductions.advance > 0
+      ? `<tr><td>Salary Advance</td><td class="amount-col">${formatCurrency(slip.deductions.advance)}</td></tr>`
+      : ""
+    }
+               ${slip.deductions.lop > 0
+      ? `<tr><td>Loss of Pay</td><td class="amount-col">${formatCurrency(slip.deductions.lop)}</td></tr>`
+      : ""
+    }
             ${slip.deductions.otherDeductions
-              .map(
-                (deduction) =>
-                  `<tr><td>${deduction.name}</td><td class="amount-col">${formatCurrency(deduction.amount)}</td></tr>`,
-              )
-              .join("")}
+      .map(
+        (deduction) =>
+          `<tr><td>${deduction.name}</td><td class="amount-col">${formatCurrency(deduction.amount)}</td></tr>`,
+      )
+      .join("")}
           </table>
         </td>
       </tr>
@@ -185,11 +179,10 @@ export const getSalarySlipPdfTemplate = (slip) => {
       Net Pay: ${formatCurrency(slip.netPay)}
     </div>
     
-     ${
-       slip.notes
-         ? `<div style="margin-top: 20px; font-size: 14px; color: #555;"><strong>Note:</strong> ${slip.notes}</div>`
-         : ""
-     }
+     ${slip.notes
+      ? `<div style="margin-top: 20px; font-size: 14px; color: #555;"><strong>Note:</strong> ${slip.notes}</div>`
+      : ""
+    }
 
     <div class="footer">
       <p>&copy; ${new Date().getFullYear()} AASoftLabs. All rights reserved.</p>
@@ -230,9 +223,13 @@ export const getSalarySlipEmailBody = (slip) => {
 <body>
   <div class="container">
     <div class="header">
-       <div style="margin-bottom: 10px;">
-         <span style="color: #2563eb; font-size: 24px; font-weight: bold;">AA</span>
-         <span style="color: #4b5563; font-size: 24px; font-weight: bold;">SoftLabs</span>
+       <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px;">
+         <img src="https://aasoftlabs.com/logo.png" alt="AASoftLabs" style="height: 50px; width: auto;" />
+         <div>
+           <span style="color: #2563eb; font-size: 24px; font-weight: bold;">AA</span>
+           <span style="color: #4b5563; font-size: 24px; font-weight: bold;">SoftLabs</span>
+           <sup style="color: #9ca3af; font-size: 10px; margin-left: 2px;">™</sup>
+         </div>
       </div>
       <h3>Payslip for ${monthName} ${slip.year}</h3>
     </div>
