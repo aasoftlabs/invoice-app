@@ -40,6 +40,7 @@ const SlipTemplate = forwardRef(({ slip, company }, ref) => {
     };
 
     const toWords = (num) => {
+        if (!num) return "Zero";
         const a = [
             "",
             "One",
