@@ -222,6 +222,46 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }) {
                 <option value="admin">Admin (Full Access)</option>
               </select>
             </div>
+
+            <div className="col-span-2 grid grid-cols-2 gap-4">
+              <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 dark:border-slate-700 rounded-lg">
+                <input
+                  type="checkbox"
+                  checked={newUser.enableEmail !== false}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, enableEmail: e.target.checked })
+                  }
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300 block">
+                    Receive Emails
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">
+                    Allow system to send emails
+                  </span>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 dark:border-slate-700 rounded-lg">
+                <input
+                  type="checkbox"
+                  checked={newUser.enablePayroll !== false}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, enablePayroll: e.target.checked })
+                  }
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300 block">
+                    Enable Payroll
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">
+                    Show in payroll list & generation
+                  </span>
+                </div>
+              </label>
+            </div>
           </div>
 
           {/* Permissions */}

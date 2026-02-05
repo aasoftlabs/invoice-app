@@ -31,7 +31,7 @@ export async function POST(req) {
     // Fetch slip with user details
     const slip = await SalarySlip.findById(slipId).populate(
       "userId",
-      "name email designation department employeeId",
+      "name email designation department employeeId enableEmail",
     );
 
     if (!slip) {
@@ -44,6 +44,13 @@ export async function POST(req) {
     if (!slip.userId || !slip.userId.email) {
       return NextResponse.json(
         { message: "Employee email not found" },
+        { status: 400 },
+      );
+    }
+
+    if (slip.userId.enableEmail === false) {
+      return NextResponse.json(
+        { message: "Email sending is disabled for this user" },
         { status: 400 },
       );
     }

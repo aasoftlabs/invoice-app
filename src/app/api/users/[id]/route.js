@@ -43,7 +43,8 @@ export async function PUT(req, { params }) {
   try {
     await connectDB();
     const { id } = await params;
-    const { name, designation, email, role, permissions } = await req.json();
+    const reqJson = await req.json();
+    const { name, designation, email, role, permissions } = reqJson;
 
     // Check if email is being changed and if it's already taken
     if (email) {
@@ -62,6 +63,10 @@ export async function PUT(req, { params }) {
     if (email) updateData.email = email;
     if (role) updateData.role = role;
     if (permissions) updateData.permissions = permissions;
+    if (typeof reqJson.enableEmail !== "undefined")
+      updateData.enableEmail = reqJson.enableEmail;
+    if (typeof reqJson.enablePayroll !== "undefined")
+      updateData.enablePayroll = reqJson.enablePayroll;
 
     const user = await User.findByIdAndUpdate(id, updateData, {
       new: true,

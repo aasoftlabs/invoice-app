@@ -91,6 +91,8 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }) {
           email: editingUser.email,
           role: editingUser.role,
           permissions: editingUser.permissions,
+          enableEmail: editingUser.enableEmail,
+          enablePayroll: editingUser.enablePayroll,
         }),
       });
 
@@ -214,6 +216,52 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }) {
                 <option value="user">User (Restricted)</option>
                 <option value="admin">Admin (Full Access)</option>
               </select>
+            </div>
+
+            <div className="col-span-2 grid grid-cols-2 gap-4">
+              <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 dark:border-slate-700 rounded-lg">
+                <input
+                  type="checkbox"
+                  checked={editingUser.enableEmail !== false}
+                  onChange={(e) =>
+                    setEditingUser({
+                      ...editingUser,
+                      enableEmail: e.target.checked,
+                    })
+                  }
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300 block">
+                    Receive Emails
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">
+                    Allow system to send emails
+                  </span>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 dark:border-slate-700 rounded-lg">
+                <input
+                  type="checkbox"
+                  checked={editingUser.enablePayroll !== false}
+                  onChange={(e) =>
+                    setEditingUser({
+                      ...editingUser,
+                      enablePayroll: e.target.checked,
+                    })
+                  }
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300 block">
+                    Enable Payroll
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">
+                    Show in payroll list & generation
+                  </span>
+                </div>
+              </label>
             </div>
           </div>
 
