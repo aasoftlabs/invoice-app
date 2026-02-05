@@ -151,6 +151,25 @@ export const usePayroll = () => {
     }
   }, []);
 
+  const fetchAttendanceSummary = useCallback(async (month, year) => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `/api/attendance/summary?month=${month}&year=${year}`,
+      );
+      const data = await res.json();
+      if (data.success) {
+        return data.userLopCounts;
+      }
+      return {};
+    } catch (err) {
+      console.error("Error fetching attendance summary:", err);
+      return {};
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const deleteSalaryStructure = useCallback(async (userId) => {
     setLoading(true);
     try {
@@ -187,5 +206,6 @@ export const usePayroll = () => {
     slips,
     generateSlips,
     fetchSlips,
+    fetchAttendanceSummary,
   };
 };

@@ -5,8 +5,9 @@ export function hasPermission(user, page) {
   // Admin has access to everything
   if (user.role === "admin") return true;
 
-  // Notes and Profile are allowed to all users by default
-  if (page === "notes" || page === "profile") return true;
+  // Notes, Profile, and Attendance are allowed to all users by default
+  if (page === "notes" || page === "profile" || page === "attendance")
+    return true;
 
   // Check if user has specific permission
   return user.permissions && user.permissions.includes(page);
@@ -27,6 +28,7 @@ export function getUserPermissions(user) {
       "notes",
       "payroll",
       "accounts",
+      "attendance",
     ];
   }
 
@@ -38,6 +40,9 @@ export function getUserPermissions(user) {
     perms.push("profile");
   }
 
+  if (!perms.includes("attendance")) {
+    perms.push("attendance");
+  }
   return perms;
 }
 
@@ -58,6 +63,7 @@ export function canAccessRoute(user, pathname) {
     "/notes": "notes",
     "/payroll": "payroll",
     "/accounts": "accounts",
+    "/attendance": "attendance",
   };
 
   // Find matching route

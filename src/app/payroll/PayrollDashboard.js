@@ -9,6 +9,7 @@ import PayrollTable from "@/components/payroll/PayrollTable";
 import { usePayroll } from "@/hooks/usePayroll";
 import { useModal } from "@/contexts/ModalContext";
 import SendBulkSlipsModal from "@/components/payroll/slip/SendBulkSlipsModal";
+import PermissionGate from "@/components/ui/PermissionGate";
 
 export default function PayrollDashboard() {
   const router = useRouter();
@@ -143,66 +144,69 @@ export default function PayrollDashboard() {
   ]);
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-            Payroll Management
-          </h1>
-          <p className="text-gray-500 dark:text-slate-400 mt-1">
-            Manage employee salaries and generate slips
-          </p>
+    <PermissionGate permission="payroll">
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+              Payroll Management
+            </h1>
+            <p className="text-gray-500 dark:text-slate-400 mt-1">
+              Manage employee salaries and generate slips
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setIsSendBulkModalOpen(true)}
+              className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-slate-600"
+            >
+              <Mail className="w-5 h-5" />
+              Send Emails
+            </button>
+            <button
+              onClick={() => router.push("/payroll/generate")}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Generate Slips
+            </button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsSendBulkModalOpen(true)}
-            className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-slate-600"
-          >
-            <Mail className="w-5 h-5" />
-            Send Emails
-          </button>
-          <button
-            onClick={() => router.push("/payroll/generate")}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Generate Slips
-          </button>
-        </div>
+
+        <SendBulkSlipsModal
+          isOpen={isSendBulkModalOpen}
+          onClose={() => setIsSendBulkModalOpen(false)}
+        />
+
+        <PayrollStats stats={stats} />
+
+        <PayrollFilters
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
+          filterState={filterState}
+          setFilterState={setFilterState}
+          filterDepartment={filterDepartment}
+          setFilterDepartment={setFilterDepartment}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          uniqueStates={uniqueStates}
+          uniqueDepartments={uniqueDepartments}
+        />
+
+        <PayrollTable
+          employees={employees}
+          loading={loading}
+          error={hookError}
+          lastElementRef={lastEmployeeElementRef}
+        />
+
+        {loadingMore && (
+          <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading more
+            employees...
+          </div>
+        )}
       </div>
-
-      <SendBulkSlipsModal
-        isOpen={isSendBulkModalOpen}
-        onClose={() => setIsSendBulkModalOpen(false)}
-      />
-
-      <PayrollStats stats={stats} />
-
-      <PayrollFilters
-        filterStatus={filterStatus}
-        setFilterStatus={setFilterStatus}
-        filterState={filterState}
-        setFilterState={setFilterState}
-        filterDepartment={filterDepartment}
-        setFilterDepartment={setFilterDepartment}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        uniqueStates={uniqueStates}
-        uniqueDepartments={uniqueDepartments}
-      />
-
-      <PayrollTable
-        employees={employees}
-        loading={loading}
-        error={hookError}
-        lastElementRef={lastEmployeeElementRef}
-      />
-
-      {loadingMore && (
-        <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin" /> Loading more employees...
-        </div>
-      )}
-    </div>
+    </PermissionGate>
   );
 }

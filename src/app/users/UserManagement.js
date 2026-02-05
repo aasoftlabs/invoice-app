@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useModal } from "@/contexts/ModalContext";
 import { Edit2, Trash2, UserPlus } from "lucide-react";
 import Spotlight from "@/components/ui/Spotlight";
 import { useRouter } from "next/navigation";
 import AddUserModal from "@/components/users/AddUserModal";
 import EditUserModal from "@/components/users/EditUserModal";
+import PermissionGate from "@/components/ui/PermissionGate";
 
 export default function UserManagement({ users: initialUsers }) {
   const router = useRouter();
@@ -14,6 +15,11 @@ export default function UserManagement({ users: initialUsers }) {
   const [editingUser, setEditingUser] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { confirm, alert } = useModal();
+
+  // Update state when props change (from router.refresh)
+  useEffect(() => {
+    setUsers(initialUsers);
+  }, [initialUsers]);
 
   const handleDelete = async (userId, userName) => {
     if (
@@ -50,7 +56,7 @@ export default function UserManagement({ users: initialUsers }) {
   };
 
   return (
-    <>
+    <PermissionGate permission="users">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
           User Management
@@ -193,6 +199,6 @@ export default function UserManagement({ users: initialUsers }) {
         }}
         user={editingUser}
       />
-    </>
+    </PermissionGate>
   );
 }

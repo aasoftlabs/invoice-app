@@ -37,6 +37,8 @@ export default function Navbar({ user, profile }) {
                 links.push({ href: "/project", label: "Project" });
               }
 
+              links.push({ href: "/attendance", label: "Attendance" });
+
               if (permissions.includes("payroll")) {
                 links.push({ href: "/payroll", label: "Payroll" });
               } else {

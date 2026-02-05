@@ -20,19 +20,26 @@ export default function GeneratePayroll() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Use custom hook
-  const { employees, fetchEmployees, fetchSlips, generateSlips } = usePayroll();
+  const {
+    employees,
+    fetchEmployees,
+    fetchSlips,
+    generateSlips,
+    fetchAttendanceSummary,
+  } = usePayroll();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
 
     try {
       // Fetch data in parallel
-      const [employeeData, slipData] = await Promise.all([
+      const [employeeData, slipData, attendanceLopCounts] = await Promise.all([
         fetchEmployees({ all: true }),
         fetchSlips({
           month: selectedMonth,
           year: selectedYear,
         }),
+        fetchAttendanceSummary(selectedMonth, selectedYear),
       ]);
 
       const currentEmployees = employeeData?.employees || [];
@@ -40,11 +47,18 @@ export default function GeneratePayroll() {
 
       setSlips(currentSlips);
 
-      // Initialize LOP data using the fresh data from the fetches
+      // Initialize LOP data:
+      // 1. If existing slip, use its LOP
+      // 2. Otherwise use attendance summary LOP
+      // 3. Fallback to 0
       const initialLop = {};
       currentEmployees.forEach((e) => {
         const slip = currentSlips.find((s) => s.userId._id === e._id);
-        initialLop[e._id] = slip ? slip.lopDays : 0;
+        if (slip) {
+          initialLop[e._id] = slip.lopDays;
+        } else {
+          initialLop[e._id] = attendanceLopCounts[e._id] || 0;
+        }
       });
       setLopData(initialLop);
     } catch (err) {
@@ -52,7 +66,13 @@ export default function GeneratePayroll() {
     } finally {
       setLoading(false);
     }
-  }, [selectedMonth, selectedYear, fetchEmployees, fetchSlips]);
+  }, [
+    selectedMonth,
+    selectedYear,
+    fetchEmployees,
+    fetchSlips,
+    fetchAttendanceSummary,
+  ]);
 
   useEffect(() => {
     fetchData();

@@ -3,6 +3,7 @@ import connectDB from "@/lib/mongoose";
 import WorkLog from "@/models/WorkLog";
 import Task from "@/models/Task";
 import { auth } from "@/auth";
+import { markAttendance } from "@/lib/attendanceUtils";
 
 export async function POST(req) {
   try {
@@ -18,6 +19,14 @@ export async function POST(req) {
     data.userId = session.user.id;
 
     const newWorkLog = await WorkLog.create(data);
+
+    // Auto-mark attendance
+    try {
+      await markAttendance(session.user.id, data.date || new Date(), "worklog");
+    } catch (attError) {
+      console.error("Failed to auto-mark attendance from worklog:", attError);
+      // Don't fail the worklog creation if attendance fails
+    }
 
     // Update task dates based on work log
     if (data.taskId) {
@@ -82,7 +91,6 @@ export async function GET(req) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
     const filterAll = searchParams.get("all") === "true";
-
 
     let query = {};
 
@@ -163,6 +171,20 @@ export async function PUT(req) {
       .populate("userId", "name email")
       .populate("projectId", "name")
       .populate("taskId", "taskName");
+
+    // Auto-mark/update attendance on edit as well
+    try {
+      await markAttendance(
+        session.user.id,
+        updatedLog.date || new Date(),
+        "worklog",
+      );
+    } catch (attError) {
+      console.error(
+        "Failed to auto-update attendance from worklog edit:",
+        attError,
+      );
+    }
 
     return NextResponse.json({ success: true, data: updatedLog });
   } catch (error) {

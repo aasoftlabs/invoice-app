@@ -53,10 +53,23 @@ const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       if (token) {
-        session.user.role = token.role;
-        session.user.id = token.id;
-        session.user.image = token.picture;
-        session.user.permissions = token.permissions;
+        await connectDB();
+        const user = await User.findById(token.id).select(
+          "role permissions avatar",
+        );
+
+        if (user) {
+          session.user.role = user.role;
+          session.user.id = token.id;
+          session.user.image = user.avatar;
+          session.user.permissions = user.permissions || [];
+        } else {
+          // If user not found, fallback to token data or clear session
+          session.user.role = token.role;
+          session.user.id = token.id;
+          session.user.image = token.picture;
+          session.user.permissions = token.permissions || [];
+        }
       }
       return session;
     },

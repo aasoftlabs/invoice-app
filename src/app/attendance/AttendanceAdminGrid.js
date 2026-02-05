@@ -1,0 +1,383 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Search,
+  Calendar as CalendarIcon,
+  Download,
+  Edit3,
+  Check,
+  X,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  AlertTriangle,
+} from "lucide-react";
+import AccessDenied from "@/components/ui/AccessDenied";
+
+export default function AttendanceAdminGrid() {
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [updating, setUpdating] = useState(null);
+  const [unauthorized, setUnauthorized] = useState(false);
+
+  const fetchAttendance = async () => {
+    try {
+      setLoading(true);
+      setUnauthorized(false);
+      const res = await fetch(`/api/attendance/admin?date=${date}`);
+
+      if (res.status === 401) {
+        setUnauthorized(true);
+        return;
+      }
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setEmployees(data);
+    } catch (error) {
+      console.error("Error fetching admin attendance:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttendance();
+  }, [date]);
+
+  const handleUpdateStatus = async (userId, status, overrides = {}) => {
+    try {
+      setUpdating(userId);
+      const res = await fetch("/api/attendance/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          date,
+          status,
+          clockIn: overrides.clockIn,
+          clockOut: overrides.clockOut,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update");
+
+      // Update local state
+      setEmployees((prev) =>
+        prev.map((emp) => {
+          if (emp._id === userId) {
+            return {
+              ...emp,
+              attendance: { ...emp.attendance, status, source: "admin" },
+            };
+          }
+          return emp;
+        }),
+      );
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  const filteredEmployees = employees.filter(
+    (emp) =>
+      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.employeeId?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const adjustDate = (days) => {
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    setDate(d.toISOString().split("T")[0]);
+  };
+
+  if (unauthorized) {
+    return (
+      <AccessDenied message="You no longer have permission to view the attendance dashboard." />
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+        <div className="flex items-center gap-2 bg-white dark:bg-slate-800 p-1 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
+          <button
+            onClick={() => adjustDate(-1)}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-500" />
+          </button>
+          <div className="flex items-center gap-2 px-3">
+            <CalendarIcon className="w-4 h-4 text-blue-500" />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="bg-transparent border-none text-sm font-bold focus:ring-0 text-gray-900 dark:text-white"
+            />
+          </div>
+          <button
+            onClick={() => adjustDate(1)}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors"
+            disabled={date === new Date().toISOString().split("T")[0]}
+          >
+            <ChevronRight className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+
+        <div className="relative w-full md:w-64">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search employees..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b dark:border-slate-700">
+              <tr>
+                <th className="px-6 py-4">Employee</th>
+                <th className="px-6 py-4">Attendance Status</th>
+                <th className="px-6 py-4 text-center">Clock In</th>
+                <th className="px-6 py-4 text-center">Clock Out</th>
+                <th className="px-6 py-4 text-center">Working Hours</th>
+                <th className="px-6 py-4">Source</th>
+                <th className="px-6 py-4 text-right">Rapid Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td
+                      colSpan="7"
+                      className="px-6 py-6 h-12 bg-gray-50/20 dark:bg-slate-800/20"
+                    />
+                  </tr>
+                ))
+              ) : filteredEmployees.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="7"
+                    className="px-6 py-12 text-center text-gray-500"
+                  >
+                    No employees found
+                  </td>
+                </tr>
+              ) : (
+                filteredEmployees.map((emp) => {
+                  const todayStr = new Date().toISOString().split("T")[0];
+                  const isFuture = date > todayStr;
+                  const isPast = date < todayStr;
+                  const dojStr = emp.joiningDate
+                    ? new Date(emp.joiningDate).toISOString().split("T")[0]
+                    : null;
+                  const isBeforeJoining = dojStr && date < dojStr;
+                  const isMissedOut =
+                    isPast &&
+                    emp.attendance?.clockIn &&
+                    !emp.attendance?.clockOut;
+                  const isDisabled =
+                    updating === emp._id || isBeforeJoining || isFuture;
+
+                  const handleRegularize = () => {
+                    const exitTime = prompt(
+                      "Enter exit time (24h format HH:mm):",
+                      "18:00",
+                    );
+                    if (
+                      exitTime &&
+                      /^([01]\d|2[0-3]):([0-5]\d)$/.test(exitTime)
+                    ) {
+                      handleUpdateStatus(
+                        emp._id,
+                        emp.attendance?.status || "present",
+                        { clockOut: exitTime },
+                      );
+                    } else if (exitTime) {
+                      alert(
+                        "Invalid time format. Please use HH:mm (e.g. 18:00)",
+                      );
+                    }
+                  };
+                  return (
+                    <tr
+                      key={emp._id}
+                      className="hover:bg-gray-50/50 dark:hover:bg-slate-700/50"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          {emp.name}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {emp.employeeId || emp._id.slice(-6).toUpperCase()}
+                        </div>
+                        {isBeforeJoining ? (
+                          <div className="text-[10px] font-bold text-red-500 uppercase mt-1">
+                            Not Joined Yet
+                          </div>
+                        ) : isFuture ? (
+                          <div className="text-[10px] font-bold text-amber-500 uppercase mt-1">
+                            Future Date
+                          </div>
+                        ) : isMissedOut ? (
+                          <div className="flex items-center gap-1 text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase mt-1 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-full w-fit">
+                            <AlertTriangle className="w-3 h-3" />
+                            Missed Exit
+                          </div>
+                        ) : null}
+                      </td>
+                      <td className="px-6 py-4">
+                        <select
+                          value={emp.attendance?.status || "absent"}
+                          onChange={(e) =>
+                            handleUpdateStatus(emp._id, e.target.value)
+                          }
+                          disabled={isDisabled}
+                          className={`text-xs font-bold uppercase rounded-lg border-none focus:ring-2 focus:ring-blue-500 px-3 py-1.5 cursor-pointer dark:bg-slate-900 ${
+                            isBeforeJoining || isFuture
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50"
+                              : emp.attendance?.status === "present"
+                                ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
+                                : emp.attendance?.status === "half_day"
+                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+                                  : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+                          }`}
+                        >
+                          <option
+                            value="present"
+                            className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
+                          >
+                            Present
+                          </option>
+                          <option
+                            value="half_day"
+                            className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
+                          >
+                            Half Day
+                          </option>
+                          <option
+                            value="absent"
+                            className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
+                          >
+                            Absent
+                          </option>
+                          <option
+                            value="lop"
+                            className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
+                          >
+                            LOP
+                          </option>
+                        </select>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="text-sm font-semibold text-gray-700 dark:text-slate-300">
+                          {emp.attendance?.clockIn
+                            ? new Date(
+                                emp.attendance.clockIn,
+                              ).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })
+                            : "--:--"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="text-sm font-semibold text-gray-700 dark:text-slate-300">
+                          {emp.attendance?.clockOut
+                            ? new Date(
+                                emp.attendance.clockOut,
+                              ).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })
+                            : "--:--"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full">
+                          {(() => {
+                            if (
+                              !emp.attendance?.clockIn ||
+                              !emp.attendance?.clockOut
+                            )
+                              return "--";
+                            const start = new Date(emp.attendance.clockIn);
+                            const end = new Date(emp.attendance.clockOut);
+                            const diffMs = end - start;
+                            if (diffMs < 0) return "--";
+                            const hrs = Math.floor(diffMs / 3600000);
+                            const mins = Math.floor((diffMs % 3600000) / 60000);
+                            return `${hrs}h ${mins}m`;
+                          })()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="text-xs text-gray-500 capitalize italic bg-gray-100 dark:bg-slate-900 px-2 py-1 rounded">
+                          {emp.attendance?.source || "manual"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {updating === emp._id ? (
+                          <Loader2 className="w-5 h-5 animate-spin ml-auto text-blue-500" />
+                        ) : (
+                          <div className="flex justify-end gap-2">
+                            {emp.attendance?.status !== "present" && (
+                              <button
+                                onClick={() =>
+                                  handleUpdateStatus(emp._id, "present")
+                                }
+                                disabled={isDisabled}
+                                title="Set Present"
+                                className="p-1.5 hover:bg-green-50 text-green-600 rounded-md transition-colors disabled:opacity-0"
+                              >
+                                <Check className="w-5 h-5" />
+                              </button>
+                            )}
+                            {emp.attendance?.status !== "absent" && (
+                              <button
+                                onClick={() =>
+                                  handleUpdateStatus(emp._id, "absent")
+                                }
+                                disabled={isDisabled}
+                                title="Set Absent"
+                                className="p-1.5 hover:bg-red-50 text-red-600 rounded-md transition-colors disabled:opacity-0"
+                              >
+                                <X className="w-5 h-5" />
+                              </button>
+                            )}
+                            {isMissedOut && (
+                              <button
+                                onClick={handleRegularize}
+                                title="Regularize (Fix Exit Time)"
+                                className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-md transition-colors"
+                              >
+                                <Edit3 className="w-5 h-5" />
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
