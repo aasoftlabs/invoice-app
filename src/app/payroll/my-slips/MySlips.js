@@ -9,6 +9,9 @@ import {
   Calendar,
   Trash2,
   RefreshCw,
+  Mail,
+  CheckCircle,
+  Send,
 } from "lucide-react";
 import { usePayroll } from "@/hooks/usePayroll";
 
@@ -115,6 +118,50 @@ export default function MySlips({ userId }) {
       });
     }
     setActionLoading(null);
+  };
+
+  const handleSendEmail = async (slip) => {
+    if (
+      !(await confirm({
+        title: "Send Salary Slip",
+        message: `Are you sure you want to send the salary slip to ${slip.userId.email}?`,
+        variant: "info",
+        confirmText: "Send Email",
+      }))
+    )
+      return;
+
+    setActionLoading(slip._id);
+
+    try {
+      const res = await fetch("/api/payroll/email/single", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slipId: slip._id }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        await alert({
+          title: "Success",
+          message: "Email sent successfully!",
+          variant: "success",
+        });
+        loadSlips();
+      } else {
+        throw new Error(data.message || "Failed to send email");
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      await alert({
+        title: "Error",
+        message: error.message || "Failed to send email",
+        variant: "danger",
+      });
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const monthNames = [
@@ -278,6 +325,22 @@ export default function MySlips({ userId }) {
                 >
                   <Download className="w-4 h-4" />
                 </button>
+                <button
+                  onClick={() => handleSendEmail(slip)}
+                  disabled={actionLoading === slip._id}
+                  className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Send Email"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+                {slip.emailSent && (
+                  <button
+                    className="flex items-center justify-center gap-2 px-3 py-2 border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg text-sm font-medium cursor-default"
+                    title={`Email sent on ${new Date(slip.emailSentAt).toLocaleString()}`}
+                  >
+                    <Mail className="w-4 h-4" />
+                  </button>
+                )}
                 <button
                   onClick={() => handleDelete(slip._id)}
                   disabled={actionLoading === slip._id}

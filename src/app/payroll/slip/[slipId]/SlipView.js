@@ -18,6 +18,7 @@ export default function SlipView({ slipId }) {
   const [slip, setSlip] = useState(null);
   const [company, setCompany] = useState(null);
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
   const slipRef = useRef(null);
 
   const fetchData = useCallback(async () => {
@@ -108,6 +109,41 @@ export default function SlipView({ slipId }) {
     window.print();
   };
 
+  // Handle email sending
+  const handleSendEmailAction = async () => {
+    setSendingEmail(true);
+    try {
+      const res = await fetch("/api/payroll/email/single", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slipId }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        await alert({
+          title: "Success",
+          message: "Salary slip emailed successfully!",
+          variant: "success",
+        });
+        // Refresh data to show sent status if we added UI for it
+        fetchData();
+      } else {
+        throw new Error(data.message || "Failed to send email");
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      await alert({
+        title: "Error",
+        message: error.message || "Failed to send email",
+        variant: "danger",
+      });
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-slate-900">
@@ -138,9 +174,10 @@ export default function SlipView({ slipId }) {
         onBack={() => router.push("/payroll")}
         onPrint={handlePrint}
         onDownload={handleDownload}
-        loading={downloading}
+        loading={downloading || sendingEmail}
         onPay={() => setIsPayModalOpen(true)}
         status={slip.status}
+        onSendEmail={handleSendEmailAction}
       />
 
       <SlipTemplate ref={slipRef} slip={slip} company={company} />

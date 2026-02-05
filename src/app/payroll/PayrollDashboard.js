@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Mail } from "lucide-react";
 import PayrollStats from "@/components/payroll/PayrollStats";
 import PayrollFilters from "@/components/payroll/PayrollFilters";
 import PayrollTable from "@/components/payroll/PayrollTable";
 import { usePayroll } from "@/hooks/usePayroll";
 import { useModal } from "@/contexts/ModalContext";
+import SendBulkSlipsModal from "@/components/payroll/slip/SendBulkSlipsModal";
 
 export default function PayrollDashboard() {
   const router = useRouter();
@@ -27,6 +28,7 @@ export default function PayrollDashboard() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isSendBulkModalOpen, setIsSendBulkModalOpen] = useState(false);
 
   // Filter States
   const [searchTerm, setSearchTerm] = useState("");
@@ -151,14 +153,28 @@ export default function PayrollDashboard() {
             Manage employee salaries and generate slips
           </p>
         </div>
-        <button
-          onClick={() => router.push("/payroll/generate")}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Generate Slips
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setIsSendBulkModalOpen(true)}
+            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            <Mail className="w-5 h-5" />
+            Send Emails
+          </button>
+          <button
+            onClick={() => router.push("/payroll/generate")}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Generate Slips
+          </button>
+        </div>
       </div>
+
+      <SendBulkSlipsModal
+        isOpen={isSendBulkModalOpen}
+        onClose={() => setIsSendBulkModalOpen(false)}
+      />
 
       <PayrollStats stats={stats} />
 
