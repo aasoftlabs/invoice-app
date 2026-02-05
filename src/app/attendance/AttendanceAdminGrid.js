@@ -22,6 +22,7 @@ export default function AttendanceAdminGrid() {
   const [searchTerm, setSearchTerm] = useState("");
   const [updating, setUpdating] = useState(null);
   const [unauthorized, setUnauthorized] = useState(false);
+  const [yearlySummary, setYearlySummary] = useState({});
 
   const fetchAttendance = async () => {
     try {
@@ -37,6 +38,15 @@ export default function AttendanceAdminGrid() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setEmployees(data);
+
+      // Also fetch yearly summary for usage column
+      const yrRes = await fetch(
+        `/api/attendance/summary?year=${new Date(date).getFullYear()}`,
+      );
+      const yrData = await yrRes.json();
+      if (yrData.success) {
+        setYearlySummary(yrData.summary);
+      }
     } catch (error) {
       console.error("Error fetching admin attendance:", error);
     } finally {
@@ -60,6 +70,7 @@ export default function AttendanceAdminGrid() {
           status,
           clockIn: overrides.clockIn,
           clockOut: overrides.clockOut,
+          note: overrides.note,
         }),
       });
       if (!res.ok) throw new Error("Failed to update");
@@ -129,15 +140,65 @@ export default function AttendanceAdminGrid() {
           </button>
         </div>
 
-        <div className="relative w-full md:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search employees..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
-          />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              const name = prompt(
+                "Enter Holiday Name (e.g. Republic Day):",
+                "Public Holiday",
+              );
+              if (!name) return;
+
+              if (
+                !confirm(
+                  `Are you sure you want to mark ${date} as a holiday for ALL employees?`,
+                )
+              )
+                return;
+
+              try {
+                setLoading(true);
+                // Call API for each employee (simple approach for now, since we have filteredEmployees)
+                // Better approach: New Bulk API endpoint. But let's stick to sequence for simplicity or create bulk handler.
+                // Actually, let's create a bulk handler in the markAdmin function.
+
+                const promises = filteredEmployees.map((emp) =>
+                  fetch("/api/attendance/admin", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      userId: emp._id,
+                      date,
+                      status: "holiday",
+                      note: name,
+                    }),
+                  }),
+                );
+
+                await Promise.all(promises);
+                fetchAttendance(); // Refresh all
+              } catch (error) {
+                alert("Failed to mark holidays: " + error.message);
+              } finally {
+                setLoading(false);
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 rounded-xl text-sm font-bold transition-all border border-purple-100 dark:border-purple-800"
+          >
+            <CalendarIcon className="w-4 h-4" />
+            Mark Holiday for All
+          </button>
+
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search employees..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+            />
+          </div>
         </div>
       </div>
 
@@ -151,6 +212,7 @@ export default function AttendanceAdminGrid() {
                 <th className="px-6 py-4 text-center">Clock In</th>
                 <th className="px-6 py-4 text-center">Clock Out</th>
                 <th className="px-6 py-4 text-center">Working Hours</th>
+                <th className="px-6 py-4 text-center">Usage (Annual)</th>
                 <th className="px-6 py-4">Source</th>
                 <th className="px-6 py-4 text-right">Rapid Action</th>
               </tr>
@@ -160,7 +222,7 @@ export default function AttendanceAdminGrid() {
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td
-                      colSpan="7"
+                      colSpan="8"
                       className="px-6 py-6 h-12 bg-gray-50/20 dark:bg-slate-800/20"
                     />
                   </tr>
@@ -168,7 +230,7 @@ export default function AttendanceAdminGrid() {
               ) : filteredEmployees.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="7"
+                    colSpan="8"
                     className="px-6 py-12 text-center text-gray-500"
                   >
                     No employees found
@@ -240,9 +302,21 @@ export default function AttendanceAdminGrid() {
                       <td className="px-6 py-4">
                         <select
                           value={emp.attendance?.status || "absent"}
-                          onChange={(e) =>
-                            handleUpdateStatus(emp._id, e.target.value)
-                          }
+                          onChange={(e) => {
+                            if (e.target.value === "holiday") {
+                              const name = prompt(
+                                "Enter Holiday Name (e.g. Independence Day):",
+                                "Public Holiday",
+                              );
+                              if (name) {
+                                handleUpdateStatus(emp._id, "holiday", {
+                                  note: name,
+                                });
+                              }
+                            } else {
+                              handleUpdateStatus(emp._id, e.target.value);
+                            }
+                          }}
                           disabled={isDisabled}
                           className={`text-xs font-bold uppercase rounded-lg border-none focus:ring-2 focus:ring-blue-500 px-3 py-1.5 cursor-pointer dark:bg-slate-900 ${
                             isBeforeJoining || isFuture
@@ -251,7 +325,17 @@ export default function AttendanceAdminGrid() {
                                 ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
                                 : emp.attendance?.status === "half_day"
                                   ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
-                                  : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+                                  : emp.attendance?.status === "cl"
+                                    ? "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400"
+                                    : emp.attendance?.status === "sl"
+                                      ? "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
+                                      : emp.attendance?.status === "el"
+                                        ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400"
+                                        : emp.attendance?.status === "pl"
+                                          ? "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-400"
+                                          : emp.attendance?.status === "holiday"
+                                            ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400"
+                                            : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
                           }`}
                         >
                           <option
@@ -265,6 +349,45 @@ export default function AttendanceAdminGrid() {
                             className="bg-white dark:bg-slate-900 text-gray-900 dark:text-white"
                           >
                             Half Day
+                          </option>
+                          {((yearlySummary[emp._id]?.cl || 0) < 12 ||
+                            emp.attendance?.status === "cl") && (
+                            <option
+                              value="cl"
+                              className="bg-white dark:bg-slate-900 text-orange-600 font-bold"
+                            >
+                              Casual Leave (CL)
+                            </option>
+                          )}
+                          {((yearlySummary[emp._id]?.sl || 0) < 12 ||
+                            emp.attendance?.status === "sl") && (
+                            <option
+                              value="sl"
+                              className="bg-white dark:bg-slate-900 text-rose-600 font-bold"
+                            >
+                              Sick Leave (SL)
+                            </option>
+                          )}
+                          {((yearlySummary[emp._id]?.el || 0) < 15 ||
+                            emp.attendance?.status === "el") && (
+                            <option
+                              value="el"
+                              className="bg-white dark:bg-slate-900 text-indigo-600 font-bold"
+                            >
+                              Earned Leave (EL)
+                            </option>
+                          )}
+                          <option
+                            value="pl"
+                            className="bg-white dark:bg-slate-900 text-teal-600 font-bold"
+                          >
+                            Paid Leave (PL)
+                          </option>
+                          <option
+                            value="holiday"
+                            className="bg-white dark:bg-slate-900 text-purple-600 font-bold"
+                          >
+                            Holiday
                           </option>
                           <option
                             value="absent"
@@ -323,6 +446,21 @@ export default function AttendanceAdminGrid() {
                             return `${hrs}h ${mins}m`;
                           })()}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex flex-col gap-1 items-center">
+                          <div className="flex gap-2 text-[10px] font-bold">
+                            <span className="text-orange-600 dark:text-orange-400">
+                              CL: {yearlySummary[emp._id]?.cl || 0}/12
+                            </span>
+                            <span className="text-rose-600 dark:text-rose-400">
+                              SL: {yearlySummary[emp._id]?.sl || 0}/12
+                            </span>
+                            <span className="text-indigo-600 dark:text-indigo-400">
+                              EL: {yearlySummary[emp._id]?.el || 0}/15
+                            </span>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className="text-xs text-gray-500 capitalize italic bg-gray-100 dark:bg-slate-900 px-2 py-1 rounded">

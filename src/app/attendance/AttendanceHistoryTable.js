@@ -26,10 +26,45 @@ export default function AttendanceHistoryTable({ records, loading }) {
             Half Day
           </span>
         );
+      case "holiday":
+        return (
+          <span className="flex items-center gap-1.5 px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded text-xs font-semibold uppercase">
+            <Calendar className="w-3 h-3" />
+            Holiday: {rec.note || "Public Holiday"}
+          </span>
+        );
+      case "cl":
+        return (
+          <span className="flex items-center gap-1.5 px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-xs font-semibold uppercase">
+            <Info className="w-3 h-3" />
+            Casual Leave
+          </span>
+        );
+      case "sl":
+        return (
+          <span className="flex items-center gap-1.5 px-2 py-1 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 rounded text-xs font-semibold uppercase">
+            <Info className="w-3 h-3" />
+            Sick Leave
+          </span>
+        );
+      case "el":
+        return (
+          <span className="flex items-center gap-1.5 px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 rounded text-xs font-semibold uppercase">
+            <Info className="w-3 h-3" />
+            Earned Leave
+          </span>
+        );
+      case "pl":
+        return (
+          <span className="flex items-center gap-1.5 px-2 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 rounded text-xs font-semibold uppercase">
+            <Info className="w-3 h-3" />
+            Paid Leave
+          </span>
+        );
       default:
         return (
           <span className="px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-400 rounded text-xs font-semibold uppercase">
-            {status}
+            {status.replace("_", " ")}
           </span>
         );
     }

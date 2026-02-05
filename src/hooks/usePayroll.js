@@ -154,17 +154,18 @@ export const usePayroll = () => {
   const fetchAttendanceSummary = useCallback(async (month, year) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `/api/attendance/summary?month=${month}&year=${year}`,
-      );
+      const url = month
+        ? `/api/attendance/summary?month=${month}&year=${year}`
+        : `/api/attendance/summary?year=${year}`;
+      const res = await fetch(url);
       const data = await res.json();
       if (data.success) {
-        return data.userLopCounts;
+        return data;
       }
-      return {};
+      return { summary: {}, userLopCounts: {} };
     } catch (err) {
       console.error("Error fetching attendance summary:", err);
-      return {};
+      return { summary: {}, userLopCounts: {} };
     } finally {
       setLoading(false);
     }
