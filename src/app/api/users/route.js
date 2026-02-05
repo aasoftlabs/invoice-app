@@ -54,7 +54,6 @@ export async function POST(req) {
       password: hashedPassword,
       role: data.role || "user",
       permissions: userPermissions,
-      enableEmail: data.enableEmail !== undefined ? data.enableEmail : true,
       enablePayroll:
         data.enablePayroll !== undefined ? data.enablePayroll : true,
       avatar: data.avatar || "",

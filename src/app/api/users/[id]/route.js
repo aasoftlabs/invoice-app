@@ -63,8 +63,6 @@ export async function PUT(req, { params }) {
     if (email) updateData.email = email;
     if (role) updateData.role = role;
     if (permissions) updateData.permissions = permissions;
-    if (typeof reqJson.enableEmail !== "undefined")
-      updateData.enableEmail = reqJson.enableEmail;
     if (typeof reqJson.enablePayroll !== "undefined")
       updateData.enablePayroll = reqJson.enablePayroll;
 

@@ -151,6 +151,24 @@ export const usePayroll = () => {
     }
   }, []);
 
+  const deleteSalaryStructure = useCallback(async (userId) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/payroll/salary/${userId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        return { success: true };
+      }
+      return { success: false, error: data.error };
+    } catch (err) {
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     loading,
     error,
@@ -164,6 +182,7 @@ export const usePayroll = () => {
     salaryStructure,
     getSalaryStructure,
     updateSalaryStructure,
+    deleteSalaryStructure,
     // Slips
     slips,
     generateSlips,

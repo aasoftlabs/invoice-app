@@ -39,6 +39,8 @@ export default function Navbar({ user, profile }) {
 
               if (permissions.includes("payroll")) {
                 links.push({ href: "/payroll", label: "Payroll" });
+              } else {
+                links.push({ href: "/payroll/my-slips", label: "My Slips" });
               }
 
               if (permissions.includes("accounts")) {
@@ -51,10 +53,11 @@ export default function Navbar({ user, profile }) {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`hidden md:block text-sm font-semibold transition-colors ${isActive
-                      ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 -mb-[22px] pb-[18px]"
-                      : "text-gray-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white"
-                      }`}
+                    className={`hidden md:block text-sm font-semibold transition-colors ${
+                      isActive
+                        ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 -mb-[22px] pb-[18px]"
+                        : "text-gray-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white"
+                    }`}
                   >
                     {link.label}
                   </Link>

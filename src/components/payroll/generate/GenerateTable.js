@@ -1,4 +1,5 @@
 import { CheckCircle, AlertCircle, Play } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function GenerateTable({
   employees,
@@ -9,6 +10,7 @@ export default function GenerateTable({
   handleGenerate,
   getSlipStatus,
 }) {
+  const router = useRouter();
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
       <table className="w-full text-left">
@@ -114,7 +116,7 @@ export default function GenerateTable({
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() =>
-                            window.open(`/payroll/slip/${slip._id}`, "_blank")
+                            router.push(`/payroll/slip/${slip._id}`)
                           }
                           className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium cursor-pointer"
                         >

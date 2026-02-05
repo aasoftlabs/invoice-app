@@ -12,7 +12,7 @@ export const sendPasswordResetEmail = async (email, token) => {
   const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
 
   await resend.emails.send({
-    from: "hrd@aasoftlabs.com",
+    from: "security@aasoftlabs.com",
     to: email,
     subject: "Reset your password",
     html: getPasswordResetTemplate(resetUrl),
@@ -32,7 +32,7 @@ export const sendSalarySlipEmail = async (email, slipData) => {
 
     // Send email with attachment
     await resend.emails.send({
-      from: "payroll@aasoftlabs.com",
+      from: "hrd@aasoftlabs.com",
       to: email,
       subject: `Payslip for ${monthName} ${slipData.year} - AASoftLabs`,
       html: getSalarySlipEmailBody(slipData),
@@ -42,7 +42,6 @@ export const sendSalarySlipEmail = async (email, slipData) => {
           content: pdfBuffer,
         },
       ],
-    });
     });
   } catch (error) {
     console.error("Error in sendSalarySlipEmail:", error);
@@ -62,7 +61,7 @@ export const sendBulkSalarySlipEmails = async (items) => {
     ).toLocaleString("default", { month: "long" });
 
     return {
-      from: "payroll@aasoftlabs.com",
+      from: "hrd@aasoftlabs.com",
       to: email,
       subject: `Payslip for ${monthName} ${slipData.year} - AASoftLabs`,
       html: getSalarySlipEmailBody(slipData),

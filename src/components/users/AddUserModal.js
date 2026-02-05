@@ -222,54 +222,35 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }) {
                 <option value="admin">Admin (Full Access)</option>
               </select>
             </div>
+          </div>
 
-            <div className="col-span-2 grid grid-cols-2 gap-4">
-              <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 dark:border-slate-700 rounded-lg">
-                <input
-                  type="checkbox"
-                  checked={newUser.enableEmail !== false}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, enableEmail: e.target.checked })
-                  }
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                />
-                <div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300 block">
-                    Receive Emails
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-slate-400">
-                    Allow system to send emails
-                  </span>
-                </div>
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 dark:border-slate-700 rounded-lg">
+          {/* Permissions */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+              Access Permissions
+            </label>
+            <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-700">
+              {/* Enable Payroll Checkbox - Moved here */}
+              <label className="flex items-start gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={newUser.enablePayroll !== false}
                   onChange={(e) =>
                     setNewUser({ ...newUser, enablePayroll: e.target.checked })
                   }
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 mt-0.5"
                 />
                 <div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300 block">
-                    Enable Payroll
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
+                    Enroll for Payroll
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-slate-400">
-                    Show in payroll list & generation
-                  </span>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">
+                    Show in payroll list & generation. Also enables payroll
+                    emails.
+                  </p>
                 </div>
               </label>
-            </div>
-          </div>
 
-          {/* Permissions */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-              Page Access Permissions
-            </label>
-            <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-700">
               {AVAILABLE_PERMISSIONS.map((perm) => (
                 <label
                   key={perm.id}

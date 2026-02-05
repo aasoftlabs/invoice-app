@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/contexts/ModalContext";
+import { useSession } from "next-auth/react";
 import jsPDF from "jspdf";
 import { api } from "@/lib/api";
 import SlipTemplate from "@/components/payroll/slip/SlipTemplate";
@@ -13,6 +14,7 @@ import { toPng } from "html-to-image"; // Added this import
 export default function SlipView({ slipId }) {
   const router = useRouter();
   const { alert } = useModal();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [slip, setSlip] = useState(null);
@@ -175,9 +177,15 @@ export default function SlipView({ slipId }) {
         onPrint={handlePrint}
         onDownload={handleDownload}
         loading={downloading || sendingEmail}
-        onPay={() => setIsPayModalOpen(true)}
+        onPay={
+          session?.user?.role === "admin"
+            ? () => setIsPayModalOpen(true)
+            : undefined
+        }
         status={slip.status}
-        onSendEmail={handleSendEmailAction}
+        onSendEmail={
+          session?.user?.role === "admin" ? handleSendEmailAction : undefined
+        }
       />
 
       <SlipTemplate ref={slipRef} slip={slip} company={company} />

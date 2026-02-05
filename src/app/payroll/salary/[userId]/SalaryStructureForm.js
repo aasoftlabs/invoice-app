@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useModal } from "@/contexts/ModalContext";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, Trash2, RotateCcw } from "lucide-react";
 import SalaryConfiguration from "@/components/payroll/salary/SalaryConfiguration";
 import SalaryEarnings from "@/components/payroll/salary/SalaryEarnings";
 import SalaryDeductions from "@/components/payroll/salary/SalaryDeductions";
@@ -12,14 +12,15 @@ import { usePayroll } from "@/hooks/usePayroll";
 
 export default function SalaryStructureForm({ userId, sessionUserId }) {
   const router = useRouter();
-  const { alert } = useModal();
+  const { confirm, alert } = useModal();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [user, setUser] = useState(null);
   const [settings, setSettings] = useState(null);
 
   // Use custom hook
-  const { getSalaryStructure, updateSalaryStructure } = usePayroll();
+  const { getSalaryStructure, updateSalaryStructure, deleteSalaryStructure } =
+    usePayroll();
 
   const [salary, setSalary] = useState({
     userId: userId,
@@ -40,6 +41,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
     otherDeductions: [],
     pfApplicable: true,
     esiApplicable: false,
+    tdsApplicable: false,
     taxRegime: "new",
   });
 
@@ -145,6 +147,79 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
     setSaving(false);
   };
 
+  const handleReset = async () => {
+    if (
+      !(await confirm({
+        title: "Reset Salary Structure",
+        message:
+          "Are you sure you want to reset all fields to default values? This will clear all unsaved changes.",
+        variant: "warning",
+        confirmText: "Reset",
+      }))
+    ) {
+      return;
+    }
+
+    setSalary({
+      userId: userId,
+      state: user?.state || "Maharashtra",
+      employeeId: user?.employeeId || "",
+      department: user?.department,
+      joiningDate: user?.joiningDate,
+      basic: 0,
+      da: 0,
+      hra: 0,
+      conveyanceAllowance: 0,
+      specialAllowance: 0,
+      medicalAllowance: 0,
+      mobileExpense: 0,
+      distanceAllowance: 0,
+      bonus: 0,
+      arrears: 0,
+      otherAllowances: [],
+      loanDeduction: 0,
+      advanceDeduction: 0,
+      otherDeductions: [],
+      pfApplicable: true,
+      esiApplicable: false,
+      tdsApplicable: false,
+      taxRegime: "new",
+    });
+  };
+
+  const handleDelete = async () => {
+    if (
+      !(await confirm({
+        title: "Delete Salary Structure",
+        message: `Are you sure you want to delete the salary structure for ${user?.name}? This action cannot be undone.`,
+        variant: "danger",
+        confirmText: "Delete",
+      }))
+    ) {
+      return;
+    }
+
+    setSaving(true);
+    const result = await deleteSalaryStructure(userId);
+
+    if (result.success) {
+      await alert({
+        title: "Success",
+        message: "Salary structure deleted successfully!",
+        variant: "success",
+      });
+      router.push("/payroll");
+      router.refresh();
+    } else {
+      await alert({
+        title: "Error",
+        message: result.error || "Failed to delete salary structure",
+        variant: "danger",
+      });
+    }
+    setSaving(false);
+  };
+
   // Function to calculate estimated net pay purely on client side for quick view
   const calculateEstimate = () => {
     const gross =
@@ -221,18 +296,36 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
             </p>
           </div>
         </div>
-        <button
-          onClick={handleSubmit}
-          disabled={saving}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {saving ? (
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
-          Save
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleReset}
+            disabled={saving}
+            className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Reset
+          </button>
+          <button
+            onClick={handleDelete}
+            disabled={saving}
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={saving}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            Save
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

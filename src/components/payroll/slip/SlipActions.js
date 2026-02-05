@@ -30,13 +30,15 @@ export default function SlipActions({
           </button>
         )}
 
-        <button
-          onClick={onSendEmail}
-          disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors shadow-sm font-medium disabled:opacity-50"
-        >
-          <Mail className="w-4 h-4" /> Send Email
-        </button>
+        {onSendEmail && (
+          <button
+            onClick={onSendEmail}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm font-medium disabled:opacity-50"
+          >
+            <Mail className="w-4 h-4" /> Send Email
+          </button>
+        )}
 
         <button
           onClick={onPrint}

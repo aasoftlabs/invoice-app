@@ -73,7 +73,7 @@ export default function SendBulkSlipsModal({ isOpen, onClose, onSuccess }) {
       <div className="bg-white rounded-xl shadow-2xl max-w-md w-full animate-in fade-in zoom-in duration-200">
         <div className="flex justify-between items-center p-6 border-b border-gray-100">
           <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <Mail className="w-5 h-5 text-purple-600" />
+            <Mail className="w-5 h-5 text-blue-600" />
             Send Bulk Salary Slips
           </h2>
           <button
@@ -85,8 +85,8 @@ export default function SendBulkSlipsModal({ isOpen, onClose, onSuccess }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="bg-purple-50 p-4 rounded-lg border border-purple-100 mb-4">
-            <p className="text-sm text-purple-800">
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4">
+            <p className="text-sm text-blue-800">
               This will send salary slip emails to all employees who have a
               generated slip for the selected month.
             </p>
@@ -102,7 +102,7 @@ export default function SendBulkSlipsModal({ isOpen, onClose, onSuccess }) {
                 onChange={(e) =>
                   setFormData({ ...formData, month: parseInt(e.target.value) })
                 }
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-gray-900"
+                className="w-full p-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-gray-900"
               >
                 {months.map((m, i) => (
                   <option key={i + 1} value={i + 1}>
@@ -124,7 +124,7 @@ export default function SendBulkSlipsModal({ isOpen, onClose, onSuccess }) {
                 onChange={(e) =>
                   setFormData({ ...formData, year: parseInt(e.target.value) })
                 }
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-gray-900"
+                className="w-full p-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900"
               />
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function SendBulkSlipsModal({ isOpen, onClose, onSuccess }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-70"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-70"
             >
               {loading ? (
                 <>

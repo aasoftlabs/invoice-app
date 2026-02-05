@@ -31,7 +31,7 @@ export async function POST(req) {
     // Fetch slip with user details
     const slip = await SalarySlip.findById(slipId).populate(
       "userId",
-      "name email designation department employeeId enableEmail",
+      "name email designation department employeeId enablePayroll",
     );
 
     if (!slip) {
@@ -48,9 +48,20 @@ export async function POST(req) {
       );
     }
 
-    if (slip.userId.enableEmail === false) {
+    // Check if slip is in a valid status for emailing
+    if (slip.status === "draft") {
       return NextResponse.json(
-        { message: "Email sending is disabled for this user" },
+        {
+          message:
+            "Cannot send email for draft salary slips. Please finalize the slip first.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (slip.userId.enablePayroll === false) {
+      return NextResponse.json(
+        { message: "Payroll is disabled for this user" },
         { status: 400 },
       );
     }

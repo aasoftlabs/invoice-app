@@ -140,9 +140,25 @@ export default function SalaryConfiguration({ salary, handleChange }) {
           />
           <label
             htmlFor="esiApplicable"
-            className="text-sm font-medium text-gray-700 cursor-pointer"
+            className="text-sm font-medium text-gray-700 dark:text-slate-300 cursor-pointer"
           >
             ESI Applicable
+          </label>
+        </div>
+        <div className="flex items-center gap-2 mt-6">
+          <input
+            type="checkbox"
+            id="tdsApplicable"
+            name="tdsApplicable"
+            checked={salary.tdsApplicable}
+            onChange={handleChange}
+            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
+          />
+          <label
+            htmlFor="tdsApplicable"
+            className="text-sm font-medium text-gray-700 dark:text-slate-300 cursor-pointer"
+          >
+            TDS Applicable
           </label>
         </div>
       </div>

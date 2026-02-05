@@ -32,7 +32,7 @@ export async function POST(req) {
     // Fetch all slips for the given month/year
     const slips = await SalarySlip.find({ month, year }).populate(
       "userId",
-      "name email designation department employeeId enableEmail",
+      "name email designation department employeeId enablePayroll",
     );
 
     if (!slips || slips.length === 0) {
@@ -54,11 +54,12 @@ export async function POST(req) {
     // or Promise.all if we are confident. Let's do Promise.all for speed.
 
     const preparationPromises = slips.map(async (slip) => {
-      // Skip if invalid user or emails disabled
+      // Skip if invalid user, emails disabled, or slip is in draft status
       if (
         !slip.userId ||
         !slip.userId.email ||
-        slip.userId.enableEmail === false
+        slip.userId.enablePayroll === false ||
+        slip.status === "draft"
       ) {
         // Not counting as failed, just skipped
         return;

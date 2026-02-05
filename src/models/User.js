@@ -22,7 +22,6 @@ const UserSchema = new mongoose.Schema({
     // If user has "payroll" permission, they can access all /payroll/* pages and manage all employees
     // All users can see their own payroll data regardless of permission
   },
-  enableEmail: { type: Boolean, default: true }, // Enable/Disable email notifications
   enablePayroll: { type: Boolean, default: true }, // Enable/Disable payroll generation
   avatar: { type: String }, // URL or Base64
   resetToken: { type: String },
