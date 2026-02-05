@@ -1,6 +1,13 @@
 "use client";
 
-import { CheckCircle2, XCircle, Clock, Info, History } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Info,
+  History,
+  Calendar,
+} from "lucide-react";
 
 export default function AttendanceHistoryTable({ records, loading }) {
   const getStatusBadge = (status) => {

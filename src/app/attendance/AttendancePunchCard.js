@@ -20,7 +20,7 @@ export default function AttendancePunchCard({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    Promise.resolve().then(() => setMounted(true));
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -48,7 +48,7 @@ export default function AttendancePunchCard({
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Clock className="w-5 h-5 text-blue-500" />
-            Today's Activity
+            Today&apos;s Activity
           </h2>
           <div className="text-sm font-medium text-gray-500 dark:text-slate-400">
             {mounted
