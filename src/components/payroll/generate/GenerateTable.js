@@ -21,6 +21,7 @@ export default function GenerateTable({
             <th className="px-6 py-3">Net Salary (Est.)</th>
             <th className="px-6 py-3 w-32">LOP Days</th>
             <th className="px-6 py-3">Status</th>
+            <th className="px-6 py-3">Payment Status</th>
             <th className="px-6 py-3 text-right">Action</th>
           </tr>
         </thead>
@@ -28,7 +29,7 @@ export default function GenerateTable({
           {loading ? (
             <tr>
               <td
-                colSpan="6"
+                colSpan="7"
                 className="px-6 py-8 text-center text-gray-500 dark:text-slate-400"
               >
                 <div className="flex justify-center items-center gap-2">
@@ -39,7 +40,7 @@ export default function GenerateTable({
             </tr>
           ) : employees.length === 0 ? (
             <tr>
-              <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+              <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
                 No employees found
               </td>
             </tr>
@@ -108,6 +109,25 @@ export default function GenerateTable({
                     ) : (
                       <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-slate-400 bg-gray-100 dark:bg-slate-700 px-2 py-1 rounded">
                         Pending
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    {slip ? (
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-semibold uppercase ${
+                          slip.status === "paid"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : slip.status === "finalized"
+                              ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                              : "bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400"
+                        }`}
+                      >
+                        {slip.status}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400 italic">
+                        Not Generated
                       </span>
                     )}
                   </td>

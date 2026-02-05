@@ -320,15 +320,7 @@ export default function MySlips({ userId }) {
                     />
                   </button>
                 )}
-                <button
-                  onClick={() =>
-                    window.open(`/payroll/slip/${slip._id}/download`, "_blank")
-                  }
-                  className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-medium transition-colors"
-                  title="Download PDF"
-                >
-                  <Download className="w-4 h-4" />
-                </button>
+
                 {/* Email Button Logic */}
                 {session?.user?.role === "admin" ? (
                   <button

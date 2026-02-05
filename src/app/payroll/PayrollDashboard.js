@@ -156,7 +156,7 @@ export default function PayrollDashboard() {
         <div className="flex gap-2">
           <button
             onClick={() => setIsSendBulkModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-slate-600"
           >
             <Mail className="w-5 h-5" />
             Send Emails

@@ -83,7 +83,41 @@ export async function GET(req) {
       },
     });
 
-    // 4. Filter by Salary Status
+    // 4. Lookup Latest Salary Slip (for current month status)
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+
+    pipeline.push({
+      $lookup: {
+        from: "salaryslips",
+        let: { userId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$userId", "$$userId"] },
+                  { $eq: ["$month", currentMonth] },
+                  { $eq: ["$year", currentYear] },
+                ],
+              },
+            },
+          },
+          { $limit: 1 },
+        ],
+        as: "latestSlip",
+      },
+    });
+
+    pipeline.push({
+      $unwind: {
+        path: "$latestSlip",
+        preserveNullAndEmptyArrays: true,
+      },
+    });
+
+    // 5. Filter by Salary Status
     if (status === "with_salary") {
       pipeline.push({ $match: { salaryData: { $exists: true, $ne: null } } });
     } else if (status === "setup_pending") {
@@ -115,10 +149,19 @@ export async function GET(req) {
       }
 
       // Clean up user object (remove salaryData, password)
-      const { salaryData, password, ...userFields } = user;
+      const { salaryData, latestSlip, password, ...userFields } = user;
       return {
         ...userFields,
         salary: finalSalary,
+        latestSlip: latestSlip
+          ? {
+              _id: latestSlip._id,
+              status: latestSlip.status,
+              month: latestSlip.month,
+              year: latestSlip.year,
+              paidOn: latestSlip.paidOn,
+            }
+          : null,
       };
     });
 

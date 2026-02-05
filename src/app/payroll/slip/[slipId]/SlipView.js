@@ -161,7 +161,7 @@ export default function SlipView({ slipId }) {
           Slip not found
         </h2>
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/payroll")}
           className="mt-4 text-blue-600 dark:text-blue-400 hover:underline"
         >
           Go Back
