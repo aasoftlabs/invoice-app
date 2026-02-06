@@ -122,7 +122,7 @@ export default function SlipView({ slipId }) {
       const pdfBytes = new Uint8Array(pdfArrayBuffer);
 
       // Convert to base64 using browser's btoa
-      let binary = '';
+      let binary = "";
       const len = pdfBytes.byteLength;
       for (let i = 0; i < len; i++) {
         binary += String.fromCharCode(pdfBytes[i]);
@@ -163,17 +163,12 @@ export default function SlipView({ slipId }) {
     const startTime = Date.now();
 
     try {
-      // Generate PDF client-side using the SAME code as download
-      const pdfStartTime = Date.now();
-      const { pdfBase64 } = await generatePdfBase64();
-      const pdfEndTime = Date.now();
-
-      // Send email with client-generated PDF
+      // Send email (PDF will be generated server-side)
       const apiStartTime = Date.now();
       const res = await fetch("/api/payroll/email/single", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slipId, pdfBase64 }),
+        body: JSON.stringify({ slipId }),
       });
       const apiEndTime = Date.now();
 

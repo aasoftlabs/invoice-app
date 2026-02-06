@@ -151,8 +151,8 @@ const SlipTemplate = forwardRef(({ slip, company }, ref) => {
                 </div>
 
                 {/* Right side - Address */}
-                <div className="text-right max-w-xs">
-                    <p className="text-gray-500 text-sm whitespace-pre-line">
+                <div className="text-right max-w-[250px]">
+                    <p className="text-gray-500 text-[10px] whitespace-pre-line">
                         <span className="font-semibold text-gray-600">Reg. Office:</span>{" "}
                         {company?.address ||
                             "Company Address, City, State, Zip Code\nContact: contact@company.com"}

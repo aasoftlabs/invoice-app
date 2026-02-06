@@ -4,6 +4,8 @@ import connectDB from "@/lib/mongoose";
 import SalarySlip from "@/models/SalarySlip";
 import User from "@/models/User";
 import { sendSalarySlipEmail } from "@/lib/sendEmail";
+import { generatePdf } from "@/lib/pdfGenerator";
+import { getSalarySlipPdfTemplate } from "@/lib/emailTemplates/salarySlip";
 
 export async function POST(req) {
   try {
@@ -66,8 +68,22 @@ export async function POST(req) {
       );
     }
 
-    // Send email with client-generated PDF
-    await sendSalarySlipEmail(slip.userId.email, slip, pdfBase64);
+    // Generate PDF server-side
+    let finalPdfContent = pdfBase64;
+
+    if (!finalPdfContent) {
+      try {
+        const htmlContent = getSalarySlipPdfTemplate(slip);
+        const pdfBuffer = await generatePdf(htmlContent);
+        finalPdfContent = pdfBuffer;
+      } catch (err) {
+        console.error("Error generating PDF:", err);
+        throw err;
+      }
+    }
+
+    // Send email with PDF (either from client or server-generated)
+    await sendSalarySlipEmail(slip.userId.email, slip, finalPdfContent);
 
     // Update status
     slip.emailSent = true;
@@ -81,7 +97,7 @@ export async function POST(req) {
   } catch (error) {
     console.error("Error sending salary slip email:", error);
     return NextResponse.json(
-      { message: "Internal Server Error" },
+      { message: `Internal Server Error: ${error.message}` },
       { status: 500 },
     );
   }
