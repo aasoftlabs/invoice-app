@@ -10,7 +10,6 @@ export default function LetterheadEditorTinyMCE({ content, setContent }) {
         value={content}
         onEditorChange={(newValue) => setContent(newValue)}
         init={{
-          height: "100%",
           menubar: "file edit view insert format tools table",
           plugins: [
             "advlist",
@@ -30,6 +29,7 @@ export default function LetterheadEditorTinyMCE({ content, setContent }) {
             "table",
             "code",
             "wordcount",
+            "autoresize",
           ],
           toolbar:
             "undo redo | blocks | " +
@@ -37,7 +37,7 @@ export default function LetterheadEditorTinyMCE({ content, setContent }) {
             "alignright alignjustify | bullist numlist outdent indent | " +
             "table | removeformat",
           content_style:
-            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; margin: 1rem; }",
+            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; margin: 0; }",
           resize: false,
           statusbar: false,
           fixed_toolbar_container: "#editor-toolbar",
