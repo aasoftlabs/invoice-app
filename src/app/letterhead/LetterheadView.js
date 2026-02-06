@@ -228,7 +228,7 @@ export default function LetterheadView({ profile }) {
                   {/* Print Headers (Hidden on screen via CSS, Visible in Print) */}
                   <thead className="print-header-group hidden print:table-header-group">
                     <tr>
-                      <td className="w-full">
+                      <td className="w-full px-12 pt-10">
                         <LogoHeader profile={profile} />
                         <div className="h-4"></div>
                       </td>
@@ -237,7 +237,7 @@ export default function LetterheadView({ profile }) {
 
                   <tfoot className="print-footer-group hidden print:table-footer-group">
                     <tr>
-                      <td className="w-full">
+                      <td className="w-full px-12 pb-10">
                         <div className="h-4"></div>
                         <CompanyFooter profile={profile} />
                       </td>
@@ -371,8 +371,9 @@ export default function LetterheadView({ profile }) {
 
             @page {
               size: A4;
-              margin: 10mm; /* Give browser margin to handle header/footer bleed */
+              margin: 0;
             }
+            html,
             body {
               background: white !important;
               margin: 0;
@@ -401,10 +402,10 @@ export default function LetterheadView({ profile }) {
               display: none !important;
             }
 
-            /* Ensure full width */
-            .max-w-\[210mm\] {
-              max-width: none !important;
+            /* Ensure full width for the container in print */
+            .w-\[210mm\] {
               width: 100% !important;
+              max-width: none !important;
               margin: 0 !important;
               box-shadow: none !important;
               padding: 0 !important;
