@@ -410,6 +410,13 @@ export default function LetterheadView({ profile }) {
               box-shadow: none !important;
               padding: 0 !important;
             }
+
+            /* FORCE EDITOR TEXT TO BE BLACK */
+            /* Crucial because in Dark Mode, the parent text is white, but the "Paper" is white, so text must be black */
+            #letterhead-editor {
+              color: #000000 !important;
+              caret-color: #000000 !important;
+            }
           }
         `}</style>
       </div>

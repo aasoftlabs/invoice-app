@@ -37,11 +37,12 @@ export default function LetterheadEditorTinyMCE({ content, setContent }) {
             "alignright alignjustify | bullist numlist outdent indent | " +
             "table | removeformat",
           content_style:
-            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; margin: 0; }",
+            "body { font-family:Helvetica,Arial,sans-serif; font-size:11px; margin: 0; color: #000; }",
           resize: false,
           statusbar: false,
           fixed_toolbar_container: "#editor-toolbar",
           inline: true,
+          auto_focus: "letterhead-editor",
         }}
         apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
       />
