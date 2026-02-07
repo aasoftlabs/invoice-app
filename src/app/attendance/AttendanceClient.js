@@ -140,10 +140,10 @@ export default function AttendanceClient({ user }) {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             Employee Attendance
           </h1>
-          <p className="text-gray-500 dark:text-slate-400">
+          <p className="text-sm md:text-base text-gray-500 dark:text-slate-400 mt-1">
             {isAdmin
               ? "Manage and track attendance for all employees"
               : "Track your daily attendance and work activity"}
@@ -151,24 +151,25 @@ export default function AttendanceClient({ user }) {
         </div>
 
         {/* Tabs */}
-        {isAdmin ? <div className="flex p-1 bg-gray-100 dark:bg-slate-800 rounded-lg w-fit">
+        {isAdmin ? (
+          <div className="flex p-1 bg-gray-100 dark:bg-slate-800 rounded-xl w-full md:w-fit overflow-x-auto no-scrollbar">
             <button
               onClick={() => {
                 setActiveTab("admin");
                 setViewingUser(null);
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-all ${
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${
                 activeTab === "admin"
                   ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
                   : "text-gray-500 hover:text-gray-700 dark:hover:text-slate-300"
               }`}
             >
               <Users className="w-4 h-4" />
-              Admin Dashboard
+              Dashboard
             </button>
             <button
               onClick={() => setActiveTab("me")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-all ${
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${
                 activeTab === "me"
                   ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
                   : "text-gray-500 hover:text-gray-700 dark:hover:text-slate-300"
@@ -177,7 +178,8 @@ export default function AttendanceClient({ user }) {
               <History className="w-4 h-4" />
               My Attendance
             </button>
-          </div> : null}
+          </div>
+        ) : null}
       </div>
 
       {activeTab === "me" ? (

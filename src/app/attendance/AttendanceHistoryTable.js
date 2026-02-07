@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 
 export default function AttendanceHistoryTable({ records, loading }) {
-  const getStatusBadge = (status) => {
-    switch (status) {
+  const getStatusBadge = (rec) => {
+    switch (rec.status) {
       case "present":
         return (
           <span className="flex items-center gap-1.5 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded text-xs font-semibold uppercase">
@@ -103,7 +103,8 @@ export default function AttendanceHistoryTable({ records, loading }) {
         <div className="text-xs text-gray-500">Current Month</div>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Desktop View */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b dark:border-slate-700">
             <tr>
@@ -168,7 +169,7 @@ export default function AttendanceHistoryTable({ records, loading }) {
                       })()}
                     </span>
                   </td>
-                  <td className="px-6 py-4">{getStatusBadge(rec.status)}</td>
+                  <td className="px-6 py-4">{getStatusBadge(rec)}</td>
                   <td className="px-6 py-4">
                     <span className="text-xs text-gray-500 capitalize px-2 py-0.5 border border-gray-200 dark:border-slate-600 rounded">
                       {rec.source}
@@ -179,6 +180,73 @@ export default function AttendanceHistoryTable({ records, loading }) {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden divide-y divide-gray-100 dark:divide-slate-700">
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="p-4 animate-pulse space-y-3">
+              <div className="h-4 bg-gray-100 dark:bg-slate-700 rounded w-1/4" />
+              <div className="h-8 bg-gray-50 dark:bg-slate-800 rounded shadow-sm" />
+            </div>
+          ))
+        ) : records.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">No records found</div>
+        ) : (
+          records.map((rec) => (
+            <div key={rec._id} className="p-4 space-y-4">
+              <div className="flex justify-between items-center">
+                <div className="font-bold text-gray-900 dark:text-white">
+                  {formatDate(rec.date)}
+                </div>
+                <div>{getStatusBadge(rec)}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-gray-50 dark:bg-slate-900/50 p-2 rounded-lg text-center">
+                  <div className="text-[10px] text-gray-400 uppercase font-bold">
+                    In
+                  </div>
+                  <div className="text-xs font-bold text-gray-700 dark:text-slate-300">
+                    {formatTime(rec.clockIn)}
+                  </div>
+                </div>
+                <div className="bg-gray-50 dark:bg-slate-900/50 p-2 rounded-lg text-center">
+                  <div className="text-[10px] text-gray-400 uppercase font-bold">
+                    Out
+                  </div>
+                  <div className="text-xs font-bold text-gray-700 dark:text-slate-300">
+                    {formatTime(rec.clockOut)}
+                  </div>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg text-center">
+                  <div className="text-[10px] text-blue-400 uppercase font-bold">
+                    Hrs
+                  </div>
+                  <div className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                    {(() => {
+                      if (!rec.clockIn || !rec.clockOut) return "--";
+                      const start = new Date(rec.clockIn);
+                      const end = new Date(rec.clockOut);
+                      const diffMs = end - start;
+                      if (diffMs < 0) return "--";
+                      const hrs = Math.floor(diffMs / 3600000);
+                      const mins = Math.floor((diffMs % 3600000) / 60000);
+                      return `${hrs}h ${mins}m`;
+                    })()}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-start">
+                <span className="text-[10px] text-gray-500 font-medium px-2 py-0.5 border border-gray-100 dark:border-slate-700 rounded bg-gray-50/50 dark:bg-slate-800/50">
+                  Source: {rec.source}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

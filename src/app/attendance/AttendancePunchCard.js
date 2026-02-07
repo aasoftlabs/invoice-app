@@ -64,7 +64,7 @@ export default function AttendancePunchCard({
 
       <div className={`text-center ${minimal ? "py-2" : "py-6"}`}>
         <div
-          className={`${minimal ? "text-3xl" : "text-4xl"} font-mono font-bold text-gray-900 dark:text-white mb-1`}
+          className={`${minimal ? "text-2xl sm:text-3xl" : "text-3xl sm:text-4xl"} font-mono font-bold text-gray-900 dark:text-white mb-1 transition-all`}
         >
           {mounted
             ? now.toLocaleTimeString([], {
@@ -75,31 +75,33 @@ export default function AttendancePunchCard({
               })
             : "--:--:-- --"}
         </div>
-        <div className="text-[10px] text-gray-500 mb-4 lowercase italic tracking-wider">
+        <div className="text-[9px] sm:text-[10px] text-gray-500 mb-4 lowercase italic tracking-wider">
           current system time
         </div>
 
-        <div className={`grid grid-cols-2 gap-3 ${minimal ? "mb-4" : "mb-8"}`}>
+        <div
+          className={`grid grid-cols-2 gap-2 sm:gap-3 ${minimal ? "mb-4" : "mb-8"}`}
+        >
           <div
-            className={`${minimal ? "p-2" : "p-4"} bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700`}
+            className={`${minimal ? "p-2 sm:p-3" : "p-3 sm:p-4"} bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700`}
           >
-            <div className="text-[10px] text-gray-400 uppercase font-bold mb-0.5">
+            <div className="text-[9px] sm:text-[10px] text-gray-400 uppercase font-bold mb-0.5">
               Clock In
             </div>
             <div
-              className={`${minimal ? "text-sm" : "text-lg"} font-bold text-gray-900 dark:text-white`}
+              className={`${minimal ? "text-xs sm:text-sm" : "text-base sm:text-lg"} font-bold text-gray-900 dark:text-white`}
             >
               {formatTime(record?.clockIn)}
             </div>
           </div>
           <div
-            className={`${minimal ? "p-2" : "p-4"} bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700`}
+            className={`${minimal ? "p-2 sm:p-3" : "p-3 sm:p-4"} bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700`}
           >
-            <div className="text-[10px] text-gray-400 uppercase font-bold mb-0.5">
+            <div className="text-[9px] sm:text-[10px] text-gray-400 uppercase font-bold mb-0.5">
               Clock Out
             </div>
             <div
-              className={`${minimal ? "text-sm" : "text-lg"} font-bold text-gray-900 dark:text-white`}
+              className={`${minimal ? "text-xs sm:text-sm" : "text-base sm:text-lg"} font-bold text-gray-900 dark:text-white`}
             >
               {formatTime(record?.clockOut)}
             </div>
@@ -109,7 +111,7 @@ export default function AttendancePunchCard({
         <button
           onClick={onPunch}
           disabled={loading}
-          className={`w-full ${minimal ? "py-3 text-base" : "py-4 text-lg"} rounded-xl font-bold flex items-center justify-center gap-2 transition-all transform active:scale-95 ${
+          className={`w-full ${minimal ? "py-2.5 sm:py-3 text-sm sm:text-base" : "py-3.5 sm:py-4 text-base sm:text-lg"} rounded-xl font-bold flex items-center justify-center gap-2 transition-all transform active:scale-95 cursor-pointer ${
             isFinished
               ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800 cursor-default"
               : isClockedIn

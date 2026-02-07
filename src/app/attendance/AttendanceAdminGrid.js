@@ -265,57 +265,60 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-        <div className="flex items-center gap-2 bg-white dark:bg-slate-800 p-1 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-          <button
-            onClick={() => adjustDate(-1)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-500" />
-          </button>
-          <div className="flex items-center gap-2 px-3">
-            <CalendarIcon className="w-4 h-4 text-blue-500" />
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="bg-transparent border-none text-sm font-bold focus:ring-0 text-gray-900 dark:text-white"
-            />
+    <div className="space-y-6">
+      <div className="flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center">
+        <div className="flex flex-row items-center gap-2 sm:gap-3 pb-1 sm:pb-0">
+          <div className="shrink-0 flex items-center gap-1 sm:gap-2 bg-white dark:bg-slate-800 p-1 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+            <button
+              onClick={() => adjustDate(-1)}
+              className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
+            </button>
+            <div className="flex items-center gap-1 sm:gap-2 px-1 sm:px-2">
+              <CalendarIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500" />
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="bg-transparent border-none text-[12px] sm:text-sm font-bold focus:ring-0 text-gray-900 dark:text-white cursor-pointer w-[100px] sm:w-auto"
+              />
+            </div>
+            <button
+              onClick={() => adjustDate(1)}
+              className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
+              disabled={date === new Date().toISOString().split("T")[0]}
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
+            </button>
           </div>
+
           <button
-            onClick={() => adjustDate(1)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors"
-            disabled={date === new Date().toISOString().split("T")[0]}
+            onClick={openMarkHolidayAllModal}
+            className="flex-1 sm:flex-initial shrink-0 flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 rounded-xl text-[12px] sm:text-sm font-bold transition-all border border-purple-100 dark:border-purple-800 cursor-pointer active:scale-95 whitespace-nowrap"
           >
-            <ChevronRight className="w-5 h-5 text-gray-500" />
+            <CalendarIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500" />
+            <span>Holiday for All</span>
           </button>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={openMarkHolidayAllModal}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 rounded-xl text-sm font-bold transition-all border border-purple-100 dark:border-purple-800"
-          >
-            <CalendarIcon className="w-4 h-4" />
-            Mark Holiday for All
-          </button>
-
-          <div className="relative w-full md:w-64">
+          <div className="relative w-full lg:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search employees..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
             />
           </div>
         </div>
       </div>
 
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b dark:border-slate-700">
               <tr>
@@ -371,9 +374,207 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile Card View */}
+        <div className="md:hidden divide-y divide-gray-100 dark:divide-slate-700">
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-4 animate-pulse space-y-3">
+                <div className="h-4 bg-gray-100 dark:bg-slate-700 rounded w-1/3" />
+                <div className="h-10 bg-gray-50 dark:bg-slate-800 rounded" />
+              </div>
+            ))
+          ) : filteredEmployees.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              No employees found
+            </div>
+          ) : (
+            filteredEmployees.map((emp) => (
+              <div key={emp._id} className="p-4 space-y-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="font-bold text-gray-900 dark:text-white">
+                      {emp.name}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {emp.employeeId || emp._id.slice(-6).toUpperCase()}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => onViewHistory && onViewHistory(emp._id)}
+                    className="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg"
+                  >
+                    <History className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      Status
+                    </span>
+                    <select
+                      value={emp.attendance?.status || "absent"}
+                      onChange={(e) => {
+                        const status = e.target.value;
+                        if (status === "holiday") {
+                          openMarkHolidaySingleModal(emp._id);
+                        } else {
+                          handleUpdateStatus(emp._id, status);
+                        }
+                      }}
+                      disabled={updating === emp._id}
+                      className={`text-[11px] font-bold uppercase rounded-lg border-none focus:ring-2 focus:ring-blue-500 px-2 py-1.5 dark:bg-slate-900 ${
+                        emp.attendance?.status === "present"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
+                          : emp.attendance?.status === "half_day"
+                            ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+                            : ["cl", "sl", "el", "pl"].includes(
+                                  emp.attendance?.status,
+                                )
+                              ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400"
+                              : emp.attendance?.status === "holiday"
+                                ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400"
+                                : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+                      }`}
+                    >
+                      <option
+                        value="present"
+                        className="bg-white dark:bg-slate-900 text-green-600 font-bold"
+                      >
+                        Present
+                      </option>
+                      <option
+                        value="half_day"
+                        className="bg-white dark:bg-slate-900 text-amber-600 font-bold"
+                      >
+                        Half Day
+                      </option>
+                      {((yearlySummary[emp._id]?.cl || 0) < 12 ||
+                        emp.attendance?.status === "cl") && (
+                        <option
+                          value="cl"
+                          className="bg-white dark:bg-slate-900 text-orange-600 font-bold"
+                        >
+                          Casual Leave (CL)
+                        </option>
+                      )}
+                      {((yearlySummary[emp._id]?.sl || 0) < 12 ||
+                        emp.attendance?.status === "sl") && (
+                        <option
+                          value="sl"
+                          className="bg-white dark:bg-slate-900 text-rose-600 font-bold"
+                        >
+                          Sick Leave (SL)
+                        </option>
+                      )}
+                      {((yearlySummary[emp._id]?.el || 0) < 15 ||
+                        emp.attendance?.status === "el") && (
+                        <option
+                          value="el"
+                          className="bg-white dark:bg-slate-900 text-indigo-600 font-bold"
+                        >
+                          Earned Leave (EL)
+                        </option>
+                      )}
+                      <option
+                        value="pl"
+                        className="bg-white dark:bg-slate-900 text-teal-600 font-bold"
+                      >
+                        Paid Leave (PL)
+                      </option>
+                      <option
+                        value="holiday"
+                        className="bg-white dark:bg-slate-900 text-purple-600 font-bold"
+                      >
+                        Holiday
+                      </option>
+                      <option
+                        value="absent"
+                        className="bg-white dark:bg-slate-900 text-red-600 font-bold"
+                      >
+                        Absent
+                      </option>
+                      <option
+                        value="lop"
+                        className="bg-white dark:bg-slate-900 text-red-600 font-bold"
+                      >
+                        LOP
+                      </option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col gap-2 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-xl border border-gray-100 dark:border-slate-800">
+                    <div className="grid grid-cols-2 gap-4 pb-2 border-b dark:border-slate-700">
+                      <div className="text-center">
+                        <div className="text-[10px] text-gray-400 uppercase font-bold mb-0.5">
+                          In
+                        </div>
+                        <div className="text-sm font-bold text-gray-700 dark:text-slate-300">
+                          {emp.attendance?.clockIn
+                            ? new Date(
+                                emp.attendance.clockIn,
+                              ).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })
+                            : "--:--"}
+                        </div>
+                      </div>
+                      <div className="text-center border-l dark:border-slate-700">
+                        <div className="text-[10px] text-gray-400 uppercase font-bold mb-0.5">
+                          Out
+                        </div>
+                        <div className="text-sm font-bold text-gray-700 dark:text-slate-300">
+                          {emp.attendance?.clockOut
+                            ? new Date(
+                                emp.attendance.clockOut,
+                              ).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })
+                            : "--:--"}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="flex gap-2.5 text-[10px] font-bold">
+                        <span className="text-orange-600 dark:text-orange-400">
+                          CL: {yearlySummary[emp._id]?.cl || 0}/12
+                        </span>
+                        <span className="text-rose-600 dark:text-rose-400">
+                          SL: {yearlySummary[emp._id]?.sl || 0}/12
+                        </span>
+                        <span className="text-indigo-600 dark:text-indigo-400">
+                          EL: {yearlySummary[emp._id]?.el || 0}/15
+                        </span>
+                      </div>
+                      <div className="text-[10px] text-gray-400 italic">
+                        Source: {emp.attendance?.source || "manual"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {emp.attendance?.clockIn && !emp.attendance?.clockOut && (
+                    <button
+                      onClick={() => openRegularizeModal(emp._id)}
+                      className="w-full flex items-center justify-center gap-2 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-lg border border-blue-100 dark:border-blue-800"
+                    >
+                      <Edit3 className="w-4 h-4" /> Regularize Exit
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
-      {modalState.isOpen ? <InputModal
+      {modalState.isOpen ? (
+        <InputModal
           isOpen={modalState.isOpen}
           onClose={() => setModalState({ ...modalState, isOpen: false })}
           onSubmit={handleModalSubmit}
@@ -381,9 +582,11 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
           label={modalState.label}
           defaultValue={modalState.defaultValue}
           placeholder={modalState.placeholder}
-        /> : null}
+        />
+      ) : null}
 
-      {confirmModalState.isOpen ? <ConfirmModal
+      {confirmModalState.isOpen ? (
+        <ConfirmModal
           isOpen={confirmModalState.isOpen}
           onClose={() =>
             setConfirmModalState({ ...confirmModalState, isOpen: false })
@@ -391,7 +594,8 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
           onConfirm={handleConfirm}
           title={confirmModalState.title}
           message={confirmModalState.message}
-        /> : null}
+        />
+      ) : null}
     </div>
   );
 }
