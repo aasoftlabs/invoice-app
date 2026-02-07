@@ -1,10 +1,11 @@
-import { CheckCircle, AlertCircle, Play } from "lucide-react";
+import { CheckCircle, AlertCircle, Play, Lock, Unlock } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function GenerateTable({
   employees,
   loading,
   lopData,
+  liveLopData,
   setLopData,
   processing,
   handleGenerate,
@@ -83,19 +84,80 @@ export default function GenerateTable({
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <input
-                      type="number"
-                      min="0"
-                      max="31"
-                      value={lopData[emp._id] || 0}
-                      onChange={(e) =>
-                        setLopData((prev) => ({
-                          ...prev,
-                          [emp._id]: e.target.value,
-                        }))
-                      }
-                      className="w-20 px-2 py-1 border border-gray-300 dark:border-slate-600 rounded text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-700"
-                    />
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        min="0"
+                        max="31"
+                        value={lopData[emp._id]?.value || 0}
+                        readOnly={!lopData[emp._id]?.isManual}
+                        onChange={(e) =>
+                          setLopData((prev) => ({
+                            ...prev,
+                            [emp._id]: {
+                              ...prev[emp._id],
+                              value: parseFloat(e.target.value) || 0,
+                            },
+                          }))
+                        }
+                        className={`w-16 px-2 py-1 border rounded text-sm ${
+                          lopData[emp._id]?.isManual
+                            ? "border-blue-300 dark:border-blue-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                            : "border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400 cursor-not-allowed"
+                        }`}
+                      />
+                      <button
+                        onClick={() =>
+                          setLopData((prev) => ({
+                            ...prev,
+                            [emp._id]: {
+                              ...prev[emp._id],
+                              isManual: !prev[emp._id]?.isManual,
+                            },
+                          }))
+                        }
+                        className={`p-1 rounded-md transition-colors ${
+                          lopData[emp._id]?.isManual
+                            ? "text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                            : "text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
+                        }`}
+                        title={
+                          lopData[emp._id]?.isManual
+                            ? "Switch to Automatic"
+                            : "Edit Manually"
+                        }
+                      >
+                        {lopData[emp._id]?.isManual ? (
+                          <Unlock className="w-3 h-3" />
+                        ) : (
+                          <Lock className="w-3 h-3" />
+                        )}
+                      </button>
+                    </div>
+                    {/* Sync Warning */}
+                    {liveLopData &&
+                      liveLopData[emp._id] !== undefined &&
+                      liveLopData[emp._id] !==
+                        (lopData[emp._id]?.value || 0) && (
+                        <div className="flex items-center gap-1 mt-1 text-[10px] text-amber-600 dark:text-amber-400">
+                          <AlertCircle className="w-3 h-3" />
+                          <span>Actual: {liveLopData[emp._id]}</span>
+                          <button
+                            onClick={() =>
+                              setLopData((prev) => ({
+                                ...prev,
+                                [emp._id]: {
+                                  value: liveLopData[emp._id],
+                                  isManual: false, // Reset to auto mode
+                                },
+                              }))
+                            }
+                            className="ml-1 underline hover:text-amber-800 dark:hover:text-amber-300 cursor-pointer"
+                          >
+                            Sync
+                          </button>
+                        </div>
+                      )}
                   </td>
                   <td className="px-6 py-4">
                     {slip ? (

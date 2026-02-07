@@ -24,8 +24,19 @@ export default function ProjectDashboard() {
   const [filters, setFilters] = useState({
     year: currentYear,
     month: currentMonth,
-    userId: session?.user?.role === "admin" ? "" : session?.user?.id,
+    userId: "", // Initialize with empty, will update when session loads
   });
+
+  // Update filters when session loads
+  useEffect(() => {
+    if (session?.user) {
+      setFilters((prev) => ({
+        ...prev,
+        userId:
+          session.user.role?.toLowerCase() === "admin" ? "" : session.user.id,
+      }));
+    }
+  }, [session]);
 
   // Hooks
   const {
@@ -78,19 +89,6 @@ export default function ProjectDashboard() {
   };
 
   const isLoading = projectsLoading && !stats;
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-slate-400">
-            Loading dashboard...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <PermissionGate permission="project">
@@ -165,6 +163,7 @@ export default function ProjectDashboard() {
           <WorkLogTable
             workLogs={workLogs.slice(0, 10)}
             formatDate={formatDate}
+            loading={projectsLoading}
           />
 
           {/* Add Work Log Modal */}

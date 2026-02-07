@@ -17,6 +17,7 @@ export default function GeneratePayroll() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [processing, setProcessing] = useState(false);
   const [lopData, setLopData] = useState({});
+  const [liveLopData, setLiveLopData] = useState({}); // Stores fresh attendance counts
   const [searchTerm, setSearchTerm] = useState("");
 
   // Use custom hook
@@ -33,7 +34,7 @@ export default function GeneratePayroll() {
 
     try {
       // Fetch data in parallel
-      const [employeeData, slipData, attendanceLopCounts] = await Promise.all([
+      const [employeeData, slipData, attendanceResponse] = await Promise.all([
         fetchEmployees({ all: true }),
         fetchSlips({
           month: selectedMonth,
@@ -44,8 +45,10 @@ export default function GeneratePayroll() {
 
       const currentEmployees = employeeData?.employees || [];
       const currentSlips = slipData || [];
+      const userLopCounts = attendanceResponse?.userLopCounts || {};
 
       setSlips(currentSlips);
+      setLiveLopData(userLopCounts);
 
       // Initialize LOP data:
       // 1. If existing slip, use its LOP
@@ -55,9 +58,14 @@ export default function GeneratePayroll() {
       currentEmployees.forEach((e) => {
         const slip = currentSlips.find((s) => s.userId._id === e._id);
         if (slip) {
-          initialLop[e._id] = slip.lopDays;
+          // If slip exists, we assume it might have been manually edited or just finalized
+          initialLop[e._id] = { value: slip.lopDays, isManual: false };
         } else {
-          initialLop[e._id] = attendanceLopCounts[e._id] || 0;
+          // Default to auto-calculated from attendance, locked by default
+          initialLop[e._id] = {
+            value: userLopCounts[e._id] || 0,
+            isManual: false,
+          };
         }
       });
       setLopData(initialLop);
@@ -88,7 +96,7 @@ export default function GeneratePayroll() {
       userId,
       month: selectedMonth,
       year: selectedYear,
-      lopDays: parseFloat(lopData[userId]) || 0,
+      lopDays: parseFloat(lopData[userId]?.value) || 0,
       overwrite: !!existingSlip, // Pass true if regenerating
     });
 
@@ -153,6 +161,7 @@ export default function GeneratePayroll() {
         employees={filteredEmployees}
         loading={loading}
         lopData={lopData}
+        liveLopData={liveLopData}
         setLopData={setLopData}
         processing={processing}
         handleGenerate={handleGenerate}

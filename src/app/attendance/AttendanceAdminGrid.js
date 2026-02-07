@@ -12,10 +12,11 @@ import {
   ChevronLeft,
   ChevronRight,
   AlertTriangle,
+  History,
 } from "lucide-react";
 import AccessDenied from "@/components/ui/AccessDenied";
 
-export default function AttendanceAdminGrid() {
+export default function AttendanceAdminGrid({ onViewHistory }) {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -214,7 +215,7 @@ export default function AttendanceAdminGrid() {
                 <th className="px-6 py-4 text-center">Working Hours</th>
                 <th className="px-6 py-4 text-center">Usage (Annual)</th>
                 <th className="px-6 py-4">Source</th>
-                <th className="px-6 py-4 text-right">Rapid Action</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
@@ -472,30 +473,6 @@ export default function AttendanceAdminGrid() {
                           <Loader2 className="w-5 h-5 animate-spin ml-auto text-blue-500" />
                         ) : (
                           <div className="flex justify-end gap-2">
-                            {emp.attendance?.status !== "present" && (
-                              <button
-                                onClick={() =>
-                                  handleUpdateStatus(emp._id, "present")
-                                }
-                                disabled={isDisabled}
-                                title="Set Present"
-                                className="p-1.5 hover:bg-green-50 text-green-600 rounded-md transition-colors disabled:opacity-0"
-                              >
-                                <Check className="w-5 h-5" />
-                              </button>
-                            )}
-                            {emp.attendance?.status !== "absent" && (
-                              <button
-                                onClick={() =>
-                                  handleUpdateStatus(emp._id, "absent")
-                                }
-                                disabled={isDisabled}
-                                title="Set Absent"
-                                className="p-1.5 hover:bg-red-50 text-red-600 rounded-md transition-colors disabled:opacity-0"
-                              >
-                                <X className="w-5 h-5" />
-                              </button>
-                            )}
                             {isMissedOut && (
                               <button
                                 onClick={handleRegularize}
@@ -505,6 +482,15 @@ export default function AttendanceAdminGrid() {
                                 <Edit3 className="w-5 h-5" />
                               </button>
                             )}
+                            <button
+                              onClick={() =>
+                                onViewHistory && onViewHistory(emp._id)
+                              }
+                              title="View History"
+                              className="p-1.5 hover:bg-purple-50 text-purple-600 rounded-md transition-colors"
+                            >
+                              <History className="w-5 h-5" />
+                            </button>
                           </div>
                         )}
                       </td>

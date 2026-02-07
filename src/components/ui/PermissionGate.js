@@ -23,7 +23,7 @@ export default function PermissionGate({
   }
 
   const hasAccess =
-    session?.user?.role === "admin" ||
+    session?.user?.role?.toLowerCase()?.trim() === "admin" ||
     session?.user?.permissions?.includes(permission);
 
   if (!hasAccess) {

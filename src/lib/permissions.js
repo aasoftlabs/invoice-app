@@ -3,7 +3,7 @@ export function hasPermission(user, page) {
   if (!user) return false;
 
   // Admin has access to everything
-  if (user.role === "admin") return true;
+  if (user.role?.toLowerCase() === "admin") return true;
 
   // Notes, Profile, and Attendance are allowed to all users by default
   if (page === "notes" || page === "profile" || page === "attendance")
@@ -18,7 +18,7 @@ export function getUserPermissions(user) {
   if (!user) return [];
 
   // Admin gets all permissions
-  if (user.role === "admin") {
+  if (user.role?.toLowerCase() === "admin") {
     return [
       "invoices",
       "letterhead",
@@ -51,7 +51,7 @@ export function canAccessRoute(user, pathname) {
   if (!user) return false;
 
   // Admin can access everything
-  if (user.role === "admin") return true;
+  if (user.role?.toLowerCase() === "admin") return true;
 
   // Map routes to permissions
   const routePermissions = {

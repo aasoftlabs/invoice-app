@@ -77,46 +77,49 @@ export default async function LandingPage() {
             <ActiveNotes notes={serializedNotes} />
           </div>
 
-          {session.user.role === "admin" ||
+          {session.user.role?.toLowerCase() === "admin" ||
           userPermissions.includes("payroll") ? (
-            <Spotlight
-              className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm text-left flex flex-col justify-center"
-              spotlightColor="rgba(59, 130, 246, 0.15)"
-            >
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Quick Stats
-              </h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center pb-3 border-b border-gray-100 dark:border-slate-700">
-                  <span className="text-gray-500 dark:text-slate-400 text-sm">
-                    Active Projects
-                  </span>
-                  <span className="font-bold text-gray-900 dark:text-white">
-                    {activeProjectsCount}
-                  </span>
+            <div className="md:col-span-1 space-y-6">
+              <Spotlight
+                className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm text-left flex flex-col justify-center"
+                spotlightColor="rgba(59, 130, 246, 0.15)"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Quick Stats
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-3 border-b border-gray-100 dark:border-slate-700">
+                    <span className="text-gray-500 dark:text-slate-400 text-sm">
+                      Active Projects
+                    </span>
+                    <span className="font-bold text-gray-900 dark:text-white">
+                      {activeProjectsCount}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center pb-3 border-b border-gray-100 dark:border-slate-700">
+                    <span className="text-gray-500 dark:text-slate-400 text-sm">
+                      Pending Invoices
+                    </span>
+                    <span className="font-bold text-gray-900 dark:text-white">
+                      {pendingInvoicesCount}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-500 dark:text-slate-400 text-sm">
+                      Team Members
+                    </span>
+                    <span className="font-bold text-gray-900 dark:text-white">
+                      {teamMembersCount}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center pb-3 border-b border-gray-100 dark:border-slate-700">
-                  <span className="text-gray-500 dark:text-slate-400 text-sm">
-                    Pending Invoices
-                  </span>
-                  <span className="font-bold text-gray-900 dark:text-white">
-                    {pendingInvoicesCount}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500 dark:text-slate-400 text-sm">
-                    Team Members
-                  </span>
-                  <span className="font-bold text-gray-900 dark:text-white">
-                    {teamMembersCount}
-                  </span>
-                </div>
-              </div>
-            </Spotlight>
+              </Spotlight>
+            </div>
           ) : (
             <AttendanceHomeCard user={session.user} />
           )}
         </div>
+
         <div className="mb-12 text-center">
           <p className="text-gray-500 dark:text-slate-400 mt-2">
             Access your workspace

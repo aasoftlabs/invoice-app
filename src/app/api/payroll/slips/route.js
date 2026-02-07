@@ -143,34 +143,34 @@ export async function POST(req) {
       lopDays,
     );
 
-    // Calculate LOP amount
-    const lopAmount = calculateLOP(calculated.gross, totalDays, lopDays);
-
-    // Adjust earnings for LOP
-    const lopRatio = presentDays / totalDays;
-    const adjustedEarnings = {
-      basic: Math.round(salaryStructure.basic * lopRatio),
-      da: Math.round((salaryStructure.da || 0) * lopRatio),
-      hra: Math.round((salaryStructure.hra || 0) * lopRatio),
-      conveyanceAllowance: Math.round(
-        (salaryStructure.conveyanceAllowance || 0) * lopRatio,
-      ),
-      specialAllowance: Math.round(
-        (salaryStructure.specialAllowance || 0) * lopRatio,
-      ),
-      medicalAllowance: Math.round(
-        (salaryStructure.medicalAllowance || 0) * lopRatio,
-      ),
-      mobileExpense: Math.round(
-        (salaryStructure.mobileExpense || 0) * lopRatio,
-      ),
-      distanceAllowance: Math.round(
-        (salaryStructure.distanceAllowance || 0) * lopRatio,
-      ),
+    // Use Full Earnings (Standard)
+    // We do NOT reduce earnings pro-rata. LOP is shown as a deduction.
+    const earnings = {
+      basic: salaryStructure.basic,
+      da: salaryStructure.da || 0,
+      hra: salaryStructure.hra || 0,
+      conveyanceAllowance: salaryStructure.conveyanceAllowance || 0,
+      specialAllowance: salaryStructure.specialAllowance || 0,
+      medicalAllowance: salaryStructure.medicalAllowance || 0,
+      mobileExpense: salaryStructure.mobileExpense || 0,
+      distanceAllowance: salaryStructure.distanceAllowance || 0,
       bonus: salaryStructure.bonus || 0,
       arrears: salaryStructure.arrears || 0,
       otherAllowances: salaryStructure.otherAllowances || [],
-      gross: Math.round(calculated.gross - lopAmount),
+      gross: calculated.gross, // Full Gross
+    };
+
+    // Deductions (Calculated utility already includes LOP in total)
+    const deductions = {
+      pf: calculated.deductions.pf,
+      esi: calculated.deductions.esi,
+      pt: calculated.deductions.pt,
+      tds: calculated.deductions.tds,
+      lop: calculated.deductions.lop, // Correct LOP Amount
+      loan: salaryStructure.loanDeduction || 0,
+      advance: salaryStructure.advanceDeduction || 0,
+      otherDeductions: salaryStructure.otherDeductions || [],
+      total: calculated.deductions.total, // Correct Total (Includes LOP)
     };
 
     // Create salary slip
@@ -197,20 +197,9 @@ export async function POST(req) {
       presentDays,
       paidDays: presentDays,
       lopDays,
-      earnings: adjustedEarnings,
-      deductions: {
-        pf: calculated.deductions.pf,
-        esi: calculated.deductions.esi,
-        pt: calculated.deductions.pt,
-        tds: calculated.deductions.tds,
-        lop: lopAmount,
-        loan: salaryStructure.loanDeduction || 0,
-        advance: salaryStructure.advanceDeduction || 0,
-        otherDeductions: salaryStructure.otherDeductions || [],
-        total: calculated.deductions.total + lopAmount,
-      },
-      netPay:
-        adjustedEarnings.gross - (calculated.deductions.total + lopAmount),
+      earnings,
+      deductions,
+      netPay: calculated.netSalary,
       generatedBy: session.user.id,
       status: "finalized",
       notes,

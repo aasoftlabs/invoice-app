@@ -22,16 +22,7 @@ export default async function AttendancePage() {
   return (
     <div className="min-h-screen font-sans">
       <div className="max-w-7xl mx-auto p-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Employee Attendance
-          </h1>
-          <p className="text-gray-500 dark:text-slate-400">
-            {isAdmin
-              ? "Manage and track attendance for all employees"
-              : "Track your daily attendance and work activity"}
-          </p>
-        </div>
+        {/* Header moved to Client Component for better layout control */}
 
         <AttendanceClient user={session.user} />
       </div>

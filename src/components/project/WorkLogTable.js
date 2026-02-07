@@ -1,6 +1,23 @@
 import StatusBadge from "@/components/project/StatusBadge";
 
-export default function WorkLogTable({ workLogs, formatDate }) {
+export default function WorkLogTable({ workLogs, formatDate, loading }) {
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 overflow-hidden">
+        <div className="p-6 border-b border-gray-200 dark:border-slate-700">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+            Recent Work Logs
+          </h3>
+        </div>
+        <div className="p-6 text-center text-gray-500 dark:text-slate-400">
+          <div className="animate-pulse flex space-x-4 justify-center">
+            <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!workLogs || workLogs.length === 0) {
     return (
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-gray-200 dark:border-slate-700 overflow-hidden">
