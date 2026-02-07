@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -13,16 +14,30 @@ import {
 } from "lucide-react";
 
 export default function ProjectSidebar() {
+  const { data: session } = useSession();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
 
+  const isAdmin = session?.user?.role?.toLowerCase() === "admin";
+  const hasProjectPermission = session?.user?.permissions?.includes("project");
+
   const navItems = [
-    { name: "Dashboard", href: "/project", icon: Home },
-    { name: "Log Entry", href: "/project/log", icon: Calendar },
-    { name: "Tasks", href: "/project/tasks", icon: ListTodo },
-    { name: "Projects", href: "/project/projects", icon: FolderKanban },
-  ];
+    { name: "Dashboard", href: "/project", icon: Home, adminOnly: true },
+    {
+      name: "Log Entry",
+      href: "/project/log",
+      icon: Calendar,
+      adminOnly: false,
+    },
+    { name: "Tasks", href: "/project/tasks", icon: ListTodo, adminOnly: true },
+    {
+      name: "Projects",
+      href: "/project/projects",
+      icon: FolderKanban,
+      adminOnly: true,
+    },
+  ].filter((item) => !item.adminOnly || isAdmin || hasProjectPermission);
 
   const effectivelyCollapsed = isCollapsed && !isHovered;
 
@@ -30,7 +45,7 @@ export default function ProjectSidebar() {
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 min-h-screen p-4 transition-all duration-300 ease-in-out overflow-hidden flex flex-col ${effectivelyCollapsed ? "w-20" : "w-64"}`}
+      className={`bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 min-h-screen p-4 transition-all duration-300 ease-in-out overflow-hidden flex-col hidden md:flex ${effectivelyCollapsed ? "w-20" : "w-64"}`}
     >
       {/* Header with Toggle Button */}
       <div className="mb-6 flex items-start justify-between min-h-[48px] overflow-hidden">

@@ -1,6 +1,7 @@
 import connectDB from "@/lib/mongoose";
 import { SessionProvider } from "next-auth/react";
 import ProjectSidebar from "@/components/project/ProjectSidebar";
+import ProjectMobileNav from "@/components/project/ProjectMobileNav";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
@@ -11,20 +12,12 @@ export default async function ProjectLayout({ children }) {
     redirect("/login");
   }
 
-  // Check if user has permission to access project pages
-  // If they have "project" permission, they can access ALL /project/* pages
-  if (
-    session.user.role !== "admin" &&
-    !session.user.permissions?.includes("project")
-  ) {
-    redirect("/");
-  }
-
   return (
     <SessionProvider>
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden min-h-[calc(100vh-64px)] pb-16 md:pb-0">
         <ProjectSidebar />
         <main className="flex-1 overflow-auto">{children}</main>
+        <ProjectMobileNav />
       </div>
     </SessionProvider>
   );
