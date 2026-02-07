@@ -270,7 +270,7 @@ export default function LetterheadView({ profile }) {
 
                         <main
                           ref={bodyRef}
-                          className="relative min-h-[500px] pb-[50px]"
+                          className="relative min-h-[820px] pb-[50px]"
                         >
                           {isMounted && (
                             <LetterheadEditorTinyMCE
@@ -452,6 +452,29 @@ export default function LetterheadView({ profile }) {
               margin: 0 !important;
               display: block !important;
               width: 100% !important;
+            }
+
+            /* Fixed Footer for Print */
+            .footer-fixed-container {
+              position: fixed !important;
+              bottom: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              background: white !important;
+              padding-left: 3rem !important; /* px-12 = 3rem */
+              padding-right: 3rem !important;
+              padding-bottom: 2.5rem !important; /* pb-10 = 2.5rem */
+              z-index: 50;
+            }
+
+            /* Reserve space in flow so content doesn't overlap fixed footer */
+            tfoot {
+              display: table-footer-group !important;
+              height: 120px !important; /* 80px content + 40px padding approx */
+            }
+            tfoot td {
+              height: 120px !important;
+              border: none !important;
             }
           }
         `}</style>

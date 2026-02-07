@@ -15,6 +15,8 @@ import {
   History,
 } from "lucide-react";
 import AccessDenied from "@/components/ui/AccessDenied";
+import ConfirmModal from "@/components/ui/ConfirmModal";
+import InputModal from "@/components/ui/InputModal";
 
 export default function AttendanceAdminGrid({ onViewHistory }) {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -24,6 +26,25 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
   const [updating, setUpdating] = useState(null);
   const [unauthorized, setUnauthorized] = useState(false);
   const [yearlySummary, setYearlySummary] = useState({});
+
+  // Modal State
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: null,
+    data: null,
+    title: "",
+    label: "",
+    defaultValue: "",
+    placeholder: "",
+  });
+
+  const [confirmModalState, setConfirmModalState] = useState({
+    isOpen: false,
+    type: null,
+    data: null,
+    title: "",
+    message: "",
+  });
 
   const fetchAttendance = async () => {
     try {
@@ -107,6 +128,129 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
     setDate(d.toISOString().split("T")[0]);
   };
 
+  const markHolidayForAll = async (note) => {
+    try {
+      setLoading(true);
+      const promises = filteredEmployees.map((emp) =>
+        fetch("/api/attendance/admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: emp._id,
+            date,
+            status: "holiday",
+            note,
+          }),
+        }),
+      );
+
+      await Promise.all(promises);
+      fetchAttendance();
+    } catch (error) {
+      alert("Failed to mark holidays: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openMarkHolidayAllModal = () => {
+    const dayOfWeek = new Date(date).getDay();
+    if (dayOfWeek === 0) {
+      // Sunday
+      setConfirmModalState({
+        isOpen: true,
+        type: "sunday_holiday",
+        title: "Mark Sunday Holiday",
+        message: "It is Sunday. Mark as 'Weekly Off' for all employees?",
+      });
+      return;
+    }
+
+    setModalState({
+      isOpen: true,
+      type: "holiday_all",
+      title: "Mark Holiday for All",
+      label: "Enter Holiday Name (e.g. Republic Day):",
+      defaultValue: "Public Holiday",
+    });
+  };
+
+  const openMarkHolidaySingleModal = (empId) => {
+    const dayOfWeek = new Date(date).getDay();
+    if (dayOfWeek === 0) {
+      // Sunday
+      setConfirmModalState({
+        isOpen: true,
+        type: "sunday_single_holiday",
+        data: { empId },
+        title: "Mark Sunday Holiday",
+        message: "It is Sunday. Mark as 'Weekly Off' for this employee?",
+      });
+      return;
+    }
+
+    setModalState({
+      isOpen: true,
+      type: "holiday_single",
+      data: { empId },
+      title: "Mark Holiday",
+      label: "Enter Holiday Name:",
+      defaultValue: "Public Holiday",
+    });
+  };
+
+  const openRegularizeModal = (empId) => {
+    setModalState({
+      isOpen: true,
+      type: "regularize",
+      data: { empId },
+      title: "Regularize Attendance",
+      label: "Enter exit time (24h format HH:mm):",
+      defaultValue: "18:00",
+      placeholder: "HH:mm",
+    });
+  };
+
+  const handleModalSubmit = async (value) => {
+    if (!value) return;
+
+    if (modalState.type === "holiday_all") {
+      setConfirmModalState({
+        isOpen: true,
+        type: "bulk_holiday",
+        data: { name: value },
+        title: "Confirm Bulk Holiday",
+        message: `Are you sure you want to mark ${date} as a holiday for ALL employees?`,
+      });
+    } else if (modalState.type === "holiday_single") {
+      handleUpdateStatus(modalState.data.empId, "holiday", { note: value });
+    } else if (modalState.type === "regularize") {
+      const exitTime = value;
+      if (exitTime && /^([01]\d|2[0-3]):([0-5]\d)$/.test(exitTime)) {
+        const emp = employees.find((e) => e._id === modalState.data.empId);
+        handleUpdateStatus(
+          modalState.data.empId,
+          emp?.attendance?.status || "present",
+          { clockOut: exitTime },
+        );
+      } else {
+        alert("Invalid time format. Please use HH:mm (e.g. 18:00)");
+      }
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (confirmModalState.type === "sunday_holiday") {
+      await markHolidayForAll("Weekly Off");
+    } else if (confirmModalState.type === "bulk_holiday") {
+      await markHolidayForAll(confirmModalState.data.name);
+    } else if (confirmModalState.type === "sunday_single_holiday") {
+      handleUpdateStatus(confirmModalState.data.empId, "holiday", {
+        note: "Weekly Off",
+      });
+    }
+  };
+
   if (unauthorized) {
     return (
       <AccessDenied message="You no longer have permission to view the attendance dashboard." />
@@ -143,47 +287,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={async () => {
-              const name = prompt(
-                "Enter Holiday Name (e.g. Republic Day):",
-                "Public Holiday",
-              );
-              if (!name) return;
-
-              if (
-                !confirm(
-                  `Are you sure you want to mark ${date} as a holiday for ALL employees?`,
-                )
-              )
-                return;
-
-              try {
-                setLoading(true);
-                // Call API for each employee (simple approach for now, since we have filteredEmployees)
-                // Better approach: New Bulk API endpoint. But let's stick to sequence for simplicity or create bulk handler.
-                // Actually, let's create a bulk handler in the markAdmin function.
-
-                const promises = filteredEmployees.map((emp) =>
-                  fetch("/api/attendance/admin", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      userId: emp._id,
-                      date,
-                      status: "holiday",
-                      note: name,
-                    }),
-                  }),
-                );
-
-                await Promise.all(promises);
-                fetchAttendance(); // Refresh all
-              } catch (error) {
-                alert("Failed to mark holidays: " + error.message);
-              } finally {
-                setLoading(false);
-              }
-            }}
+            onClick={openMarkHolidayAllModal}
             className="flex items-center gap-2 px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 rounded-xl text-sm font-bold transition-all border border-purple-100 dark:border-purple-800"
           >
             <CalendarIcon className="w-4 h-4" />
@@ -253,26 +357,6 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                   const isDisabled =
                     updating === emp._id || isBeforeJoining || isFuture;
 
-                  const handleRegularize = () => {
-                    const exitTime = prompt(
-                      "Enter exit time (24h format HH:mm):",
-                      "18:00",
-                    );
-                    if (
-                      exitTime &&
-                      /^([01]\d|2[0-3]):([0-5]\d)$/.test(exitTime)
-                    ) {
-                      handleUpdateStatus(
-                        emp._id,
-                        emp.attendance?.status || "present",
-                        { clockOut: exitTime },
-                      );
-                    } else if (exitTime) {
-                      alert(
-                        "Invalid time format. Please use HH:mm (e.g. 18:00)",
-                      );
-                    }
-                  };
                   return (
                     <tr
                       key={emp._id}
@@ -305,15 +389,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                           value={emp.attendance?.status || "absent"}
                           onChange={(e) => {
                             if (e.target.value === "holiday") {
-                              const name = prompt(
-                                "Enter Holiday Name (e.g. Independence Day):",
-                                "Public Holiday",
-                              );
-                              if (name) {
-                                handleUpdateStatus(emp._id, "holiday", {
-                                  note: name,
-                                });
-                              }
+                              openMarkHolidaySingleModal(emp._id);
                             } else {
                               handleUpdateStatus(emp._id, e.target.value);
                             }
@@ -475,7 +551,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                           <div className="flex justify-end gap-2">
                             {isMissedOut && (
                               <button
-                                onClick={handleRegularize}
+                                onClick={() => openRegularizeModal(emp._id)}
                                 title="Regularize (Fix Exit Time)"
                                 className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-md transition-colors"
                               >
@@ -502,6 +578,26 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
           </table>
         </div>
       </div>
+
+      <InputModal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        onSubmit={handleModalSubmit}
+        title={modalState.title}
+        label={modalState.label}
+        defaultValue={modalState.defaultValue}
+        placeholder={modalState.placeholder}
+      />
+
+      <ConfirmModal
+        isOpen={confirmModalState.isOpen}
+        onClose={() =>
+          setConfirmModalState({ ...confirmModalState, isOpen: false })
+        }
+        onConfirm={handleConfirm}
+        title={confirmModalState.title}
+        message={confirmModalState.message}
+      />
     </div>
   );
 }
