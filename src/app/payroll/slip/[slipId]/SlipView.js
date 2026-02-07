@@ -49,6 +49,44 @@ export default function SlipView({ slipId }) {
     fetchData();
   }, [fetchData]);
 
+  // Handle email sending with client-side PDF generation
+  const handleSendEmailAction = useCallback(async () => {
+    setSendingEmail(true);
+    const startTime = Date.now();
+
+    try {
+      // Send email (PDF will be generated server-side)
+      const res = await fetch("/api/payroll/email/single", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slipId }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        await alert({
+          title: "Success",
+          message: "Salary slip emailed successfully!",
+          variant: "success",
+        });
+        // Refresh data to show sent status
+        fetchData();
+      } else {
+        throw new Error(data.message || "Failed to send email");
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      await alert({
+        title: "Error",
+        message: error.message || "Failed to send email",
+        variant: "danger",
+      });
+    } finally {
+      setSendingEmail(false);
+    }
+  }, [slipId, alert, fetchData]);
+
   const handlePaySuccess = async () => {
     // Refresh data to show paid status
     fetchData();
@@ -157,47 +195,6 @@ export default function SlipView({ slipId }) {
     window.print();
   };
 
-  // Handle email sending with client-side PDF generation
-  const handleSendEmailAction = async () => {
-    setSendingEmail(true);
-    const startTime = Date.now();
-
-    try {
-      // Send email (PDF will be generated server-side)
-      const apiStartTime = Date.now();
-      const res = await fetch("/api/payroll/email/single", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slipId }),
-      });
-      const apiEndTime = Date.now();
-
-      const data = await res.json();
-
-      if (res.ok) {
-        const totalTime = Date.now() - startTime;
-        await alert({
-          title: "Success",
-          message: "Salary slip emailed successfully!",
-          variant: "success",
-        });
-        // Refresh data to show sent status
-        fetchData();
-      } else {
-        throw new Error(data.message || "Failed to send email");
-      }
-    } catch (error) {
-      console.error("Error sending email:", error);
-      await alert({
-        title: "Error",
-        message: error.message || "Failed to send email",
-        variant: "danger",
-      });
-    } finally {
-      setSendingEmail(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-slate-900">
@@ -223,7 +220,7 @@ export default function SlipView({ slipId }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-slate-900 p-8 print:p-0 print:bg-white">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-900 p-4 md:p-8 print:p-0 print:bg-white">
       <SlipActions
         onBack={() => router.push("/payroll")}
         onPrint={handlePrint}
@@ -241,7 +238,7 @@ export default function SlipView({ slipId }) {
         }
       />
 
-      <SlipTemplate ref={slipRef} slip={slip} company={company} />
+        <SlipTemplate ref={slipRef} slip={slip} company={company} />
 
       <PaySalaryModal
         isOpen={isPayModalOpen}

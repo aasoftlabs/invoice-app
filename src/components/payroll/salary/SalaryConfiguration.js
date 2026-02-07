@@ -113,7 +113,7 @@ export default function SalaryConfiguration({ salary, handleChange }) {
             </option>
           </select>
         </div>
-        <div className="flex items-center gap-2 mt-6">
+        <div className="flex items-center gap-2 md:mt-6">
           <input
             type="checkbox"
             id="pfApplicable"
@@ -129,7 +129,7 @@ export default function SalaryConfiguration({ salary, handleChange }) {
             PF Applicable
           </label>
         </div>
-        <div className="flex items-center gap-2 mt-6">
+        <div className="flex items-center gap-2 md:mt-6">
           <input
             type="checkbox"
             id="esiApplicable"
@@ -145,7 +145,7 @@ export default function SalaryConfiguration({ salary, handleChange }) {
             ESI Applicable
           </label>
         </div>
-        <div className="flex items-center gap-2 mt-6">
+        <div className="flex items-center gap-2 md:mt-6">
           <input
             type="checkbox"
             id="tdsApplicable"

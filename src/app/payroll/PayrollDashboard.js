@@ -146,7 +146,7 @@ export default function PayrollDashboard() {
   return (
     <PermissionGate permission="payroll">
       <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
               Payroll Management
@@ -155,17 +155,17 @@ export default function PayrollDashboard() {
               Manage employee salaries and generate slips
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3 justify-between w-full md:w-auto">
             <button
               onClick={() => setIsSendBulkModalOpen(true)}
-              className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors border border-gray-300 dark:border-slate-600"
+              className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-all border border-gray-300 dark:border-slate-600 cursor-pointer hover:shadow-md active:scale-95"
             >
               <Mail className="w-5 h-5" />
               Send Emails
             </button>
             <button
               onClick={() => router.push("/payroll/generate")}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all cursor-pointer hover:shadow-lg hover:shadow-blue-500/30 active:scale-95"
             >
               <Plus className="w-5 h-5" />
               Generate Slips
@@ -200,10 +200,12 @@ export default function PayrollDashboard() {
           lastElementRef={lastEmployeeElementRef}
         />
 
-        {loadingMore ? <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+        {loadingMore ? (
+          <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin" /> Loading more
             employees...
-          </div> : null}
+          </div>
+        ) : null}
       </div>
     </PermissionGate>
   );

@@ -9,7 +9,7 @@ export default function PayrollStats({ stats }) {
           <div
             key={i}
             className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 h-32 animate-pulse"
-           />
+          />
         ))}
       </div>
     );
@@ -25,7 +25,7 @@ export default function PayrollStats({ stats }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group">
+      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group transition-all duration-300 hover:shadow-md hover:-translate-y-1">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">
@@ -44,7 +44,7 @@ export default function PayrollStats({ stats }) {
         </div>
       </Spotlight>
 
-      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group">
+      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group transition-all duration-300 hover:shadow-md hover:-translate-y-1">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">
@@ -63,7 +63,7 @@ export default function PayrollStats({ stats }) {
         </div>
       </Spotlight>
 
-      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group">
+      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group transition-all duration-300 hover:shadow-md hover:-translate-y-1">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">
@@ -82,7 +82,7 @@ export default function PayrollStats({ stats }) {
         </div>
       </Spotlight>
 
-      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group">
+      <Spotlight className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 cursor-pointer group transition-all duration-300 hover:shadow-md hover:-translate-y-1">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">

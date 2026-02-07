@@ -51,7 +51,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="min-h-screen font-sans">
-      <div className="max-w-7xl mx-auto p-8">
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
           My Profile
         </h1>

@@ -79,7 +79,7 @@ export default function ProfileForm({ user }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-8">
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-4 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <div className="h-20 w-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl font-bold">
@@ -153,7 +153,8 @@ export default function ProfileForm({ user }) {
           />
         </div>
 
-        {isEditing ? <div className="pt-6 border-t border-gray-100 dark:border-slate-700">
+        {isEditing ? (
+          <div className="pt-6 border-t border-gray-100 dark:border-slate-700">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Lock className="w-4 h-4" /> Change Password
             </h3>
@@ -181,9 +182,11 @@ export default function ProfileForm({ user }) {
                 />
               </div>
             </div>
-          </div> : null}
+          </div>
+        ) : null}
 
-        {isEditing ? <div className="pt-6 flex justify-end">
+        {isEditing ? (
+          <div className="pt-6 flex justify-end">
             <Button
               type="submit"
               isLoading={loading}
@@ -193,7 +196,8 @@ export default function ProfileForm({ user }) {
             >
               Save Changes
             </Button>
-          </div> : null}
+          </div>
+        ) : null}
       </form>
     </div>
   );

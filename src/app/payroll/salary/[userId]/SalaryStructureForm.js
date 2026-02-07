@@ -279,28 +279,28 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-slate-300" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white leading-tight">
               Salary Structure
             </h1>
-            <p className="text-gray-500 dark:text-slate-400">
+            <p className="text-xs md:text-sm text-gray-500 dark:text-slate-400">
               Configure salary for {user?.name} ({user?.designation})
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full md:w-auto">
           <button
             onClick={handleReset}
             disabled={saving}
-            className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-3 md:px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 cursor-pointer active:scale-95"
           >
             <RotateCcw className="w-4 h-4" />
             Reset
@@ -308,7 +308,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
           <button
             onClick={handleDelete}
             disabled={saving}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 md:px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 cursor-pointer active:scale-95"
           >
             <Trash2 className="w-4 h-4" />
             Delete
@@ -316,7 +316,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
           <button
             onClick={handleSubmit}
             disabled={saving}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 cursor-pointer shadow-sm hover:shadow-blue-500/20 active:scale-95"
           >
             {saving ? (
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />

@@ -97,7 +97,7 @@ export default function ProjectDashboard() {
 
   return (
     <PermissionGate permission="project">
-      <div className="min-h-full bg-gray-50 dark:bg-slate-900 p-8">
+      <div className="min-h-full bg-gray-50 dark:bg-slate-900 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
@@ -158,9 +158,11 @@ export default function ProjectDashboard() {
           <ActiveTaskCard activeStats={stats?.currentActive} />
 
           {/* Monthly Graph */}
-          {stats?.monthlyData ? <div className="mb-6">
+          {stats?.monthlyData ? (
+            <div className="mb-6">
               <MonthlyChart data={stats.monthlyData} />
-            </div> : null}
+            </div>
+          ) : null}
 
           {/* Recent Work Logs */}
           <WorkLogTable

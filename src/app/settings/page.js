@@ -172,7 +172,9 @@ export default function SettingsPage() {
                       />
                       {tab.label}
                     </div>
-                    {isActive ? <ChevronRight className="w-4 h-4 text-blue-600 dark:text-blue-400 opacity-50" /> : null}
+                    {isActive ? (
+                      <ChevronRight className="w-4 h-4 text-blue-600 dark:text-blue-400 opacity-50" />
+                    ) : null}
                   </button>
                 );
               })}
@@ -182,7 +184,7 @@ export default function SettingsPage() {
 
         {/* Right Content */}
         <div className="flex-1">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-8 min-h-[600px]">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-4 md:p-8 min-h-[600px]">
             <div className="mb-8 pb-4 border-b border-gray-100 dark:border-slate-700">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                 <CurrentTabIcon className="w-8 h-8 text-blue-600" />

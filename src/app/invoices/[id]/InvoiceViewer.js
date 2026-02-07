@@ -12,7 +12,7 @@ export default function InvoiceViewer({ invoice, profile }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-8 font-sans print:p-0 print:bg-white transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-4 md:p-8 font-sans print:p-0 print:bg-white transition-colors duration-300">
       <div className="max-w-4xl mx-auto print:max-w-none print:mx-0 print:w-full">
         {/* Toolbar (Hidden on Print) */}
         <div className="mb-6 flex justify-between items-center print:hidden">
