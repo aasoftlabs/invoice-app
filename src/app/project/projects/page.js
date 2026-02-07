@@ -192,7 +192,7 @@ export default function ProjectsPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600 dark:text-slate-400">Loading...</p>
         </div>
       </div>
@@ -209,6 +209,7 @@ export default function ProjectsPage() {
           </h1>
           <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={() => setShowCompleted(!showCompleted)}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
                 showCompleted
@@ -219,6 +220,7 @@ export default function ProjectsPage() {
               {showCompleted ? "Hide Completed" : "Show Completed"}
             </button>
             <button
+              type="button"
               onClick={() => {
                 setEditingProject(null);
                 setIsModalOpen(true);
@@ -347,6 +349,7 @@ export default function ProjectsPage() {
                               session?.user?.id) && (
                             <>
                               <button
+                                type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleEditProject(project);
@@ -357,6 +360,7 @@ export default function ProjectsPage() {
                                 <Pencil className="w-4 h-4" />
                               </button>
                               <button
+                                type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleDeleteProject(project._id);
@@ -412,14 +416,14 @@ export default function ProjectsPage() {
                                             <StatusBadge status={task.status} />
                                           </div>
 
-                                          {task.description && (
+                                          {task.description ? (
                                             <p className="text-sm text-gray-600 dark:text-slate-400 mb-3">
                                               {task.description}
                                             </p>
-                                          )}
+                                          ) : null}
 
                                           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-600 dark:text-slate-400">
-                                            {task.assignedTo && (
+                                            {task.assignedTo ? (
                                               <div className="flex items-center gap-1">
                                                 <span className="font-medium text-gray-700 dark:text-slate-400">
                                                   Assigned to:
@@ -428,8 +432,8 @@ export default function ProjectsPage() {
                                                   {task.assignedTo.name}
                                                 </span>
                                               </div>
-                                            )}
-                                            {task.startDate && (
+                                            ) : null}
+                                            {task.startDate ? (
                                               <div className="flex items-center gap-1">
                                                 <span className="font-medium text-gray-700 dark:text-slate-400">
                                                   Started:
@@ -438,8 +442,8 @@ export default function ProjectsPage() {
                                                   {formatDate(task.startDate)}
                                                 </span>
                                               </div>
-                                            )}
-                                            {task.completedDate && (
+                                            ) : null}
+                                            {task.completedDate ? (
                                               <div className="flex items-center gap-1">
                                                 <span className="font-medium text-gray-700 dark:text-slate-400">
                                                   Completed:
@@ -450,8 +454,8 @@ export default function ProjectsPage() {
                                                   )}
                                                 </span>
                                               </div>
-                                            )}
-                                            {task.completedBy && (
+                                            ) : null}
+                                            {task.completedBy ? (
                                               <div className="flex items-center gap-1">
                                                 <span className="font-medium text-gray-700 dark:text-slate-400">
                                                   by
@@ -460,7 +464,7 @@ export default function ProjectsPage() {
                                                   {task.completedBy.name}
                                                 </span>
                                               </div>
-                                            )}
+                                            ) : null}
                                           </div>
                                         </div>
                                       </div>
@@ -489,11 +493,11 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {loadingMore && (
+      {loadingMore ? (
         <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin" /> Loading more projects...
         </div>
-      )}
+      ) : null}
 
       <AddProjectModal
         isOpen={isModalOpen}

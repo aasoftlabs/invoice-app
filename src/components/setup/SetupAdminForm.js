@@ -34,11 +34,9 @@ export default function SetupAdminForm() {
             className="w-full p-2.5 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             placeholder="admin@company.com"
           />
-          {errors.adminUser?.email && (
-            <p className="text-xs text-red-500">
+          {errors.adminUser?.email ? <p className="text-xs text-red-500">
               {errors.adminUser.email.message}
-            </p>
-          )}
+            </p> : null}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -50,11 +48,9 @@ export default function SetupAdminForm() {
             className="w-full p-2.5 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             placeholder="******"
           />
-          {errors.adminUser?.password && (
-            <p className="text-xs text-red-500">
+          {errors.adminUser?.password ? <p className="text-xs text-red-500">
               {errors.adminUser.password.message}
-            </p>
-          )}
+            </p> : null}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -66,11 +62,9 @@ export default function SetupAdminForm() {
             className="w-full p-2.5 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             placeholder="******"
           />
-          {errors.adminUser?.confirmPassword && (
-            <p className="text-xs text-red-500">
+          {errors.adminUser?.confirmPassword ? <p className="text-xs text-red-500">
               {errors.adminUser.confirmPassword.message}
-            </p>
-          )}
+            </p> : null}
         </div>
       </div>
     </div>

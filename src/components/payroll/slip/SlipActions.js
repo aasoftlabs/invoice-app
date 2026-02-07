@@ -22,17 +22,14 @@ export default function SlipActions({
         <ArrowLeft className="w-5 h-5" /> Back
       </button>
       <div className="flex gap-3">
-        {status !== "paid" && onPay && (
-          <button
+        {status !== "paid" && onPay ? <button
             onClick={onPay}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm font-medium"
           >
             <CreditCard className="w-4 h-4" /> Pay & Record
-          </button>
-        )}
+          </button> : null}
 
-        {onSendEmail && (
-          <button
+        {onSendEmail ? <button
             onClick={onSendEmail}
             disabled={emailLoading}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm font-medium disabled:opacity-50"
@@ -43,8 +40,7 @@ export default function SlipActions({
               <Mail className="w-4 h-4" />
             )}
             Send Email
-          </button>
-        )}
+          </button> : null}
 
         <button
           onClick={onPrint}

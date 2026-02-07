@@ -114,20 +114,16 @@ export default function AttendanceCalendar({ records, minimal = false }) {
                   : "bg-gray-50 dark:bg-slate-900/50 text-gray-400 border-gray-100 dark:border-slate-800"
             }`}
           >
-            {d && (
-              <>
+            {d ? <>
                 <span className="font-medium">{d.day}</span>
-                {d.record && (
-                  <div className={`${minimal ? "mt-0" : "mt-0.5"}`}>
+                {d.record ? <div className={`${minimal ? "mt-0" : "mt-0.5"}`}>
                     {d.record.status === "present" && (
                       <div
                         className={`${minimal ? "w-0.5 h-0.5" : "w-1 h-1"} rounded-full bg-current`}
                       />
                     )}
-                  </div>
-                )}
-              </>
-            )}
+                  </div> : null}
+              </> : null}
           </div>
         ))}
       </div>

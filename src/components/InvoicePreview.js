@@ -7,102 +7,114 @@ import { toWords } from "number-to-words";
 import Image from "next/image";
 import { useWatch } from "react-hook-form";
 
-const HeaderContent = ({ profile, invoiceData }) => (
-  <div
-    className="border-b-4 pb-6 mb-8 flex justify-between items-end bg-white"
-    style={{ borderColor: profile?.formatting?.color || "#1d4ed8" }}
-  >
-    <div className="w-1/2">
-      <div className="flex items-center gap-4 mb-2">
-        {profile?.logo ? (
-          <Image
-            src={profile.logo}
-            width={150}
-            height={64}
-            unoptimized
-            className="h-16 w-auto object-contain max-w-[150px]"
-            alt="Logo"
-          />
-        ) : (
-          <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">
-            Logo
+function HeaderContent({ profile, invoiceData }) {
+  return (
+    <div
+      className="border-b-4 pb-6 mb-8 flex justify-between items-end bg-white"
+      style={{ borderColor: profile?.formatting?.color || "#1d4ed8" }}
+    >
+      <div className="w-1/2">
+        <div className="flex items-center gap-4 mb-2">
+          {profile?.logo ? ( // eslint-disable-line react/jsx-no-leaked-render
+            <Image
+              src={profile.logo}
+              width={150}
+              height={64}
+              unoptimized
+              className="h-16 w-auto object-contain max-w-[150px]"
+              alt="Logo"
+            />
+          ) : (
+            <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">
+              Logo
+            </div>
+          )}
+          <div>
+            <BrandName
+              name={profile?.name}
+              color={profile?.formatting?.color}
+            />
+            {!!profile?.slogan ? (
+              <div className="text-[8px] text-gray-500 uppercase mt-1">
+                {profile.slogan}
+              </div>
+            ) : null}
+            {!!profile?.tagline ? (
+              <div
+                className="text-[10px] uppercase font-bold mt-1"
+                style={{ color: profile?.formatting?.color || "#1d4ed8" }}
+              >
+                {profile.tagline}
+              </div>
+            ) : null}
           </div>
-        )}
-        <div>
-          <BrandName name={profile?.name} color={profile?.formatting?.color} />
-          {profile?.slogan && (
-            <div className="text-[8px] text-gray-500 uppercase mt-1">
-              {profile.slogan}
-            </div>
-          )}
-          {profile?.tagline && (
-            <div
-              className="text-[10px] uppercase font-bold mt-1"
-              style={{ color: profile?.formatting?.color || "#1d4ed8" }}
-            >
-              {profile.tagline}
-            </div>
-          )}
+        </div>
+      </div>
+
+      <div className="w-1/2 flex flex-col items-end text-right">
+        <div
+          className="text-3xl font-bold mb-2"
+          style={{ color: profile?.formatting?.color || "#1d4ed8" }}
+        >
+          INVOICE
+        </div>
+        <div className="text-xs text-gray-600 space-y-1 text-right">
+          <div className="grid grid-cols-[auto_1fr] gap-x-3 text-right">
+            <span className="font-bold text-right">Invoice No:</span>
+            <span className="text-left">{invoiceData?.invoiceNo}</span>
+
+            <span className="font-bold text-right">Invoice Date:</span>
+            <span className="text-left">
+              {invoiceData?.date
+                ? new Date(invoiceData.date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })
+                : null}
+            </span>
+
+            {!!invoiceData?.dueDate ? (
+              <>
+                <span className="font-bold text-right">Due Date:</span>
+                <span className="text-left">
+                  {new Date(invoiceData.dueDate).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </span>
+              </>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
+  );
+}
 
-    <div className="w-1/2 flex flex-col items-end text-right">
-      <div
-        className="text-3xl font-bold mb-2"
-        style={{ color: profile?.formatting?.color || "#1d4ed8" }}
-      >
-        INVOICE
-      </div>
-      <div className="text-xs text-gray-600 space-y-1 text-right">
-        <div className="grid grid-cols-[auto_1fr] gap-x-3 text-right">
-          <span className="font-bold text-right">Invoice No:</span>
-          <span className="text-left">{invoiceData?.invoiceNo}</span>
-
-          <span className="font-bold text-right">Invoice Date:</span>
-          <span className="text-left">
-            {invoiceData?.date &&
-              new Date(invoiceData.date).toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              })}
-          </span>
-
-          {invoiceData?.dueDate && (
-            <>
-              <span className="font-bold text-right">Due Date:</span>
-              <span className="text-left">
-                {new Date(invoiceData.dueDate).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
-              </span>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const FooterContent = ({ profile, invoiceData, initialData }) => (
-  <div className="text-center text-xs text-gray-500 border-t border-gray-100 pt-6 bg-white">
-    <p className="font-semibold text-gray-700 mb-1">
-      Thank you for your business!
-    </p>
-    <p className="mb-2">For any enquiries, please email {profile?.email}</p>
-
-    {invoiceData?.type === "Digital" && (
-      <p className="text-[10px] text-gray-400 italic mt-2">
-        This is a computer generated invoice and doesn&#39;t need signature.
+function FooterContent({ profile, invoiceData, initialData }) {
+  return (
+    <div className="text-center text-xs text-gray-500 border-t border-gray-100 pt-6 bg-white">
+      <p className="font-semibold text-gray-700 mb-1">
+        Thank you for your business!
       </p>
-    )}
-  </div>
-);
+      <p className="mb-2">For any enquiries, please email {profile?.email}</p>
 
-const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
+      {invoiceData?.type === "Digital" && (
+        <p className="text-[10px] text-gray-400 italic mt-2">
+          This is a computer generated invoice and doesn&#39;t need signature.
+        </p>
+      )}
+    </div>
+  );
+}
+
+const InvoicePreviewContent = React.memo(function InvoicePreviewContent({
+  profile,
+  data,
+  initialData,
+}) {
   const [origin, setOrigin] = React.useState("");
 
   React.useEffect(() => {
@@ -188,17 +200,17 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                           data.clientCompany ||
                           "[Client/Company Name]"}
                       </div>
-                      {data.clientName && data.clientCompany && (
+                      {!!(data.clientName && data.clientCompany) ? (
                         <div>{data.clientCompany}</div>
-                      )}
+                      ) : null}
                       <div className="whitespace-pre-wrap">
                         {data.clientAddress || "[Address]"}
                       </div>
-                      {data.clientGst && (
+                      {!!data.clientGst ? (
                         <div className="mt-1 text-xs text-gray-500">
                           GSTIN: {data.clientGst}
                         </div>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                   <div className="w-1/2 pl-4 border-l border-gray-100">
@@ -217,7 +229,7 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                       </div>
                       <div className="mt-2">Phone: {profile.phone}</div>
                       <div>Email: {profile.email}</div>
-                      {profile.gstIn && <div>GSTIN: {profile.gstIn}</div>}
+                      {profile.gstIn ? <div>GSTIN: {profile.gstIn}</div> : null}
                     </div>
                   </div>
                 </div>
@@ -254,11 +266,11 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                         <td className="p-3 text-gray-600">{i + 1}</td>
                         <td className="py-4 text-gray-800">
                           <div className="font-medium">{item.description}</div>
-                          {item.subDescription && (
+                          {item.subDescription ? (
                             <div className="text-xs text-gray-500 mt-1 whitespace-pre-wrap">
                               {item.subDescription}
                             </div>
-                          )}
+                          ) : null}
                         </td>
                         <td className="p-3 text-right text-gray-600">
                           {Number(item.rate).toLocaleString("en-IN", {
@@ -280,10 +292,10 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                       </tr>
                     ))}
                     <tr>
-                      <td colSpan={5} className="h-4"></td>
+                      <td colSpan={5} className="h-4" />
                     </tr>
                     <tr>
-                      <td colSpan={3}></td>
+                      <td colSpan={3} />
                       <td className="p-2 text-right text-xs font-bold text-gray-600">
                         Sub Total
                       </td>
@@ -295,7 +307,7 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                       </td>
                     </tr>
                     <tr>
-                      <td colSpan={3}></td>
+                      <td colSpan={3} />
                       <td className="p-2 text-right text-xs font-bold text-gray-600">
                         GST ({data.taxRate}%)
                       </td>
@@ -385,7 +397,7 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                     </div>
 
                     {/* Optional QR Code for Standard Invoice */}
-                    {data.type === "Standard" && data.showQrCode && (
+                    {data.type === "Standard" && data.showQrCode ? (
                       <div className="mt-4">
                         <QRCodeSVG
                           value={`${origin}/verify/${data?._id || initialData?._id || "preview"}`}
@@ -396,7 +408,7 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
                           Scan to verify
                         </div>
                       </div>
-                    )}
+                    ) : null}
                   </div>
 
                   <div className="text-right flex flex-col items-end">
@@ -469,15 +481,19 @@ const InvoicePreviewContent = React.memo(({ profile, data, initialData }) => {
 });
 
 // Connected Component (Live Mode)
-const InvoicePreviewLive = ({ control, invoiceData, ...props }) => {
+function InvoicePreviewLive({ control, invoiceData, ...props }) {
   const watchedData = useWatch({ control });
   // Merge watched data with initial data to ensure structure
   const data = watchedData ? { ...invoiceData, ...watchedData } : invoiceData;
   return <InvoicePreviewContent data={data} {...props} />;
-};
+}
 
 // Main Component Wrapper
-const InvoicePreview = React.memo(({ control, invoiceData, ...props }) => {
+const InvoicePreview = React.memo(function InvoicePreview({
+  control,
+  invoiceData,
+  ...props
+}) {
   if (control) {
     return (
       <InvoicePreviewLive

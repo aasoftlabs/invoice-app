@@ -11,7 +11,7 @@ export default function WorkLogTable({ workLogs, formatDate, loading }) {
         </div>
         <div className="p-6 text-center text-gray-500 dark:text-slate-400">
           <div className="animate-pulse flex space-x-4 justify-center">
-            <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4" />
           </div>
         </div>
       </div>

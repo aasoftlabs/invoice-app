@@ -37,5 +37,5 @@ export default async function EditInvoicePage({ params }) {
     })),
   };
 
-  return <InvoiceEditor initialData={serializedInvoice} isEditing={true} />;
+  return <InvoiceEditor initialData={serializedInvoice} isEditing />;
 }

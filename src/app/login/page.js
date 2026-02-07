@@ -71,11 +71,9 @@ export default function LoginPage() {
               placeholder="admin@aasoftlabs.com"
               {...register("email")}
             />
-            {errors.email && (
-              <p className="text-xs text-red-500 mt-1">
+            {errors.email ? <p className="text-xs text-red-500 mt-1">
                 {errors.email.message}
-              </p>
-            )}
+              </p> : null}
           </div>
           <div className="mb-6">
             <label
@@ -104,11 +102,9 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
-            {errors.password && (
-              <p className="text-xs text-red-500 -mt-2">
+            {errors.password ? <p className="text-xs text-red-500 -mt-2">
                 {errors.password.message}
-              </p>
-            )}
+              </p> : null}
           </div>
           <div className="flex items-center justify-between mb-4">
             <Link
@@ -126,9 +122,7 @@ export default function LoginPage() {
             aria-live="polite"
             aria-atomic="true"
           >
-            {errorMessage && (
-              <p className="text-sm text-red-500">{errorMessage}</p>
-            )}
+            {errorMessage ? <p className="text-sm text-red-500">{errorMessage}</p> : null}
           </div>
         </form>
       </div>

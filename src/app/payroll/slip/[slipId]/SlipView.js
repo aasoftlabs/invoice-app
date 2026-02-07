@@ -81,7 +81,7 @@ export default function SlipView({ slipId }) {
 
       return () => clearTimeout(timer);
     }
-  }, [searchParams, session, slip, company, loading]);
+  }, [searchParams, session, slip, company, loading, handleSendEmailAction]);
 
   // Generate PDF as base64 string (reusable for download and email)
   const generatePdfBase64 = async () => {
@@ -201,7 +201,7 @@ export default function SlipView({ slipId }) {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-slate-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     );
   }

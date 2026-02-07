@@ -49,7 +49,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
         status: "Pending",
       });
     }
-  }, [initialData, isOpen]);
+  }, [initialData, isOpen, getDefaultEndTime]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -128,7 +128,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-            ></textarea>
+             />
           </div>
 
           {/* Date & Time */}

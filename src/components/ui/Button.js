@@ -45,7 +45,7 @@ export default function Button({
 
   return (
     <button
-      type={type}
+      type={type} // eslint-disable-line react/button-has-type
       className={twMerge(baseStyles, variants[variant], sizes[size], className)}
       disabled={disabled || isLoading}
       {...props}

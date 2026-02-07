@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-const Logo = ({flink}) => {
+function Logo({flink}) {
   return (
     <Link href={flink ? flink : "/"} className="flex items-center gap-2 group">
       <Image src="/logo.png" alt="Logo" width={32} height={32} />
@@ -19,6 +19,6 @@ const Logo = ({flink}) => {
       </div>
     </Link>
   );
-};
+}
 
 export default Logo;

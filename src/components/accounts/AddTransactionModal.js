@@ -75,7 +75,7 @@ export default function AddTransactionModal({
         });
       }
     }
-  }, [isOpen, editingTransaction, fetchUnpaidInvoices]);
+  }, [isOpen, editingTransaction, fetchUnpaidInvoices, formData.type]);
   // removed formData.type from dep array to avoid loop, same as previous fix
 
   // Auto-fill amount when invoice is selected
@@ -221,8 +221,7 @@ export default function AddTransactionModal({
               </span>
             </label>
 
-            {formData.isInvoicePayment && (
-              <div className="animate-in fade-in slide-in-from-top-2">
+            {formData.isInvoicePayment ? <div className="animate-in fade-in slide-in-from-top-2">
                 <Select
                   label="SELECT INVOICE"
                   value={formData.invoiceId}
@@ -237,13 +236,10 @@ export default function AddTransactionModal({
                     </option>
                   ))}
                 </Select>
-                {fetchingInvoices && (
-                  <p className="text-xs text-blue-600 mt-1">
+                {fetchingInvoices ? <p className="text-xs text-blue-600 mt-1">
                     Fetching invoices...
-                  </p>
-                )}
-              </div>
-            )}
+                  </p> : null}
+              </div> : null}
           </div>
         )}
 

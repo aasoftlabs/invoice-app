@@ -200,12 +200,10 @@ export default function PayrollDashboard() {
           lastElementRef={lastEmployeeElementRef}
         />
 
-        {loadingMore && (
-          <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+        {loadingMore ? <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin" /> Loading more
             employees...
-          </div>
-        )}
+          </div> : null}
       </div>
     </PermissionGate>
   );

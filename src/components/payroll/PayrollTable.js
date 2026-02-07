@@ -69,11 +69,9 @@ export default function PayrollTable({
                   <div className="text-xs text-gray-500 dark:text-slate-400">
                     {emp.email}
                   </div>
-                  {emp.designation && (
-                    <div className="text-xs text-gray-400 italic">
+                  {emp.designation ? <div className="text-xs text-gray-400 italic">
                       {emp.designation}
-                    </div>
-                  )}
+                    </div> : null}
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-sm text-gray-700 dark:text-slate-300">

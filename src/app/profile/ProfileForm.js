@@ -153,8 +153,7 @@ export default function ProfileForm({ user }) {
           />
         </div>
 
-        {isEditing && (
-          <div className="pt-6 border-t border-gray-100 dark:border-slate-700">
+        {isEditing ? <div className="pt-6 border-t border-gray-100 dark:border-slate-700">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Lock className="w-4 h-4" /> Change Password
             </h3>
@@ -182,11 +181,9 @@ export default function ProfileForm({ user }) {
                 />
               </div>
             </div>
-          </div>
-        )}
+          </div> : null}
 
-        {isEditing && (
-          <div className="pt-6 flex justify-end">
+        {isEditing ? <div className="pt-6 flex justify-end">
             <Button
               type="submit"
               isLoading={loading}
@@ -196,8 +193,7 @@ export default function ProfileForm({ user }) {
             >
               Save Changes
             </Button>
-          </div>
-        )}
+          </div> : null}
       </form>
     </div>
   );

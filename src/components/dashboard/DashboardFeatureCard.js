@@ -46,7 +46,7 @@ export default function DashboardFeatureCard({ feature, hasAccess }) {
         } rounded-bl-full -mr-4 -mt-4 transition-transform duration-500 ${
           hasAccess ? "group-hover:scale-110" : ""
         }`}
-      ></div>
+       />
 
       <div className="flex justify-between items-start mb-4 relative z-10">
         <div

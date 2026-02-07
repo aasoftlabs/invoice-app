@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Clock,
   Calendar,
@@ -41,51 +41,57 @@ export default function AttendanceClient({ user }) {
   const [todayRecord, setTodayRecord] = useState(null);
   const [yearlyStats, setYearlyStats] = useState(null);
 
-  const fetchRecords = async (targetUserId = null) => {
-    try {
-      setLoading(true);
-      let url = "/api/attendance/mark"; // Default: fetch my records
+  const fetchRecords = useCallback(
+    async (targetUserId = null) => {
+      try {
+        setLoading(true);
+        let url = "/api/attendance/mark"; // Default: fetch my records
 
-      if (activeTab === "admin" && targetUserId) {
-        url = `/api/attendance/history?userId=${targetUserId}`;
+        if (activeTab === "admin" && targetUserId) {
+          url = `/api/attendance/history?userId=${targetUserId}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        setRecords(data);
+
+        if (activeTab === "me") {
+          // Find today's record
+          const today = new Date().toISOString().split("T")[0];
+          const todayRec = data.find(
+            (r) => new Date(r.date).toISOString().split("T")[0] === today,
+          );
+          setTodayRecord(todayRec);
+        }
+      } catch (error) {
+        console.error("Error fetching records:", error);
+      } finally {
+        setLoading(false);
       }
+    },
+    [activeTab],
+  );
 
-      const res = await fetch(url);
-      const data = await res.json();
+  const fetchAnnualSummary = useCallback(
+    async (targetUserId = null) => {
+      try {
+        const year = new Date().getFullYear();
+        const res = await fetch(`/api/attendance/summary?year=${year}`);
+        const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error);
-
-      setRecords(data);
-
-      if (activeTab === "me") {
-        // Find today's record
-        const today = new Date().toISOString().split("T")[0];
-        const todayRec = data.find(
-          (r) => new Date(r.date).toISOString().split("T")[0] === today,
-        );
-        setTodayRecord(todayRec);
+        const uid = targetUserId || session?.user?.id;
+        if (data.success && uid) {
+          setYearlyStats(data.summary[uid] || null);
+        }
+      } catch (error) {
+        console.error("Error fetching yearly summary:", error);
       }
-    } catch (error) {
-      console.error("Error fetching records:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchAnnualSummary = async (targetUserId = null) => {
-    try {
-      const year = new Date().getFullYear();
-      const res = await fetch(`/api/attendance/summary?year=${year}`);
-      const data = await res.json();
-
-      const uid = targetUserId || session?.user?.id;
-      if (data.success && uid) {
-        setYearlyStats(data.summary[uid] || null);
-      }
-    } catch (error) {
-      console.error("Error fetching yearly summary:", error);
-    }
-  };
+    },
+    [session?.user?.id],
+  );
 
   useEffect(() => {
     if (activeTab === "me") {
@@ -97,7 +103,13 @@ export default function AttendanceClient({ user }) {
       fetchRecords(viewingUser);
       fetchAnnualSummary(viewingUser);
     }
-  }, [activeTab, viewingUser, session?.user?.id]);
+  }, [
+    activeTab,
+    viewingUser,
+    session?.user?.id,
+    fetchRecords,
+    fetchAnnualSummary,
+  ]);
 
   const handlePunch = async () => {
     try {
@@ -139,8 +151,7 @@ export default function AttendanceClient({ user }) {
         </div>
 
         {/* Tabs */}
-        {isAdmin && (
-          <div className="flex p-1 bg-gray-100 dark:bg-slate-800 rounded-lg w-fit">
+        {isAdmin ? <div className="flex p-1 bg-gray-100 dark:bg-slate-800 rounded-lg w-fit">
             <button
               onClick={() => {
                 setActiveTab("admin");
@@ -166,8 +177,7 @@ export default function AttendanceClient({ user }) {
               <History className="w-4 h-4" />
               My Attendance
             </button>
-          </div>
-        )}
+          </div> : null}
       </div>
 
       {activeTab === "me" ? (
@@ -184,7 +194,7 @@ export default function AttendanceClient({ user }) {
                     </>
                   ) : (
                     <>
-                      <Clock className="w-5 h-5 text-blue-500" /> Today's
+                      <Clock className="w-5 h-5 text-blue-500" /> Today&apos;s
                       Activity
                     </>
                   )}
@@ -208,10 +218,10 @@ export default function AttendanceClient({ user }) {
                   record={todayRecord}
                   onPunch={handlePunch}
                   loading={loading}
-                  minimal={true}
+                  minimal
                 />
               ) : (
-                <AttendanceCalendar records={records} minimal={true} />
+                <AttendanceCalendar records={records} minimal />
               )}
             </div>
 
@@ -241,7 +251,7 @@ export default function AttendanceClient({ user }) {
                   <Calendar className="w-5 h-5 text-blue-500" />
                   Attendance Log
                 </h3>
-                <AttendanceCalendar records={records} minimal={true} />
+                <AttendanceCalendar records={records} minimal />
               </div>
               <AttendanceStatsCard
                 records={records}

@@ -164,7 +164,7 @@ export default function WorkLogPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600 dark:text-slate-400">Loading...</p>
         </div>
       </div>
@@ -371,11 +371,9 @@ export default function WorkLogPage() {
           </div>
         </div>
 
-        {loadingMore && (
-          <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+        {loadingMore ? <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin" /> Loading more logs...
-          </div>
-        )}
+          </div> : null}
       </div>
 
       <AddWorkLogModal

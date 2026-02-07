@@ -39,15 +39,13 @@ export default function Spotlight({
             className={`relative overflow-hidden ${className}`}
             {...props}
         >
-            {enabled && (
-                <div
+            {enabled ? <div
                     className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 z-50"
                     style={{
                         opacity,
                         background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
                     }}
-                />
-            )}
+                /> : null}
             {children}
         </div>
     );

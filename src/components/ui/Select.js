@@ -13,11 +13,9 @@ export default function Select({
 }) {
   return (
     <div className="w-full">
-      {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+      {label ? <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
           {label}
-        </label>
-      )}
+        </label> : null}
       <select
         className={twMerge(
           "w-full px-4 py-2 bg-white dark:bg-slate-800 border rounded-lg outline-none transition-all",
@@ -28,11 +26,9 @@ export default function Select({
         )}
         {...props}
       >
-        {placeholder && (
-          <option value="" disabled>
+        {placeholder ? <option value="" disabled>
             {placeholder}
-          </option>
-        )}
+          </option> : null}
         {options.length > 0
           ? options.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -41,7 +37,7 @@ export default function Select({
             ))
           : children}
       </select>
-      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+      {error ? <p className="mt-1 text-xs text-red-500">{error}</p> : null}
     </div>
   );
 }

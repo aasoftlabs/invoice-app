@@ -34,7 +34,7 @@ export default function GenerateTable({
                 className="px-6 py-8 text-center text-gray-500 dark:text-slate-400"
               >
                 <div className="flex justify-center items-center gap-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-500 border-t-transparent"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-500 border-t-transparent" />
                   Loading...
                 </div>
               </td>
@@ -138,8 +138,7 @@ export default function GenerateTable({
                     {liveLopData &&
                       liveLopData[emp._id] !== undefined &&
                       liveLopData[emp._id] !==
-                        (lopData[emp._id]?.value || 0) && (
-                        <div className="flex items-center gap-1 mt-1 text-[10px] text-amber-600 dark:text-amber-400">
+                        (lopData[emp._id]?.value || 0) ? <div className="flex items-center gap-1 mt-1 text-[10px] text-amber-600 dark:text-amber-400">
                           <AlertCircle className="w-3 h-3" />
                           <span>Actual: {liveLopData[emp._id]}</span>
                           <button
@@ -156,8 +155,7 @@ export default function GenerateTable({
                           >
                             Sync
                           </button>
-                        </div>
-                      )}
+                        </div> : null}
                   </td>
                   <td className="px-6 py-4">
                     {slip ? (

@@ -2,102 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Printer, ChevronLeft, ChevronRight } from "lucide-react";
-import NextImage from "next/image";
 import Spotlight from "@/components/ui/Spotlight";
 import LetterheadEditorTinyMCE from "@/components/letterhead/LetterheadEditorTinyMCE";
-import BrandName from "@/components/BrandName";
 import PermissionGate from "@/components/ui/PermissionGate";
-
-// Helper Components for Reusability
-const LogoHeader = ({ profile }) => (
-  <div className="flex justify-between items-start border-b-2 border-blue-500 pb-2 mb-2 min-h-[80px] w-full">
-    <div className="flex items-center gap-4 mb-2">
-      {profile?.logo ? (
-        <NextImage
-          src={profile.logo}
-          width={150}
-          height={64}
-          unoptimized
-          className="h-16 w-auto object-contain max-w-[150px]"
-          alt="Logo"
-        />
-      ) : (
-        <div className="w-12 h-12 bg-gray-100 dark:bg-slate-700 rounded flex items-center justify-center text-xs text-gray-400">
-          No Logo
-        </div>
-      )}
-      <div>
-        <BrandName name={profile.name} color={profile.formatting?.color} />
-        {profile.slogan && (
-          <div className="text-[8px] text-gray-500 uppercase mt-1">
-            {profile.slogan}
-          </div>
-        )}
-        {profile.tagline && (
-          <div
-            className="text-[10px] uppercase font-bold mt-1"
-            style={{ color: profile.formatting?.color || "#1d4ed8" }}
-          >
-            {profile.tagline}
-          </div>
-        )}
-      </div>
-    </div>
-    <div className="text-right text-xs text-gray-500 leading-relaxed pt-2">
-      <div className="mb-3">
-        <span
-          className="uppercase font-bold"
-          style={{ color: profile.formatting?.color }}
-        >
-          Contact Us
-        </span>
-        {profile?.phone && (
-          <p>
-            <span>+91 </span> {profile.phone}
-          </p>
-        )}
-        {profile?.email && <p>{profile.email}</p>}
-      </div>
-    </div>
-  </div>
-);
-
-const CompanyFooter = ({ profile }) => (
-  <div className="pt-2 border-t-2 border-blue-500 text-xs text-gray-500 text-center h-[80px] flex flex-col justify-end pb-1 box-border w-full">
-    <div className="flex justify-between gap-40 mb-0 text-left">
-      <div>
-        <h4
-          className="font-bold uppercase text-gray-800 mb-1"
-          style={{ color: profile.formatting?.color }}
-        >
-          Registered Office
-        </h4>
-        <p className="whitespace-pre-line leading-relaxed">
-          {profile?.address}
-        </p>
-      </div>
-      <div>
-        <h4
-          className="font-bold uppercase text-gray-800 mb-1"
-          style={{ color: profile.formatting?.color }}
-        >
-          Registration
-        </h4>
-        {profile?.registrationNo && (
-          <p>
-            <span className="font-medium">{`${profile?.registrationType} No:`}</span>{" "}
-            {profile?.registrationNo}
-          </p>
-        )}
-        {profile?.gstIn && (
-          <p>
-            <span className="font-medium">GSTIN:</span> {profile?.gstIn}
-          </p>
-        )}
-      </div>
-    </div>
-  </div>
-);
+import LogoHeader from "@/components/letterhead/LogoHeader";
+import CompanyFooter from "@/components/letterhead/CompanyFooter";
 
 export default function LetterheadView({ profile }) {
   const [content, setContent] = useState("");
@@ -107,6 +16,7 @@ export default function LetterheadView({ profile }) {
   const bodyRef = useRef(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 
@@ -154,7 +64,7 @@ export default function LetterheadView({ profile }) {
             <div
               id="editor-toolbar"
               className="flex-1 mr-4 h-full relative"
-            ></div>
+             />
 
             {/* Right: Actions */}
             <div className="flex items-center gap-3 min-w-[200px] justify-end relative z-50">
@@ -243,7 +153,7 @@ export default function LetterheadView({ profile }) {
                     <tr>
                       <td className="w-full px-12 pt-10">
                         <LogoHeader profile={profile} />
-                        <div className="h-4"></div>
+                        <div className="h-4" />
                       </td>
                     </tr>
                   </thead>
@@ -266,18 +176,16 @@ export default function LetterheadView({ profile }) {
                         {/* Header spacer handled by thead in print, but we need visual gap on screen */}
                         {/* Removed visual gap on screen for continuous view as well, or keep small padding? */}
                         {/* User wants "Continuous Page", so usually just a white sheet. */}
-                        <div className="h-10 print:hidden"></div>
+                        <div className="h-10 print:hidden" />
 
                         <main
                           ref={bodyRef}
                           className="relative min-h-[820px] pb-[50px]"
                         >
-                          {isMounted && (
-                            <LetterheadEditorTinyMCE
+                          {isMounted ? <LetterheadEditorTinyMCE
                               content={content}
                               setContent={setContent}
-                            />
-                          )}
+                            /> : null}
                         </main>
                       </td>
                     </tr>

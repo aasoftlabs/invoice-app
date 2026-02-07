@@ -26,21 +26,17 @@ export default function StatsCard({
         <h3 className="text-sm font-medium text-gray-600 dark:text-slate-400">
           {title}
         </h3>
-        {Icon && (
-          <div className={`p-2 rounded-lg border ${bgClass}`}>
+        {Icon ? <div className={`p-2 rounded-lg border ${bgClass}`}>
             <Icon className="w-5 h-5" />
-          </div>
-        )}
+          </div> : null}
       </div>
       <div className="flex flex-col">
         <p className="text-3xl font-bold text-gray-900 dark:text-white">
           {value}
         </p>
-        {subtitle && (
-          <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+        {subtitle ? <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
             {subtitle}
-          </p>
-        )}
+          </p> : null}
       </div>
     </Spotlight>
   );

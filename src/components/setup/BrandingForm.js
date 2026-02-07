@@ -66,15 +66,13 @@ export default function BrandingForm() {
                 />
               </label>
 
-              {logo && (
-                <button
+              {logo ? <button
                   type="button"
                   onClick={() => setValue("logo", "")}
                   className="text-xs text-red-500 hover:underline"
                 >
                   Remove
-                </button>
-              )}
+                </button> : null}
             </div>
 
             {logo ? (

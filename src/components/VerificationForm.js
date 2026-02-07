@@ -69,7 +69,7 @@ export default function VerificationForm({ invoiceId }) {
                             {...register("invoiceNo")}
                             className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white placeholder-gray-400 ${errors.invoiceNo ? 'border-red-500' : 'border-gray-300'}`}
                         />
-                        {errors.invoiceNo && <p className="text-xs text-red-500 mt-1">{errors.invoiceNo.message}</p>}
+                        {errors.invoiceNo ? <p className="text-xs text-red-500 mt-1">{errors.invoiceNo.message}</p> : null}
                     </div>
 
                     <div>
@@ -81,14 +81,12 @@ export default function VerificationForm({ invoiceId }) {
                             {...register("amount")}
                             className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 bg-white placeholder-gray-400 ${errors.amount ? 'border-red-500' : 'border-gray-300'}`}
                         />
-                        {errors.amount && <p className="text-xs text-red-500 mt-1">{errors.amount.message}</p>}
+                        {errors.amount ? <p className="text-xs text-red-500 mt-1">{errors.amount.message}</p> : null}
                     </div>
 
-                    {serverError && (
-                        <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2">
+                    {serverError ? <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2">
                             <AlertTriangle className="w-4 h-4" /> {serverError}
-                        </div>
-                    )}
+                        </div> : null}
 
                     <button
                         type="submit"

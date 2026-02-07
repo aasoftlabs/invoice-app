@@ -4,11 +4,11 @@ import { FaXTwitter } from "react-icons/fa6";
 import Image from "next/image";
 import Logo from "./Logo";
 
-const Footer = () => {
+function Footer() {
   return (
     <footer className="bg-slate-50 dark:bg-slate-950 border-t border-gray-200 dark:border-white/5 relative overflow-hidden transition-colors duration-300 print:hidden">
       {/* Background Effect */}
-      <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 dark:from-blue-950/5 to-transparent pointer-events-none"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 dark:from-blue-950/5 to-transparent pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Main Footer Content */}
@@ -153,6 +153,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+}
 
 export default Footer;

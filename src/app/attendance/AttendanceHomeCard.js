@@ -127,12 +127,12 @@ export default function AttendanceHomeCard({ user }) {
                 record={record}
                 onPunch={handlePunch}
                 loading={punching}
-                minimal={true}
+                minimal
               />
             )}
           </div>
         ) : (
-          <AttendanceCalendar records={records} minimal={true} />
+          <AttendanceCalendar records={records} minimal />
         )}
       </div>
     </Spotlight>

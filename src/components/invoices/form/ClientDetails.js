@@ -17,31 +17,25 @@ export default function ClientDetails() {
         {...register("clientName")}
         className={`w-full mb-3 p-2.5 border rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm ${errors.clientName ? "border-red-500" : "border-gray-300 dark:border-slate-600"}`}
       />
-      {errors.clientName && (
-        <p className="text-xs text-red-500 mb-2">{errors.clientName.message}</p>
-      )}
+      {errors.clientName ? <p className="text-xs text-red-500 mb-2">{errors.clientName.message}</p> : null}
 
       <input
         placeholder="Company Name"
         {...register("clientCompany")}
         className={`w-full mb-3 p-2.5 border rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm ${errors.clientCompany ? "border-red-500" : "border-gray-300 dark:border-slate-600"}`}
       />
-      {errors.clientCompany && (
-        <p className="text-xs text-red-500 mb-2">
+      {errors.clientCompany ? <p className="text-xs text-red-500 mb-2">
           {errors.clientCompany.message}
-        </p>
-      )}
+        </p> : null}
 
       <textarea
         placeholder="Address"
         {...register("clientAddress")}
         className={`w-full mb-3 p-2.5 border rounded-lg text-sm h-24 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm resize-none ${errors.clientAddress ? "border-red-500" : "border-gray-300 dark:border-slate-600"}`}
       />
-      {errors.clientAddress && (
-        <p className="text-xs text-red-500 mb-2">
+      {errors.clientAddress ? <p className="text-xs text-red-500 mb-2">
           {errors.clientAddress.message}
-        </p>
-      )}
+        </p> : null}
 
       <input
         placeholder="Client GSTIN (Optional)"

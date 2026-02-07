@@ -132,7 +132,7 @@ export default function NotesPage() {
               <div
                 key={i}
                 className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm animate-pulse h-48"
-              ></div>
+               />
             ))}
           </div>
         ) : filteredNotes.length === 0 ? (

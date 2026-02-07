@@ -22,7 +22,9 @@ export default function InvoiceDashboard({ initialInvoices }) {
 
   const [invoices, setInvoices] = useState(initialInvoices);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(
+    initialInvoices ? initialInvoices.length >= 20 : true,
+  );
 
   // Use custom hook for fetching
   const { loading: fetchLoading, fetchInvoices } = useInvoices();
@@ -46,11 +48,22 @@ export default function InvoiceDashboard({ initialInvoices }) {
     [loadingMore, hasMore],
   );
 
+  // Track first render to avoid redundant fetch
+  const isFirstRender = useRef(true);
+
   // Load data effect
   useEffect(() => {
     let active = true;
 
     async function loadData() {
+      // Skip the initial fetch if we already have server-side data
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        if (initialInvoices) {
+          return;
+        }
+      }
+
       const isInitial = page === 1;
 
       // Only set "loading more" for pagination
@@ -122,7 +135,7 @@ export default function InvoiceDashboard({ initialInvoices }) {
                 <th className="px-6 py-4 text-right">Amount</th>
                 <th className="px-6 py-4 text-right">Payment</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4"></th>
+                <th className="px-6 py-4" />
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
@@ -173,15 +186,19 @@ export default function InvoiceDashboard({ initialInvoices }) {
             </tbody>
           </table>
 
-          {loadingMore && (
+          {loadingMore ? (
             <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading more...
             </div>
-          )}
+          ) : null}
 
           <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-xs text-gray-500 dark:text-slate-400 text-center">
             Showing {invoices.length} records{" "}
-            {hasMore ? "(Scroll for more)" : "(End of list)"}
+            {loadingMore || (fetchLoading && page === 1)
+              ? "..."
+              : hasMore
+                ? "(Scroll for more)"
+                : "(End of list)"}
           </div>
         </Card>
       </div>

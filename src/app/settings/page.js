@@ -172,9 +172,7 @@ export default function SettingsPage() {
                       />
                       {tab.label}
                     </div>
-                    {isActive && (
-                      <ChevronRight className="w-4 h-4 text-blue-600 dark:text-blue-400 opacity-50" />
-                    )}
+                    {isActive ? <ChevronRight className="w-4 h-4 text-blue-600 dark:text-blue-400 opacity-50" /> : null}
                   </button>
                 );
               })}

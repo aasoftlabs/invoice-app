@@ -134,19 +134,15 @@ const SlipTemplate = forwardRef(({ slip, company }, ref) => {
                             name={company?.name}
                             color={company?.formatting?.color}
                         />
-                        {company?.slogan && (
-                            <p className="text-[9px] text-gray-500 uppercase mt-0.5 font-medium tracking-wider">
+                        {company?.slogan ? <p className="text-[9px] text-gray-500 uppercase mt-0.5 font-medium tracking-wider">
                                 {company.slogan}
-                            </p>
-                        )}
-                        {company?.tagline && (
-                            <p
+                            </p> : null}
+                        {company?.tagline ? <p
                                 className="text-[10px] font-bold uppercase mt-0.5"
                                 style={{ color: company?.formatting?.color || "#1d4ed8" }}
                             >
                                 {company.tagline}
-                            </p>
-                        )}
+                            </p> : null}
                     </div>
                 </div>
 

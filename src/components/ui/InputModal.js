@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
 import Button from "./Button";
 import { Input } from "./Input";
@@ -18,12 +18,6 @@ export default function InputModal({
   confirmButtonColor = "blue",
 }) {
   const [value, setValue] = useState(defaultValue);
-
-  useEffect(() => {
-    if (isOpen) {
-      setValue(defaultValue);
-    }
-  }, [isOpen, defaultValue]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

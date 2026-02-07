@@ -101,8 +101,7 @@ export default function CompanyForm({ initialData }) {
             onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
             placeholder="https://example.com/logo.png"
           />
-          {formData.logo && (
-            <div className="mt-2 p-2 border dark:border-slate-600 rounded bg-gray-50 dark:bg-slate-900/50 inline-block">
+          {formData.logo ? <div className="mt-2 p-2 border dark:border-slate-600 rounded bg-gray-50 dark:bg-slate-900/50 inline-block">
               <Image
                 src={formData.logo}
                 alt="Logo preview"
@@ -111,8 +110,7 @@ export default function CompanyForm({ initialData }) {
                 unoptimized
                 className="h-16 w-auto object-contain"
               />
-            </div>
-          )}
+            </div> : null}
         </div>
 
         <div className="pt-4">

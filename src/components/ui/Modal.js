@@ -37,6 +37,7 @@ export default function Modal({ isOpen, onClose, title, children, className }) {
             {title}
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 dark:text-slate-400 dark:hover:text-slate-200"
           >

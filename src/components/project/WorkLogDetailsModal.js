@@ -75,8 +75,7 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
         </div>
 
         {/* Remarks */}
-        {workLog.remarks && (
-          <div>
+        {workLog.remarks ? <div>
             <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2 flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Remarks
@@ -84,8 +83,7 @@ export default function WorkLogDetailsModal({ isOpen, onClose, workLog }) {
             <p className="text-gray-900 dark:text-slate-200 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg whitespace-pre-wrap">
               {workLog.remarks}
             </p>
-          </div>
-        )}
+          </div> : null}
 
         {/* User Info */}
         <div>

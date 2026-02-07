@@ -23,21 +23,17 @@ export default function AccessDenied({
       </p>
 
       <div className="flex gap-4">
-        {showHome && (
-          <Link href="/">
+        {showHome ? <Link href="/">
             <Button variant="outline" icon={Home}>
               Go Home
             </Button>
-          </Link>
-        )}
+          </Link> : null}
 
-        {showLogout && (
-          <Link href="/api/auth/signout">
+        {showLogout ? <Link href="/api/auth/signout">
             <Button variant="ghost" icon={LogOut}>
               Log Out
             </Button>
-          </Link>
-        )}
+          </Link> : null}
       </div>
     </div>
   );

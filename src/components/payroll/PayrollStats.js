@@ -9,7 +9,7 @@ export default function PayrollStats({ stats }) {
           <div
             key={i}
             className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 h-32 animate-pulse"
-          ></div>
+           />
         ))}
       </div>
     );

@@ -360,12 +360,10 @@ export default function AccountsPage() {
             </div>
           </div>
 
-          {loadingMore && (
-            <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+          {loadingMore ? <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading more
               transactions...
-            </div>
-          )}
+            </div> : null}
         </div>
 
         <AddTransactionModal

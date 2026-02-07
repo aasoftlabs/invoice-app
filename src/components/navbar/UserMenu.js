@@ -51,8 +51,7 @@ export default function UserMenu({ user }) {
       </button>
 
       {/* Dropdown */}
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-gray-100 dark:border-slate-700 py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+      {isOpen ? <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-gray-100 dark:border-slate-700 py-2 z-50 animate-in fade-in zoom-in-95 duration-100">
           <div className="px-4 py-2 border-b border-gray-100 dark:border-slate-700 md:hidden">
             <div className="text-sm font-semibold dark:text-white">
               {user?.name}
@@ -78,25 +77,21 @@ export default function UserMenu({ user }) {
             <StickyNote className="w-4 h-4" /> My Notes
           </Link>
 
-          {user?.permissions?.includes("company") && (
-            <Link
+          {user?.permissions?.includes("company") ? <Link
               href="/settings"
               className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
               onClick={() => setIsOpen(false)}
             >
               <Settings className="w-4 h-4" /> Company Settings
-            </Link>
-          )}
+            </Link> : null}
 
-          {user?.permissions?.includes("users") && (
-            <Link
+          {user?.permissions?.includes("users") ? <Link
               href="/users"
               className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
               onClick={() => setIsOpen(false)}
             >
               <UserPlus className="w-4 h-4" /> Manage Users
-            </Link>
-          )}
+            </Link> : null}
 
           <button
             onClick={() => signOut()}
@@ -104,8 +99,7 @@ export default function UserMenu({ user }) {
           >
             <LogOut className="w-4 h-4" /> Sign Out
           </button>
-        </div>
-      )}
+        </div> : null}
     </div>
   );
 }

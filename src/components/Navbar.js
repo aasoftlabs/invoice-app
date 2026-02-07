@@ -13,7 +13,7 @@ export default function Navbar({ user, profile }) {
   return (
     <nav className="w-full bg-slate-50 dark:bg-slate-950 border-b border-gray-200 dark:border-white/5 shadow-sm print:hidden transition-colors relative">
       {/* Background Effect */}
-      <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 dark:from-blue-950/5 to-transparent pointer-events-none"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 dark:from-blue-950/5 to-transparent pointer-events-none" />
       <div className="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center relative z-10">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -23,8 +23,7 @@ export default function Navbar({ user, profile }) {
 
         {/* Right: Navigation & User Menu */}
         <div className="flex items-center gap-6">
-          {user &&
-            (() => {
+          {user ? (() => {
               const links = [];
 
               if (permissions.includes("invoices")) {
@@ -65,7 +64,7 @@ export default function Navbar({ user, profile }) {
                   </Link>
                 );
               });
-            })()}
+            })() : null}
 
           {/* Theme Toggle */}
           <ThemeToggle />

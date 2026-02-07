@@ -23,8 +23,6 @@ export default async function LetterheadPage() {
     const serializedProfile = profile ? JSON.parse(JSON.stringify(profile)) : null;
 
     return (
-        <>
-            <LetterheadView profile={serializedProfile} />
-        </>
+        <LetterheadView profile={serializedProfile} />
     );
 }

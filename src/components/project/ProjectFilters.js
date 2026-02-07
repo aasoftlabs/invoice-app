@@ -65,8 +65,7 @@ export default function ProjectFilters({
           </div>
 
           {/* User Filter (Admin Only) */}
-          {isAdmin && (
-            <div className="w-48">
+          {isAdmin ? <div className="w-48">
               <Select
                 value={filters.userId}
                 onChange={(e) =>
@@ -74,8 +73,7 @@ export default function ProjectFilters({
                 }
                 options={userOptions}
               />
-            </div>
-          )}
+            </div> : null}
         </div>
       </div>
     </div>

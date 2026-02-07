@@ -73,11 +73,9 @@ export default function InvoiceRow({ invoice, scrollRef }) {
         <div className="font-medium text-sm">
           {invoice.client.name || invoice.client.company || "Walk-in Customer"}
         </div>
-        {invoice.client.name && invoice.client.company && (
-          <div className="text-xs text-gray-400 dark:text-slate-500">
+        {invoice.client.name && invoice.client.company ? <div className="text-xs text-gray-400 dark:text-slate-500">
             {invoice.client.company}
-          </div>
-        )}
+          </div> : null}
       </td>
       <td className="px-6 py-4 text-right font-bold text-gray-800 dark:text-white">
         ₹{" "}

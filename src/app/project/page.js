@@ -28,13 +28,18 @@ export default function ProjectDashboard() {
   });
 
   // Update filters when session loads
+  // Update filters when session loads
   useEffect(() => {
     if (session?.user) {
-      setFilters((prev) => ({
-        ...prev,
-        userId:
-          session.user.role?.toLowerCase() === "admin" ? "" : session.user.id,
-      }));
+      const targetId =
+        session.user.role?.toLowerCase() === "admin" ? "" : session.user.id;
+
+      setFilters((prev) => {
+        if (prev.userId !== targetId) {
+          return { ...prev, userId: targetId };
+        }
+        return prev;
+      });
     }
   }, [session]);
 
@@ -153,11 +158,9 @@ export default function ProjectDashboard() {
           <ActiveTaskCard activeStats={stats?.currentActive} />
 
           {/* Monthly Graph */}
-          {stats?.monthlyData && (
-            <div className="mb-6">
+          {stats?.monthlyData ? <div className="mb-6">
               <MonthlyChart data={stats.monthlyData} />
-            </div>
-          )}
+            </div> : null}
 
           {/* Recent Work Logs */}
           <WorkLogTable

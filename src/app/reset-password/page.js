@@ -136,10 +136,8 @@ function ResetPasswordForm() {
               )}
             </button>
           </div>
-          {message && (
-            <p className="text-green-600 text-sm text-center">{message}</p>
-          )}
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {message ? <p className="text-green-600 text-sm text-center">{message}</p> : null}
+          {error ? <p className="text-red-500 text-sm text-center">{error}</p> : null}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Resetting..." : "Reset Password"}
           </Button>

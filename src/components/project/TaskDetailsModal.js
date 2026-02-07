@@ -43,8 +43,7 @@ export default function TaskDetailsModal({ isOpen, onClose, task }) {
         </div>
 
         {/* Description */}
-        {task.description && (
-          <div>
+        {task.description ? <div>
             <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2 flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Description
@@ -52,8 +51,7 @@ export default function TaskDetailsModal({ isOpen, onClose, task }) {
             <p className="text-gray-900 dark:text-slate-200 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-lg">
               {task.description}
             </p>
-          </div>
-        )}
+          </div> : null}
 
         {/* Dates */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -100,16 +98,14 @@ export default function TaskDetailsModal({ isOpen, onClose, task }) {
         </div>
 
         {/* Remarks */}
-        {task.remarks && (
-          <div>
+        {task.remarks ? <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Remarks
             </label>
             <p className="text-gray-900 dark:text-slate-200 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-lg">
               {task.remarks}
             </p>
-          </div>
-        )}
+          </div> : null}
 
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
           <Button variant="outline" onClick={onClose}>
