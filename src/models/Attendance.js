@@ -51,6 +51,9 @@ const AttendanceSchema = new mongoose.Schema({
 
 // Compound index to ensure one record per user per day
 AttendanceSchema.index({ userId: 1, date: 1 }, { unique: true });
+// Performance indexes
+AttendanceSchema.index({ date: 1 });
+AttendanceSchema.index({ status: 1 });
 
 // Update the updatedAt field on save
 AttendanceSchema.pre("save", async function () {

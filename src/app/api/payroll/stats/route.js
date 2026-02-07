@@ -45,6 +45,13 @@ export async function GET(req) {
           preserveNullAndEmptyArrays: true,
         },
       },
+      {
+        $project: {
+          name: 1,
+          salaryData: 1,
+          // Exclude everything else to reduce payload
+        },
+      },
     ];
 
     const employeesRaw = await User.aggregate(pipeline);

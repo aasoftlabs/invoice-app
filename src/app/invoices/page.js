@@ -10,8 +10,6 @@ import InvoiceDashboard from "@/components/invoices/InvoiceDashboard";
 export default async function Dashboard() {
   await connectDB();
 
-
-
   // 2. Now check authentication
   const session = await auth();
   if (!session) redirect("/login");
@@ -37,12 +35,11 @@ export default async function Dashboard() {
     Invoice.find({
       date: { $gte: startDate, $lt: endDate },
     })
+      .select("-items -paymentHistory") // Exclude heavy arrays
       .sort({ date: -1 })
       .limit(20)
       .lean(),
   ]);
-
-
 
   // Serialize for Client Components
   const serializedInvoices = JSON.parse(JSON.stringify(invoices));

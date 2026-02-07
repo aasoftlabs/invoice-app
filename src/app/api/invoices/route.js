@@ -83,17 +83,20 @@ export async function GET(req) {
       query.$or = [
         { invoiceNo: { $regex: search, $options: "i" } },
         { "client.name": { $regex: search, $options: "i" } },
-        { "client.company": { $regex: search, $options: "i" } }
+        { "client.company": { $regex: search, $options: "i" } },
       ];
     }
 
     let invoices;
 
     if (fetchAll) {
-      invoices = await Invoice.find(query).sort({ date: -1 });
+      invoices = await Invoice.find(query)
+        .select("-items -paymentHistory")
+        .sort({ date: -1 });
     } else {
       const skip = (page - 1) * limit;
       invoices = await Invoice.find(query)
+        .select("-items -paymentHistory")
         .sort({ date: -1 })
         .skip(skip)
         .limit(limit);

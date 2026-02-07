@@ -131,4 +131,9 @@ TaskSchema.post("remove", async function (doc) {
   }
 });
 
+// Performance Indexes
+TaskSchema.index({ projectId: 1 });
+TaskSchema.index({ assignedTo: 1 });
+TaskSchema.index({ status: 1 });
+
 export default mongoose.models.Task || mongoose.model("Task", TaskSchema);

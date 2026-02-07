@@ -13,7 +13,9 @@ export async function GET() {
   }
 
   await connectDB();
-  const users = await User.find({}).select("-password").sort({ createdAt: -1 });
+  const users = await User.find({})
+    .select("-password -avatar -resetToken -resetTokenExpiry -lastResetRequest")
+    .sort({ createdAt: -1 });
   return NextResponse.json({ success: true, data: users });
 }
 
