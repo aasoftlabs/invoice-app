@@ -8,7 +8,7 @@ export default function InvoiceMeta() {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Invoice Type Selector */}
         <div className="col-span-2 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 flex items-center justify-between mb-2 shadow-sm">
           <div className="flex items-center gap-2">

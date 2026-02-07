@@ -16,6 +16,7 @@
     "canvg": "^4.0.3",
     "clsx": "^2.1.1",
     "core-js": "^3.48.0",
+    "framer-motion": "^12.33.0",
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.0.0",

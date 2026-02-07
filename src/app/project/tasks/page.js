@@ -246,124 +246,128 @@ export default function TasksPage() {
 
         {/* Tasks Table */}
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow border border-gray-200 dark:border-slate-700 overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50 dark:bg-slate-900">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
-                  Project
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
-                  Task
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
-                  Description
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
-                  Start Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
-                  Completed
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Completed By
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
-              {loading && tasks.length === 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 dark:bg-slate-900">
                 <tr>
-                  <td
-                    colSpan="8"
-                    className="px-6 py-4 text-center text-gray-500 dark:text-slate-400"
-                  >
-                    Loading...
-                  </td>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
+                    Project
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
+                    Task
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
+                    Description
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
+                    Start Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase">
+                    Completed
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Completed By
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Actions
+                  </th>
                 </tr>
-              ) : filteredTasks.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="8"
-                    className="px-6 py-4 text-center text-gray-500 dark:text-slate-400"
-                  >
-                    No tasks found
-                  </td>
-                </tr>
-              ) : (
-                filteredTasks.map((task, index) => (
-                  <tr
-                    key={task._id}
-                    ref={
-                      index === filteredTasks.length - 1
-                        ? lastTaskElementRef
-                        : null
-                    }
-                    className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
-                    onClick={() => handleViewTask(task)}
-                  >
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
-                      {task.projectId?.name}
+              </thead>
+              <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                {loading && tasks.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="px-6 py-4 text-center text-gray-500 dark:text-slate-400"
+                    >
+                      Loading...
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-slate-100">
-                      {task.taskName}
+                  </tr>
+                ) : filteredTasks.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="px-6 py-4 text-center text-gray-500 dark:text-slate-400"
+                    >
+                      No tasks found
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
-                      {task.description || "-"}
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusBadge status={task.status} />
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
-                      {formatDate(task.startDate)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
-                      {formatDate(task.completedDate)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
-                      {task.completedBy?.name || "-"}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEdit(task);
-                          }}
-                          className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
-                          title="Edit task"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        {session?.user?.role === "admin" && (
+                  </tr>
+                ) : (
+                  filteredTasks.map((task, index) => (
+                    <tr
+                      key={task._id}
+                      ref={
+                        index === filteredTasks.length - 1
+                          ? lastTaskElementRef
+                          : null
+                      }
+                      className="hover:bg-gray-50 dark:hover:bg-slate-700 group cursor-pointer"
+                      onClick={() => handleViewTask(task)}
+                    >
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
+                        {task.projectId?.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-slate-100">
+                        {task.taskName}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
+                        {task.description || "-"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <StatusBadge status={task.status} />
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
+                        {formatDate(task.startDate)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
+                        {formatDate(task.completedDate)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-slate-200">
+                        {task.completedBy?.name || "-"}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDelete(task._id);
+                              handleEdit(task);
                             }}
-                            className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
-                            title="Delete task"
+                            className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
+                            title="Edit task"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Edit2 className="w-4 h-4" />
                           </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                          {session?.user?.role === "admin" && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(task._id);
+                              }}
+                              className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                              title="Delete task"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      {loadingMore ? <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+      {loadingMore ? (
+        <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin" /> Loading more tasks...
-        </div> : null}
+        </div>
+      ) : null}
 
       <AddTaskModal
         isOpen={isModalOpen}

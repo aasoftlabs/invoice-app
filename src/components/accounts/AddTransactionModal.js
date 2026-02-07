@@ -29,7 +29,7 @@ export default function AddTransactionModal({
     amount: "",
     description: "",
     paymentMode: "Bank Transfer",
-    isInvoicePayment: true,
+    isInvoicePayment: false,
     invoiceId: "",
   });
 
@@ -68,7 +68,7 @@ export default function AddTransactionModal({
             amount: "",
             description: "",
             paymentMode: "Bank Transfer",
-            isInvoicePayment: true,
+            isInvoicePayment: false,
             invoiceId: "",
           });
           loadInvoices();
@@ -147,7 +147,7 @@ export default function AddTransactionModal({
                 ...formData,
                 type: "Credit",
                 category: "Invoice Payment",
-                isInvoicePayment: true,
+                isInvoicePayment: false,
               })
             }
             className={`p-3 rounded-lg border text-center font-semibold transition-all ${
@@ -221,7 +221,8 @@ export default function AddTransactionModal({
               </span>
             </label>
 
-            {formData.isInvoicePayment ? <div className="animate-in fade-in slide-in-from-top-2">
+            {formData.isInvoicePayment ? (
+              <div className="animate-in fade-in slide-in-from-top-2">
                 <Select
                   label="SELECT INVOICE"
                   value={formData.invoiceId}
@@ -236,40 +237,50 @@ export default function AddTransactionModal({
                     </option>
                   ))}
                 </Select>
-                {fetchingInvoices ? <p className="text-xs text-blue-600 mt-1">
+                {fetchingInvoices ? (
+                  <p className="text-xs text-blue-600 mt-1">
                     Fetching invoices...
-                  </p> : null}
-              </div> : null}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         )}
 
-        <Input
-          label="CATEGORY"
-          list="categories"
-          value={formData.category}
-          onChange={(e) =>
-            setFormData({ ...formData, category: e.target.value })
-          }
-          placeholder="e.g. Salary, Rent, Invoice Payment"
-        />
-        <datalist id="categories">
-          <option value="Invoice Payment" />
-          <option value="Salary" />
-          <option value="Office Rent" />
-          <option value="Utilities" />
-          <option value="Travel Expense" />
-        </datalist>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Input
+              label="CATEGORY"
+              list="categories"
+              value={formData.category}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
+              placeholder="e.g. Salary, Rent"
+              className="w-full"
+            />
+            <datalist id="categories">
+              <option value="Invoice Payment" />
+              <option value="Salary" />
+              <option value="Office Rent" />
+              <option value="Utilities" />
+              <option value="Travel Expense" />
+            </datalist>
+          </div>
 
-        <Input
-          label="AMOUNT"
-          type="number"
-          required
-          min="0"
-          step="any"
-          value={formData.amount}
-          onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-          placeholder="0.00"
-        />
+          <Input
+            label="AMOUNT"
+            type="number"
+            required
+            min="0"
+            step="any"
+            value={formData.amount}
+            onChange={(e) =>
+              setFormData({ ...formData, amount: e.target.value })
+            }
+            placeholder="0.00"
+          />
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">

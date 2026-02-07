@@ -45,6 +45,7 @@ export default function AccountsPage() {
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
     type: "all",
+    search: "",
   });
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
@@ -191,7 +192,8 @@ export default function AccountsPage() {
                 }}
                 className="flex items-center gap-2 px-5 py-3 text-white w-full h-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors rounded-xl"
               >
-                <Plus className="w-5 h-5" /> Transaction
+                <Plus className="w-5 h-5" />{" "}
+                <span className="hidden md:inline">Transaction</span>
               </button>
             </Spotlight>
           </div>
@@ -255,7 +257,8 @@ export default function AccountsPage() {
               </h2>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b border-gray-100 dark:border-slate-700">
                   <tr>
@@ -358,12 +361,81 @@ export default function AccountsPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Card View (Compact) */}
+            <div className="md:hidden">
+              {loading && transactions.length === 0 ? (
+                <div className="text-center py-8 text-gray-500 dark:text-slate-400">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                  Loading...
+                </div>
+              ) : transactions.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No transactions found.
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100 dark:divide-slate-700">
+                  {transactions.map((t, index) => (
+                    <div
+                      key={t._id}
+                      ref={
+                        index === transactions.length - 1
+                          ? lastTransactionElementRef
+                          : null
+                      }
+                      className="p-4 bg-white dark:bg-slate-800"
+                    >
+                      <div className="flex justify-between items-start mb-1">
+                        <div className="font-medium text-gray-900 dark:text-white text-sm line-clamp-1 mr-2 flex-1">
+                          {t.description || "No description"}
+                        </div>
+                        <div
+                          className={`font-mono font-bold text-sm whitespace-nowrap ${t.type === "Credit" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+                        >
+                          {t.type === "Credit" ? "+" : "-"} ₹
+                          {t.amount.toLocaleString("en-IN")}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400">
+                          <span>
+                            {new Date(t.date).toLocaleDateString("en-IN")}
+                          </span>
+                          <span>•</span>
+                          <span className="bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 px-1.5 py-0.5 rounded">
+                            {t.category}
+                          </span>
+                        </div>
+
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => handleEdit(t)}
+                            className="text-blue-600 dark:text-blue-400"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(t._id)}
+                            className="text-red-600 dark:text-red-400"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {loadingMore ? <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+          {loadingMore ? (
+            <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading more
               transactions...
-            </div> : null}
+            </div>
+          ) : null}
         </div>
 
         <AddTransactionModal

@@ -126,79 +126,81 @@ export default function InvoiceDashboard({ initialInvoices }) {
         <InvoiceFilters filters={filters} setFilters={setFilters} />
 
         <Card className="overflow-hidden">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b border-gray-100 dark:border-slate-700">
-              <tr>
-                <th className="px-6 py-4">Invoice No</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Client</th>
-                <th className="px-6 py-4 text-right">Amount</th>
-                <th className="px-6 py-4 text-right">Payment</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
-              {fetchLoading && page === 1 ? (
-                // Initial/Filter loading state
+          <div className="overflow-x-auto">
+            <table className="w-full text-left min-w-[800px]">
+              <thead className="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 text-xs uppercase font-semibold border-b border-gray-100 dark:border-slate-700">
                 <tr>
-                  <td colSpan={7} className="py-20 text-center">
-                    <div className="flex flex-col items-center justify-center gap-4">
-                      <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
-                      <p className="text-gray-500 dark:text-slate-400 animate-pulse">
-                        Updating records...
-                      </p>
-                    </div>
-                  </td>
+                  <th className="px-6 py-4">Invoice No</th>
+                  <th className="px-6 py-4">Date</th>
+                  <th className="px-6 py-4">Client</th>
+                  <th className="px-6 py-4 text-right">Amount</th>
+                  <th className="px-6 py-4 text-right">Payment</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4" />
                 </tr>
-              ) : invoices.length === 0 ? (
-                // Empty state
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-6 py-12 text-center text-gray-500 dark:text-slate-400 bg-gray-50/50 dark:bg-slate-900/50"
-                  >
-                    <div className="flex flex-col items-center justify-center gap-3">
-                      <FileText className="w-10 h-10 text-gray-300 dark:text-slate-600" />
-                      <p>No invoices found matching current filters.</p>
-                      <Link
-                        href="/invoices/create"
-                        className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
-                      >
-                        Create your invoice
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                // Data rows
-                invoices.map((inv, index) => {
-                  const isLast = invoices.length === index + 1;
-                  return (
-                    <InvoiceRow
-                      key={inv._id}
-                      invoice={inv}
-                      scrollRef={isLast ? lastInvoiceElementRef : null}
-                    />
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                {fetchLoading && page === 1 ? (
+                  // Initial/Filter loading state
+                  <tr>
+                    <td colSpan={7} className="py-20 text-center">
+                      <div className="flex flex-col items-center justify-center gap-4">
+                        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+                        <p className="text-gray-500 dark:text-slate-400 animate-pulse">
+                          Updating records...
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : invoices.length === 0 ? (
+                  // Empty state
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="px-6 py-12 text-center text-gray-500 dark:text-slate-400 bg-gray-50/50 dark:bg-slate-900/50"
+                    >
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <FileText className="w-10 h-10 text-gray-300 dark:text-slate-600" />
+                        <p>No invoices found matching current filters.</p>
+                        <Link
+                          href="/invoices/create"
+                          className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                        >
+                          Create your invoice
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  // Data rows
+                  invoices.map((inv, index) => {
+                    const isLast = invoices.length === index + 1;
+                    return (
+                      <InvoiceRow
+                        key={inv._id}
+                        invoice={inv}
+                        scrollRef={isLast ? lastInvoiceElementRef : null}
+                      />
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
 
-          {loadingMore ? (
-            <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" /> Loading more...
+            {loadingMore ? (
+              <div className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" /> Loading more...
+              </div>
+            ) : null}
+
+            <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-xs text-gray-500 dark:text-slate-400 text-center">
+              Showing {invoices.length} records{" "}
+              {loadingMore || (fetchLoading && page === 1)
+                ? "..."
+                : hasMore
+                  ? "(Scroll for more)"
+                  : "(End of list)"}
             </div>
-          ) : null}
-
-          <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-xs text-gray-500 dark:text-slate-400 text-center">
-            Showing {invoices.length} records{" "}
-            {loadingMore || (fetchLoading && page === 1)
-              ? "..."
-              : hasMore
-                ? "(Scroll for more)"
-                : "(End of list)"}
           </div>
         </Card>
       </div>
