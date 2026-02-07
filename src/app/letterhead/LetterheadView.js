@@ -10,7 +10,7 @@ import PermissionGate from "@/components/ui/PermissionGate";
 
 // Helper Components for Reusability
 const LogoHeader = ({ profile }) => (
-  <div className="flex justify-between items-start border-b-2 border-blue-500 pb-2 mb-2 h-[80px]">
+  <div className="flex justify-between items-start border-b-2 border-blue-500 pb-2 mb-2 min-h-[80px] w-full">
     <div className="flex items-center gap-4 mb-2">
       {profile?.logo ? (
         <NextImage
@@ -43,7 +43,7 @@ const LogoHeader = ({ profile }) => (
         )}
       </div>
     </div>
-    <div className="text-right text-xs text-gray-500 leading-relaxed">
+    <div className="text-right text-xs text-gray-500 leading-relaxed pt-2">
       <div className="mb-3">
         <span
           className="uppercase font-bold"
@@ -63,8 +63,8 @@ const LogoHeader = ({ profile }) => (
 );
 
 const CompanyFooter = ({ profile }) => (
-  <div className="pt-2 border-t-2 border-blue-500 text-xs text-gray-500 text-center h-[100px] flex flex-col justify-end pb-4">
-    <div className="flex justify-between gap-40 mb-2 text-left">
+  <div className="pt-2 border-t-2 border-blue-500 text-xs text-gray-500 text-center h-[80px] flex flex-col justify-end pb-1 box-border w-full">
+    <div className="flex justify-between gap-40 mb-0 text-left">
       <div>
         <h4
           className="font-bold uppercase text-gray-800 mb-1"
@@ -110,21 +110,19 @@ export default function LetterheadView({ profile }) {
     setIsMounted(true);
   }, []);
 
-  // Visual Pagination Logic
+  // Visual Pagination Logic - restored for Page Guides
   useEffect(() => {
     if (!bodyRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for (let entry of entries) {
-        // A4 Height approx 1123px.
-        // We add a buffer or just calculate raw pages.
-        // Subtracting header/footer visual height from useful area?
-        // Simplest: Content Height / (A4 px - margins)
         const height = entry.contentRect.height;
-        const A4_HEIGHT = 1123;
+        // A4 Height in px (approx 1123px at 96dpi, or just use mm logic if possible)
+        // Using 1123px as a safe baseline for A4
+        const A4_HEIGHT_PX = 1123;
         const calculatedPages = Math.max(
           1,
-          Math.ceil((height + 300) / A4_HEIGHT),
-        ); // +300 for header/footer buffer
+          Math.ceil((height + 100) / A4_HEIGHT_PX),
+        );
         setPageCount(calculatedPages);
       }
     });
@@ -195,36 +193,51 @@ export default function LetterheadView({ profile }) {
         {/* Main Workspace - Centered A4 Page */}
         <div className="flex-1 overflow-auto p-8 relative flex justify-center bg-gray-100 dark:bg-slate-900 print:p-0 print:bg-white print:overflow-visible">
           <div
-            className="transition-transform duration-200 origin-top flex flex-col items-center"
+            className="transition-transform duration-200 origin-top flex flex-col items-center print-content-container"
             style={{
               transform: `scale(${zoom})`,
               marginBottom: `${(zoom - 1) * 300}px`, // Compensate spacing when zoomed in
             }}
           >
             <div className="relative flex flex-col items-center">
-              {/* VISUAL BACKGROUND LAYER (Screen Only) - Stacks pages vertically */}
-              <div
-                className="absolute top-0 left-0 w-full h-full flex flex-col items-center gap-[20px] print:hidden pointer-events-none select-none z-0"
-                style={{
-                  // Ensure container grows to fit all pages
-                  height: `${pageCount * 1143}px`, // 1123px (A4) + 20px (gap)
-                }}
-              >
-                {[...Array(pageCount)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-[210mm] h-[297mm] min-h-[297mm] bg-white shadow-xl flex flex-col justify-between px-12 py-10 box-border"
-                  >
-                    <LogoHeader profile={profile} />
-                    <CompanyFooter profile={profile} />
-                  </div>
-                ))}
-              </div>
+              {/* VISUAL BACKGROUND LAYER REMOVED for Continuous View */}
 
               {/* CONTENT LAYER (Interactive) */}
               {/* We use the Table structure to support robust printing, but make it transparent on screen */}
-              <div className="relative z-10 w-[210mm] min-h-[297mm] print:w-full print:block">
-                <table className="w-full h-full border-collapse">
+              <div className="relative z-10 w-[210mm] min-h-[297mm] print:w-full print:block bg-white shadow-xl print:shadow-none text-gray-900">
+                {/* Visual Page Break Guides (Screen Only) */}
+                <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-20 print:hidden overflow-hidden">
+                  {[...Array(pageCount)].map((_, i) => {
+                    if (i === 0) return null; // No break before page 1
+
+                    const A4_HEIGHT_PX = 1123;
+                    const HEADER_HEIGHT = 160;
+                    const FOOTER_HEIGHT = 160;
+                    const TOTAL_VERTICAL_RESERVED =
+                      HEADER_HEIGHT + FOOTER_HEIGHT; // ~320px
+                    const USABLE_Height =
+                      A4_HEIGHT_PX - TOTAL_VERTICAL_RESERVED; // ~803px per page
+                    const TOP_SPACER = 40; // The h-10 div on screen
+
+                    // Position = Spacer + (Page * UsableHeight)
+                    // This marks where the text *content* breaks to the next page
+                    const topPos = TOP_SPACER + i * USABLE_Height;
+
+                    return (
+                      <div
+                        key={i}
+                        className="absolute w-full border-b border-dashed border-blue-300 flex items-end justify-end pr-2 text-xs text-blue-400 font-medium"
+                        style={{ top: `${topPos}px` }}
+                      >
+                        <span className="mb-1 bg-white px-1 shadow-sm rounded">
+                          Page {i} End / Page {i + 1} Start
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <table className="w-full h-full print:h-auto border-collapse">
                   {/* Print Headers (Hidden on screen via CSS, Visible in Print) */}
                   <thead className="print-header-group hidden print:table-header-group">
                     <tr>
@@ -235,10 +248,11 @@ export default function LetterheadView({ profile }) {
                     </tr>
                   </thead>
 
+                  {/* Spacer tfoot to prevent text overlapping the Fixed Footer */}
+                  {/* Native Table Footer - Repeats on every page automatically */}
                   <tfoot className="print-footer-group hidden print:table-footer-group">
                     <tr>
-                      <td className="w-full px-12 pb-10">
-                        <div className="h-4"></div>
+                      <td className="w-full px-12 pb-10 align-bottom">
                         <CompanyFooter profile={profile} />
                       </td>
                     </tr>
@@ -246,12 +260,18 @@ export default function LetterheadView({ profile }) {
 
                   <tbody>
                     <tr>
-                      <td className="align-top w-full px-12">
+                      <td className="align-top w-full px-20">
                         {/* On Screen: Spacer to push text below visual header of Page 1 */}
                         {/* Note: Subsequent pages will overlap visuals. This is a trade-off of this method. */}
-                        <div className="h-[140px] print:hidden"></div>
+                        {/* Header spacer handled by thead in print, but we need visual gap on screen */}
+                        {/* Removed visual gap on screen for continuous view as well, or keep small padding? */}
+                        {/* User wants "Continuous Page", so usually just a white sheet. */}
+                        <div className="h-10 print:hidden"></div>
 
-                        <main ref={bodyRef} className="relative min-h-[500px]">
+                        <main
+                          ref={bodyRef}
+                          className="relative min-h-[500px] pb-[50px]"
+                        >
                           {isMounted && (
                             <LetterheadEditorTinyMCE
                               content={content}
@@ -266,6 +286,8 @@ export default function LetterheadView({ profile }) {
               </div>
             </div>
           </div>
+          {/* FIXED PRINT FOOTER: Moved outside sizing container */}
+          {/* FIXED PRINT FOOTER REMOVED - using native table-footer-group instead */}
         </div>
 
         <style jsx global>{`
@@ -379,15 +401,21 @@ export default function LetterheadView({ profile }) {
               margin: 0;
             }
 
-            /* Table Print Properties - Keyword for repeating headers/footers */
+            /* Table Print Properties */
             thead {
               display: table-header-group;
             }
             tfoot {
               display: table-footer-group;
             }
-            tr {
+            /* Only prevent breaking in header/footer rows */
+            thead tr,
+            tfoot tr {
               page-break-inside: avoid;
+            }
+            /* ALLOW breaking in the main content */
+            tbody tr {
+              page-break-inside: auto;
             }
 
             .custom-scrollbar::-webkit-scrollbar {
@@ -416,6 +444,14 @@ export default function LetterheadView({ profile }) {
             #letterhead-editor {
               color: #000000 !important;
               caret-color: #000000 !important;
+            }
+
+            /* Disable transform in print to prevent fixed position and pagination issues */
+            .print-content-container {
+              transform: none !important;
+              margin: 0 !important;
+              display: block !important;
+              width: 100% !important;
             }
           }
         `}</style>

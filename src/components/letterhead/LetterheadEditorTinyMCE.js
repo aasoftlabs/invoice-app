@@ -30,6 +30,8 @@ export default function LetterheadEditorTinyMCE({ content, setContent }) {
             "code",
             "wordcount",
             "autoresize",
+            "pagebreak",
+            "visualchars",
           ],
           toolbar:
             "undo redo | blocks | " +
@@ -37,12 +39,16 @@ export default function LetterheadEditorTinyMCE({ content, setContent }) {
             "alignright alignjustify | bullist numlist outdent indent | " +
             "table | removeformat",
           content_style:
-            "body { font-family:Helvetica,Arial,sans-serif; font-size:11px; margin: 0; color: #000; }",
+            "body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12pt; line-height: 1.6; margin: 0; color: #000; } p { margin-bottom: 1em; }",
           resize: false,
           statusbar: false,
           fixed_toolbar_container: "#editor-toolbar",
           inline: true,
           auto_focus: "letterhead-editor",
+          paste_data_images: true,
+          paste_as_text: false,
+          paste_remove_styles_if_webkit: false,
+          convert_urls: false,
         }}
         apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
       />

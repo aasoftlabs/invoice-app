@@ -37,9 +37,20 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
 
   useEffect(() => {
     // 1. Fetch Profile
-    api.setup.getProfile().then((data) => {
-      if (data.profile) setProfile(data.profile);
-    });
+    api.setup
+      .getProfile()
+      .then((data) => {
+        const profileData = data.data || data.profile;
+        if (profileData) {
+          setProfile(profileData);
+        } else {
+          setProfile({}); // Ensure it doesn't hang if no profile exists
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load profile:", err);
+        setProfile({}); // Ensure it doesn't hang on error
+      });
 
     // 2. Load Data (Edit Mode or New)
     if (isEditing && initialData) {
