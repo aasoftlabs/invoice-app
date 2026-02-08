@@ -1,17 +1,36 @@
-import { Filter } from "lucide-react";
+import { Filter, X } from "lucide-react";
 
 export default function InvoiceFilters({ filters, setFilters }) {
   const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+
+  const clearFilters = () => {
+    setFilters({
+      month: currentMonth,
+      year: currentYear,
+      status: "all",
+    });
+  };
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4 mb-6">
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2 text-gray-700 dark:text-slate-300 mr-2">
-          <Filter className="w-4 h-4" />
-          <span className="font-medium text-sm">Filters:</span>
+      <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4">
+        <div className="flex items-center justify-between gap-2 text-gray-700 dark:text-slate-300 mr-2 mb-2 sm:mb-0 w-full sm:w-auto">
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4" />
+            <span className="font-medium text-sm">Filters:</span>
+          </div>
+          {/* Clear Button */}
+          <button
+            onClick={clearFilters}
+            className="text-xs flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors cursor-pointer active:scale-95 ml-2"
+            title="Reset to default filters"
+          >
+            <X className="w-3 h-3" /> Clear
+          </button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-row flex-wrap items-center gap-3 w-full sm:w-auto grow">
           {/* Month Filter */}
           <select
             value={filters.month}
@@ -22,7 +41,7 @@ export default function InvoiceFilters({ filters, setFilters }) {
                   e.target.value === "all" ? "all" : parseInt(e.target.value),
               })
             }
-            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
+            className="w-auto border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
           >
             <option value="all">All Months</option>
             {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
@@ -44,7 +63,7 @@ export default function InvoiceFilters({ filters, setFilters }) {
                   e.target.value === "all" ? "all" : parseInt(e.target.value),
               })
             }
-            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
+            className="w-auto border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
           >
             <option value="all">All Years</option>
 
@@ -59,7 +78,7 @@ export default function InvoiceFilters({ filters, setFilters }) {
           <select
             value={filters.status}
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
+            className="w-auto border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
           >
             <option value="all">All Status</option>
             <option value="Paid">Paid</option>

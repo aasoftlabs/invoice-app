@@ -15,8 +15,8 @@ export default function GlobalNoteButton() {
   if (
     !session ||
     pathname === "/login" ||
-
-    pathname.startsWith("/verify")
+    pathname.startsWith("/verify") ||
+    pathname.startsWith("/project")
   ) {
     return null;
   }
