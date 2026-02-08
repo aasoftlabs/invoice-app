@@ -53,5 +53,12 @@
     "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "nodemailer": "6.9.16",
+    "@vercel/style-guide": {
+      "@next/eslint-plugin-next": "16.1.6",
+      "eslint": "^9"
+    }
   }
 }
