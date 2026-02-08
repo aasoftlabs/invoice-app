@@ -342,6 +342,7 @@ export default function AccountsPage() {
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <button
+                              type="button"
                               onClick={() => handleEdit(t)}
                               className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                             >

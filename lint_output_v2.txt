@@ -1,0 +1,263 @@
+﻿
+> invoice-app@0.1.0 lint
+> eslint
+
+
+D:\CODE\invoice-app\src\app\accounts\page.js
+  188:15  warning  Missing an explicit type attribute for button  react/button-has-type
+  344:29  warning  Missing an explicit type attribute for button  react/button-has-type
+  350:29  warning  Missing an explicit type attribute for button  react/button-has-type
+  412:27  warning  Missing an explicit type attribute for button  react/button-has-type
+  418:27  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\attendance\AttendanceAdminGrid.js
+  272:13  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  287:13  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  296:11  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  338:28  warning  Do not use Array index in keys                                                                react/no-array-index-key
+  382:25  warning  Do not use Array index in keys                                                                react/no-array-index-key
+  403:19  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  561:20  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  562:21  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+
+D:\CODE\invoice-app\src\app\attendance\AttendanceCalendar.js
+   80:11  warning  Missing an explicit type attribute for button  react/button-has-type
+   86:11  warning  Missing an explicit type attribute for button  react/button-has-type
+   99:21  warning  Do not use Array index in keys                 react/no-array-index-key
+  108:18  warning  Do not use Array index in keys                 react/no-array-index-key
+
+D:\CODE\invoice-app\src\app\attendance\AttendanceClient.js
+  156:13  warning  Missing an explicit type attribute for button  react/button-has-type
+  170:13  warning  Missing an explicit type attribute for button  react/button-has-type
+  204:17  warning  Missing an explicit type attribute for button  react/button-has-type
+  240:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\attendance\AttendanceHistoryTable.js
+  122:26  warning  Do not use Array index in keys  react/no-array-index-key
+  189:23  warning  Do not use Array index in keys  react/no-array-index-key
+
+D:\CODE\invoice-app\src\app\attendance\AttendanceHomeCard.js
+  100:9  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\attendance\AttendancePunchCard.js
+  111:9  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\invoices\[id]\InvoiceViewer.js
+  19:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  32:13  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\letterhead\LetterheadView.js
+   73:17  warning  Missing an explicit type attribute for button  react/button-has-type
+   84:17  warning  Missing an explicit type attribute for button  react/button-has-type
+   93:15  warning  Missing an explicit type attribute for button  react/button-has-type
+  138:30  warning  Do not use Array index in keys                 react/no-array-index-key
+
+D:\CODE\invoice-app\src\app\login\page.js
+  137:5  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\notes\page.js
+   96:13  warning  Missing an explicit type attribute for button  react/button-has-type
+  111:13  warning  Missing an explicit type attribute for button  react/button-has-type
+  176:27  warning  Missing an explicit type attribute for button  react/button-has-type
+  186:27  warning  Missing an explicit type attribute for button  react/button-has-type
+  233:19  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\payroll\PayrollDashboard.js
+  159:13  warning  Missing an explicit type attribute for button  react/button-has-type
+  166:13  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\payroll\generate\GeneratePayroll.js
+  134:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\payroll\my-slips\MySlips.js
+  257:17  warning  Missing an explicit type attribute for button  react/button-has-type
+  265:19  warning  Missing an explicit type attribute for button  react/button-has-type
+  277:19  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\payroll\salary\[userId]\SalaryStructureForm.js
+  284:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  300:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  308:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  316:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\payroll\settings\PayrollSettingsPage.js
+  151:17  warning  Missing an explicit type attribute for button  react/button-has-type
+  169:25  warning  Missing an explicit type attribute for button  react/button-has-type
+  178:25  warning  Missing an explicit type attribute for button  react/button-has-type
+  274:42  warning  Do not use Array index in keys                 react/no-array-index-key
+  287:41  warning  Missing an explicit type attribute for button  react/button-has-type
+  302:55  warning  Do not use Array index in keys                 react/no-array-index-key
+  343:53  warning  Missing an explicit type attribute for button  react/button-has-type
+  352:41  warning  Missing an explicit type attribute for button  react/button-has-type
+  362:29  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\payroll\slip\[slipId]\SlipView.js
+  212:9  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\project\log\page.js
+  193:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  210:15  warning  Missing an explicit type attribute for button  react/button-has-type
+  337:23  warning  Missing an explicit type attribute for button  react/button-has-type
+  351:25  warning  Missing an explicit type attribute for button  react/button-has-type
+  446:29  warning  Missing an explicit type attribute for button  react/button-has-type
+  460:31  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\project\page.js
+  122:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\project\projects\page.js
+  365:34  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+
+D:\CODE\invoice-app\src\app\project\tasks\page.js
+  192:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  209:15  warning  Missing an explicit type attribute for button  react/button-has-type
+  315:21  warning  Missing an explicit type attribute for button  react/button-has-type
+  325:23  warning  Missing an explicit type attribute for button  react/button-has-type
+  425:27  warning  Missing an explicit type attribute for button  react/button-has-type
+  436:29  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\settings\page.js
+  160:19  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\app\users\UserManagement.js
+   68:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  162:23  warning  Missing an explicit type attribute for button  react/button-has-type
+  169:23  warning  Missing an explicit type attribute for button  react/button-has-type
+  230:15  warning  Missing an explicit type attribute for button  react/button-has-type
+  237:15  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\DashboardStats.js
+  61:18  warning  Do not use Array index in keys  react/no-array-index-key
+
+D:\CODE\invoice-app\src\components\InvoicePreview.js
+   18:30  warning  Unused eslint-disable directive (no problems were reported from 'react/jsx-no-leaked-render')
+  265:32  warning  Do not use Array index in keys                                                                 react/no-array-index-key
+
+D:\CODE\invoice-app\src\components\InvoiceRow.js
+  107:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\Navbar.js
+  78:12  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  79:11  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  94:10  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+
+D:\CODE\invoice-app\src\components\ThemeToggle.js
+  26:5  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\VerificationForm.js
+  126:21  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\accounts\AccountFilters.js
+  29:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  27 |   useEffect(() => {
+  28 |     if (filters.search === "" && searchTerm !== "") {
+> 29 |       setSearchTerm("");
+     |       ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  30 |     }
+  31 |   }, [filters.search, searchTerm]);
+  32 |  react-hooks/set-state-in-effect
+
+D:\CODE\invoice-app\src\components\attendance\AttendanceRow.js
+  201:28  warning  Missing an explicit type attribute for button  react/button-has-type
+  208:13  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\invoices\InvoiceDashboard.js
+  95:6  warning  React Hook useEffect has a missing dependency: 'initialInvoices'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+D:\CODE\invoice-app\src\components\invoices\InvoiceFilters.js
+  24:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\navbar\UserMenu.js
+   23:7   warning  Missing an explicit type attribute for button               react/button-has-type
+  110:11  warning  Missing an explicit type attribute for button               react/button-has-type
+  126:3   warning  useState call is not destructured into value + setter pair  react/hook-use-state
+
+D:\CODE\invoice-app\src\components\notes\ActiveNotes.js
+  19:27  warning  Do not use Array index in keys  react/no-array-index-key
+
+D:\CODE\invoice-app\src\components\notes\GlobalNoteButton.js
+  32:7  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\notes\NoteModal.js
+   19:9   warning  The 'getDefaultEndTime' function makes the dependencies of useEffect Hook (at line 52) change on every render. To fix this, wrap the definition of 'getDefaultEndTime' in its own useCallback() Hook  react-hooks/exhaustive-deps
+  108:11  warning  Missing an explicit type attribute for button                                                                                                                                                         react/button-has-type
+
+D:\CODE\invoice-app\src\components\payroll\PayrollFilters.js
+  32:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\payroll\PayrollTable.js
+  147:23  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  156:23  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  203:18  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  243:17  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  249:17  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+
+D:\CODE\invoice-app\src\components\payroll\generate\GenerateFilters.js
+  44:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\payroll\generate\GenerateTable.js
+  118:25  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  154:27  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  208:27  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  217:27  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  231:25  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  299:22  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  365:23  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  388:24  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  392:27  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  413:20  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  414:21  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  422:19  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+
+D:\CODE\invoice-app\src\components\payroll\salary\SalaryDeductions.js
+  39:18  warning  Do not use Array index in keys                 react/no-array-index-key
+  72:13  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\payroll\salary\SalaryEarnings.js
+   88:18  warning  Do not use Array index in keys                 react/no-array-index-key
+  121:13  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\payroll\slip\PaySalaryModal.js
+  81:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\payroll\slip\SendBulkSlipsModal.js
+   79:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  116:32  warning  Do not use Array index in keys                 react/no-array-index-key
+
+D:\CODE\invoice-app\src\components\payroll\slip\SlipActions.js
+  18:7   warning  Missing an explicit type attribute for button  react/button-has-type
+  27:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  38:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  53:9   warning  Missing an explicit type attribute for button  react/button-has-type
+  61:9   warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\profile\SalaryDetails.js
+  159:43  warning  Do not use Array index in keys  react/no-array-index-key
+  197:43  warning  Do not use Array index in keys  react/no-array-index-key
+
+D:\CODE\invoice-app\src\components\project\ProjectFilters.js
+  54:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\project\ProjectSidebar.js
+  64:9  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\users\AddUserModal.js
+  128:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\components\users\EditUserModal.js
+  135:11  warning  Missing an explicit type attribute for button  react/button-has-type
+
+D:\CODE\invoice-app\src\contexts\ModalContext.js
+  137:19  warning  Missing an explicit type attribute for button  react/button-has-type
+  144:17  warning  Missing an explicit type attribute for button  react/button-has-type
+
+Γ£û 137 problems (1 error, 136 warnings)
+  0 errors and 9 warnings potentially fixable with the `--fix` option.
+

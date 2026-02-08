@@ -24,11 +24,7 @@ export default function AccountFilters({ filters, setFilters }) {
   }, [searchTerm, setFilters]);
 
   // Sync local state if parent filter changes externally (e.g. clear filters)
-  useEffect(() => {
-    if (filters.search !== undefined && filters.search !== searchTerm) {
-      if (filters.search === "") setSearchTerm("");
-    }
-  }, [filters.search]);
+  // useEffect removed to prevent sync state update loop. Relying on clearFilters to update both.
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4 mb-6">
@@ -41,6 +37,7 @@ export default function AccountFilters({ filters, setFilters }) {
 
           {/* Clear Button */}
           <button
+            type="button"
             onClick={clearFilters}
             className="text-xs flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
             title="Reset to default filters"

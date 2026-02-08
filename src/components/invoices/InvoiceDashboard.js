@@ -92,7 +92,7 @@ export default function InvoiceDashboard({ initialInvoices }) {
     return () => {
       active = false;
     };
-  }, [filters, page, fetchInvoices, setInvoices, setHasMore, setLoadingMore]);
+  }, [filters, page, fetchInvoices, setInvoices, setHasMore, setLoadingMore, initialInvoices]);
 
   // Reset page when filters change
   useEffect(() => {

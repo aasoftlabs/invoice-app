@@ -47,13 +47,11 @@ export default function ProjectDashboard() {
       const targetId =
         session.user.role?.toLowerCase() === "admin" ? "" : session.user.id;
 
-      setFilters((prev) => {
-        if (prev.userId !== targetId) {
-          return { ...prev, userId: targetId };
-        }
-        return prev;
-      });
+      if (filters.userId !== targetId) {
+        setFilters((prev) => ({ ...prev, userId: targetId }));
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   // Hooks

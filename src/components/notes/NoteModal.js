@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, Calendar, Lock, Globe, Loader2, AlertTriangle } from "lucide-react";
 import { useToast } from "@/contexts/ToastContext";
 
@@ -9,18 +9,18 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
   const [isSaving, setIsSaving] = useState(false);
 
   // Helper to get local ISO string for datetime-local input (YYYY-MM-DDTHH:mm)
-  const toLocalISOString = (date) => {
+  const toLocalISOString = useCallback((date) => {
     const d = new Date(date);
     const tzOffset = d.getTimezoneOffset() * 60000; // offset in milliseconds
     return new Date(d.getTime() - tzOffset).toISOString().slice(0, 16);
-  };
+  }, []);
 
   // Default end time: +1 hour from start
-  const getDefaultEndTime = (startDate) => {
+  const getDefaultEndTime = useCallback((startDate) => {
     const end = new Date(startDate);
     end.setHours(end.getHours() + 1);
     return toLocalISOString(end);
-  };
+  }, [toLocalISOString]);
 
   const [formData, setFormData] = useState({
     content: "",
@@ -128,7 +128,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-             />
+            />
           </div>
 
           {/* Date & Time */}
@@ -173,22 +173,20 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, share: "private" })}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition ${
-                    formData.share === "private"
-                      ? "bg-gray-800 text-white shadow-md"
-                      : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700"
-                  }`}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition ${formData.share === "private"
+                    ? "bg-gray-800 text-white shadow-md"
+                    : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700"
+                    }`}
                 >
                   <Lock className="w-3.5 h-3.5" /> Private
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, share: "public" })}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition ${
-                    formData.share === "public"
-                      ? "bg-green-600 text-white shadow-md"
-                      : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700"
-                  }`}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition ${formData.share === "public"
+                    ? "bg-green-600 text-white shadow-md"
+                    : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700"
+                    }`}
                 >
                   <Globe className="w-3.5 h-3.5" /> Public
                 </button>
