@@ -13,7 +13,7 @@ export default async function ProjectLayout({ children }) {
   }
 
   return (
-    <SessionProvider>
+    <SessionProvider session={session}>
       <div className="flex flex-1 overflow-hidden min-h-[calc(100vh-64px)] pb-16 md:pb-0">
         <ProjectSidebar />
         <main className="flex-1 overflow-auto">{children}</main>

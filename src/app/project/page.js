@@ -13,10 +13,10 @@ import AddWorkLogModal from "@/components/project/AddWorkLogModal";
 import { useProjects } from "@/hooks/useProjects";
 import { useUsers } from "@/hooks/useUsers";
 // No permission gate needed here, handled by custom redirect
-
+import { redirect } from "next/navigation";
 export default function ProjectDashboard() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
 
   // Filters
@@ -33,11 +33,13 @@ export default function ProjectDashboard() {
   const isAdmin = session?.user?.role?.toLowerCase() === "admin";
   const hasProjectPermission = session?.user?.permissions?.includes("project");
 
-  useEffect(() => {
-    if (status === "authenticated" && !isAdmin && !hasProjectPermission) {
-      router.push("/project/log");
-    }
-  }, [status, isAdmin, hasProjectPermission, router]);
+ // Check permissions
+  if (
+    !isAdmin &&
+    !hasProjectPermission
+  ) {
+    redirect("/"); // Redirect to home if no access
+  }
 
   // Update filters when session loads
   useEffect(() => {
