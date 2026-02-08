@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import StatusBadge from "@/components/project/StatusBadge";
-import { ListTodo, Plus, Trash2, Pencil, Filter, Loader2 } from "lucide-react";
+import { ListTodo, Plus, Trash2, Pencil, Filter, Loader2, X } from "lucide-react";
 import AddWorkLogModal from "@/components/project/AddWorkLogModal";
 import WorkLogDetailsModal from "@/components/project/WorkLogDetailsModal";
 import { useProjects } from "@/hooks/useProjects";
@@ -55,6 +55,14 @@ export default function WorkLogPage() {
     month: currentMonth,
     year: currentYear,
   });
+
+  const clearFilters = () => {
+    setFilters({
+      projectId: "",
+      month: currentMonth,
+      year: currentYear,
+    });
+  };
 
   const handleDeleteLog = async (logId) => {
     if (
@@ -184,7 +192,7 @@ export default function WorkLogPage() {
           </h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg hover:shadow-blue-500/20 active:scale-95"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg hover:shadow-blue-500/20 active:scale-95 whitespace-nowrap shrink-0"
           >
             <Plus className="w-5 h-5" />
             Work Log
@@ -193,51 +201,62 @@ export default function WorkLogPage() {
 
         {/* Filters */}
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4 mb-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-slate-300 mr-2">
-              <Filter className="w-4 h-4" />
-              <span className="font-medium text-sm">Filters:</span>
+          <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4">
+            <div className="flex items-center justify-between gap-2 text-gray-700 dark:text-slate-300 mr-2 mb-2 sm:mb-0 w-full sm:w-auto">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4" />
+                <span className="font-medium text-sm">Filters:</span>
+              </div>
+              <button
+                onClick={clearFilters}
+                className="text-xs flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors cursor-pointer active:scale-95 ml-2"
+                title="Reset to default filters"
+              >
+                <X className="w-3 h-3" /> Clear
+              </button>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <select
-                value={filters.month}
-                onChange={(e) =>
-                  setFilters({ ...filters, month: parseInt(e.target.value) })
-                }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
-              >
-                {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                  <option key={month} value={month}>
-                    {new Date(2024, month - 1).toLocaleString("default", {
-                      month: "long",
-                    })}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={filters.year}
-                onChange={(e) =>
-                  setFilters({ ...filters, year: parseInt(e.target.value) })
-                }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
-              >
-                {Array.from({ length: 5 }, (_, i) => currentYear - i).map(
-                  (year) => (
-                    <option key={year} value={year}>
-                      {year}
+            <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3 w-full sm:w-auto">
+              <div className="flex gap-2 w-full sm:w-auto">
+                <select
+                  value={filters.month}
+                  onChange={(e) =>
+                    setFilters({ ...filters, month: parseInt(e.target.value) })
+                  }
+                  className="flex-1 sm:w-auto border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                >
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                    <option key={month} value={month}>
+                      {new Date(2024, month - 1).toLocaleString("default", {
+                        month: "long",
+                      })}
                     </option>
-                  ),
-                )}
-              </select>
+                  ))}
+                </select>
+
+                <select
+                  value={filters.year}
+                  onChange={(e) =>
+                    setFilters({ ...filters, year: parseInt(e.target.value) })
+                  }
+                  className="flex-1 sm:w-auto border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                >
+                  {Array.from({ length: 5 }, (_, i) => currentYear - i).map(
+                    (year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </div>
 
               <select
                 value={filters.projectId}
                 onChange={(e) =>
                   setFilters({ ...filters, projectId: e.target.value })
                 }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                className="w-full sm:w-auto border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
               >
                 <option value="">All Projects</option>
                 {projects.map((p) => (
@@ -258,7 +277,95 @@ export default function WorkLogPage() {
               Work Log History
             </h2>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* Mobile Card View */}
+          <div className="md:hidden divide-y divide-gray-200 dark:divide-slate-700">
+            {loading && workLogs.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 dark:text-slate-400">
+                Loading...
+              </div>
+            ) : workLogs.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 dark:text-slate-400">
+                No work logs found. Start by creating your first log!
+              </div>
+            ) : (
+              workLogs.map((log, index) => (
+                <div
+                  key={log._id}
+                  ref={
+                    index === workLogs.length - 1 ? lastLogElementRef : null
+                  }
+                  className="p-4 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+                  onClick={() => handleViewLog(log)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          {formatDate(log.date)}
+                        </span>
+                        {/* Assuming log has hours/minutes, if not, remove or adjust */}
+                        {/* <span className="text-xs text-gray-500 dark:text-slate-400">
+                          {log.hours}h {log.minutes}m
+                        </span> */}
+                      </div>
+                      <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                        {log.projectId?.name || "N/A"}
+                      </div>
+                    </div>
+                    <StatusBadge status={log.status} />
+                  </div>
+
+                  <p className="text-sm text-gray-600 dark:text-slate-300 mb-3 whitespace-pre-wrap">
+                    {log.details}
+                  </p>
+
+                  <div className="flex justify-between items-center text-xs text-gray-500 dark:text-slate-400 bg-gray-50 dark:bg-slate-700/30 p-2 rounded">
+                    <div>
+                      <span className="text-gray-400">Task:</span>{" "}
+                      {log.taskId?.taskName || "N/A"}
+                    </div>
+                    <div>
+                      <span className="text-gray-400">Remarks:</span>{" "}
+                      {log.remarks || "-"}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-2 mt-3">
+                    {/* Edit button - only show for log creator */}
+                    {log.userId?._id === session?.user?.id && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditLog(log);
+                        }}
+                        className="p-1.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40"
+                        title="Edit work log"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    )}
+                    {/* Delete button - show for log creator or admin */}
+                    {(log.userId?._id === session?.user?.id ||
+                      session?.user?.role === "admin") && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteLog(log._id);
+                          }}
+                          className="p-1.5 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded hover:bg-red-100 dark:hover:bg-red-900/40"
+                          title="Delete work log"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
               <thead className="bg-gray-50 dark:bg-slate-900">
                 <tr>
@@ -350,17 +457,17 @@ export default function WorkLogPage() {
                           {/* Delete button - show for log creator or admin */}
                           {(log.userId?._id === session?.user?.id ||
                             session?.user?.role === "admin") && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteLog(log._id);
-                              }}
-                              className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
-                              title="Delete work log"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteLog(log._id);
+                                }}
+                                className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                                title="Delete work log"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
                         </div>
                       </td>
                     </tr>

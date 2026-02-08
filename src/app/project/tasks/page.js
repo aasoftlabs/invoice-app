@@ -12,6 +12,7 @@ import {
   Trash2,
   Filter,
   Loader2,
+  X,
 } from "lucide-react";
 import AddTaskModal from "@/components/project/AddTaskModal";
 import TaskDetailsModal from "@/components/project/TaskDetailsModal";
@@ -61,6 +62,11 @@ export default function TasksPage() {
   const [editingTask, setEditingTask] = useState(null);
   const [viewingTask, setViewingTask] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setFilters({ projectId: "", status: "" });
+  };
 
   // Initial Fetch
   useEffect(() => {
@@ -185,7 +191,7 @@ export default function TasksPage() {
           </h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-lg hover:shadow-blue-500/20"
+            className="flex items-center gap-2 bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-lg hover:shadow-blue-500/20 whitespace-nowrap shrink-0"
           >
             <Plus className="w-5 h-5" />
             Add Task
@@ -194,59 +200,145 @@ export default function TasksPage() {
 
         {/* Filters */}
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 p-4 mb-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-slate-300 mr-2">
-              <Filter className="w-4 h-4" />
-              <span className="font-medium text-sm">Filters:</span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 grow">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search tasks..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 pr-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 bg-gray-50 dark:bg-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 transition-colors"
-                />
+          <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4">
+            <div className="flex items-center justify-between gap-2 text-gray-700 dark:text-slate-300 mr-2 mb-2 sm:mb-0 w-full sm:w-auto">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4" />
+                <span className="font-medium text-sm">Filters:</span>
               </div>
-
-              <select
-                value={filters.projectId}
-                onChange={(e) =>
-                  setFilters({ ...filters, projectId: e.target.value })
-                }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
+              <button
+                onClick={clearFilters}
+                className="text-xs flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors cursor-pointer active:scale-95 ml-2"
+                title="Reset to default filters"
               >
-                <option value="">All Projects</option>
-                {projects.map((p) => (
-                  <option key={p._id} value={p._id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
+                <X className="w-3 h-3" /> Clear
+              </button>
+            </div>
+            <select
+              value={filters.projectId}
+              onChange={(e) =>
+                setFilters({ ...filters, projectId: e.target.value })
+              }
+              className="w-full sm:w-auto border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
+            >
+              <option value="">All Projects</option>
+              {projects.map((p) => (
+                <option key={p._id} value={p._id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
 
-              <select
-                value={filters.status}
-                onChange={(e) =>
-                  setFilters({ ...filters, status: e.target.value })
-                }
-                className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
-              >
-                <option value="">All Statuses</option>
-                <option value="Completed">Completed</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Follow-up">Follow-up</option>
-                <option value="Not Started">Not Started</option>
-              </select>
+            <select
+              value={filters.status}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
+              className="w-full sm:w-auto border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm text-gray-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 transition-colors cursor-pointer"
+            >
+              <option value="">All Statuses</option>
+              <option value="Completed">Completed</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Follow-up">Follow-up</option>
+              <option value="Not Started">Not Started</option>
+            </select>
+
+            <div className="relative w-full sm:w-64">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search tasks..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full bg-gray-50 dark:bg-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-600 transition-colors"
+              />
             </div>
           </div>
         </div>
 
         {/* Tasks Table */}
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow border border-gray-200 dark:border-slate-700 overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Card View */}
+          <div className="md:hidden divide-y divide-gray-200 dark:divide-slate-700">
+            {loading && tasks.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 dark:text-slate-400">
+                Loading...
+              </div>
+            ) : filteredTasks.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 dark:text-slate-400">
+                No tasks found
+              </div>
+            ) : (
+              filteredTasks.map((task, index) => (
+                <div
+                  key={task._id}
+                  ref={
+                    index === filteredTasks.length - 1
+                      ? lastTaskElementRef
+                      : null
+                  }
+                  className="p-4 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"
+                  onClick={() => handleViewTask(task)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        {task.taskName}
+                      </h3>
+                      <div className="text-sm text-gray-500 dark:text-slate-400">
+                        {task.projectId?.name || "No Project"}
+                      </div>
+                    </div>
+                    <StatusBadge status={task.status} />
+                  </div>
+
+                  <p className="text-sm text-gray-600 dark:text-slate-300 mb-3 line-clamp-2">
+                    {task.description || "No description"}
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-700/30 p-2 rounded">
+                    <div>
+                      <span className="text-gray-400">Start:</span>{" "}
+                      {formatDate(task.startDate)}
+                    </div>
+                    <div>
+                      <span className="text-gray-400">End:</span>{" "}
+                      {formatDate(task.completedDate)}
+                    </div>
+                    <div>
+                      <span className="text-gray-400">By:</span>{" "}
+                      {task.completedBy?.name || "-"}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-2 mt-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(task);
+                      }}
+                      className="p-1.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    {session?.user?.role === "admin" && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(task._id);
+                        }}
+                        className="p-1.5 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded hover:bg-red-100 dark:hover:bg-red-900/40"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50 dark:bg-slate-900">
                 <tr>

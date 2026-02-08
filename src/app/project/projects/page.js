@@ -202,20 +202,19 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-full bg-gray-50 dark:bg-slate-900 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <FolderKanban className="w-8 h-8 text-blue-600" />
             Projects
           </h1>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full md:w-auto">
             <button
               type="button"
               onClick={() => setShowCompleted(!showCompleted)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
-                showCompleted
-                  ? "bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white border-gray-300 dark:border-slate-600"
-                  : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
-              }`}
+              className={`flex-1 md:flex-none px-3 py-2 rounded-lg text-sm font-medium transition-colors border text-center ${showCompleted
+                ? "bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white border-gray-300 dark:border-slate-600"
+                : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
+                }`}
             >
               {showCompleted ? "Hide Completed" : "Show Completed"}
             </button>
@@ -225,7 +224,7 @@ export default function ProjectsPage() {
                 setEditingProject(null);
                 setIsModalOpen(true);
               }}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg hover:shadow-blue-500/20 active:scale-95"
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all font-bold shadow-lg hover:shadow-blue-500/20 active:scale-95 whitespace-nowrap shrink-0"
             >
               <Plus className="w-5 h-5" />
               Add Project
@@ -233,7 +232,164 @@ export default function ProjectsPage() {
           </div>
         </div>
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow border border-gray-200 dark:border-slate-700 overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Card View */}
+          <div className="md:hidden divide-y divide-gray-200 dark:divide-slate-700">
+            {loading && projects.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 dark:text-slate-400">
+                Loading...
+              </div>
+            ) : projects.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 dark:text-slate-400">
+                No projects found
+              </div>
+            ) : (
+              projects.map((project, index) => (
+                <div
+                  key={project._id}
+                  ref={
+                    index === projects.length - 1 ? lastProjectElementRef : null
+                  }
+                  className="p-4 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"
+                  onClick={() => toggleProject(project._id)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        {expandedProjects.has(project._id) ? (
+                          <ChevronDown className="w-4 h-4 text-gray-400" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-gray-400" />
+                        )}
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                          {project.name}
+                        </h3>
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-slate-400 ml-6">
+                        {project.client || "No Client"}
+                      </div>
+                    </div>
+                    <StatusBadge status={project.status} />
+                  </div>
+
+                  <div className="ml-6 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-full h-2">
+                        <div
+                          className="bg-green-500 h-2 rounded-full"
+                          style={{
+                            width: `${project.completionPercent}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-gray-700 dark:text-slate-300">
+                        {project.completionPercent}%
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-slate-400 bg-gray-50 dark:bg-slate-700/30 p-2 rounded">
+                      <div>
+                        <span className="text-gray-400">Start:</span>{" "}
+                        {formatDate(project.startDate)}
+                      </div>
+                      <div>
+                        <span className="text-gray-400">End:</span>{" "}
+                        {formatDate(project.endDate)}
+                      </div>
+                      <div className="col-span-2">
+                        <span className="text-gray-400">Ref:</span>{" "}
+                        {project.refLink ? (
+                          <a
+                            href={project.refLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                          >
+                            Link
+                          </a>
+                        ) : (
+                          "-"
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2">
+                      {(session?.user?.role?.toLowerCase() === "admin" ||
+                        project.projectManager?._id === session?.user?.id) && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditProject(project);
+                              }}
+                              className="p-1.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteProject(project._id);
+                              }}
+                              className="p-1.5 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded hover:bg-red-100 dark:hover:bg-red-900/40"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                    </div>
+                  </div>
+
+                  {/* Expanded Mobile Tasks */}
+                  {expandedProjects.has(project._id) && (
+                    <div className="mt-4 ml-6 pl-4 border-l-2 border-gray-100 dark:border-slate-700">
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-xs mb-3">
+                        Tasks ({projectTasks[project._id]?.length || 0})
+                      </h4>
+                      {projectTasks[project._id] ? (
+                        projectTasks[project._id].length > 0 ? (
+                          <div className="space-y-3">
+                            {projectTasks[project._id].map((task) => (
+                              <div
+                                key={task._id}
+                                className="bg-gray-50 dark:bg-slate-700/30 rounded p-3 text-sm"
+                              >
+                                <div className="flex justify-between items-start mb-1">
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {task.taskName}
+                                  </span>
+                                  <StatusBadge status={task.status} />
+                                </div>
+                                {task.assignedTo && (
+                                  <div className="text-xs text-gray-500 dark:text-slate-400 mb-2">
+                                    {task.assignedTo.name}
+                                  </div>
+                                )}
+                                <div className="flex justify-between items-center text-xs text-gray-500 dark:text-slate-400 border-t border-gray-200 dark:border-slate-600/50 pt-2 mt-2">
+                                  <span>{formatDate(task.startDate)}</span>
+                                  <span>{formatDate(task.endDate || task.completedDate)}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-500 text-xs">
+                            No tasks found
+                          </p>
+                        )
+                      ) : (
+                        <p className="text-gray-500 text-xs">Loading...</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full">
               <thead className="bg-gray-50 dark:bg-slate-900">
                 <tr>
@@ -349,32 +505,32 @@ export default function ProjectsPage() {
                           <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             {(session?.user?.role?.toLowerCase() === "admin" ||
                               project.projectManager?._id ===
-                                session?.user?.id) && (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEditProject(project);
-                                  }}
-                                  className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
-                                  title="Edit Project"
-                                >
-                                  <Pencil className="w-4 h-4" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteProject(project._id);
-                                  }}
-                                  className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
-                                  title="Delete Project"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </>
-                            )}
+                              session?.user?.id) && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEditProject(project);
+                                    }}
+                                    className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors"
+                                    title="Edit Project"
+                                  >
+                                    <Pencil className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteProject(project._id);
+                                    }}
+                                    className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                                    title="Delete Project"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </>
+                              )}
                           </div>
                         </td>
                       </tr>

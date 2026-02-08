@@ -40,7 +40,40 @@ export default function WorkLogTable({ workLogs, formatDate, loading }) {
           Recent Work Logs
         </h3>
       </div>
-      <div className="overflow-x-auto">
+      <div className="md:hidden divide-y divide-gray-200 dark:divide-slate-700">
+        {workLogs.map((log) => (
+          <div
+            key={log._id}
+            className="p-4 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {formatDate(log.date)}
+                  </span>
+                </div>
+                <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                  {log.projectId?.name || "N/A"}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-slate-400">
+                  {log.taskId?.taskName || "N/A"}
+                </div>
+              </div>
+              <StatusBadge status={log.status} />
+            </div>
+
+            <p className="text-sm text-gray-600 dark:text-slate-300 mb-2 line-clamp-2">
+              {log.details}
+            </p>
+
+            <div className="text-xs text-gray-500 dark:text-slate-400">
+              Remarks: {log.remarks || "-"}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
           <thead className="bg-gray-50 dark:bg-slate-900">
             <tr>
