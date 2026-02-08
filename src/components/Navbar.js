@@ -10,6 +10,8 @@ import { getUserPermissions } from "@/lib/permissions";
 
 import { AnimatePresence, motion } from "framer-motion";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 export default function Navbar({ user, profile }) {
   const pathname = usePathname();
   const permissions = getUserPermissions(user);
@@ -64,7 +66,7 @@ export default function Navbar({ user, profile }) {
           </div>
         </div>
 
-        {/* Desktop Navigation */}
+
         <div className="hidden md:flex items-center gap-6">
           {filteredLinks.map((link) => {
             const isActive = pathname.startsWith(link.href);
@@ -81,6 +83,11 @@ export default function Navbar({ user, profile }) {
               </Link>
             );
           })}
+
+          {/* Theme Toggle for Desktop */}
+          <div className="border-l border-gray-200 dark:border-slate-700 pl-6 flex items-center">
+            <ThemeToggle />
+          </div>
 
           <UserMenu user={user} />
         </div>
@@ -110,8 +117,8 @@ export default function Navbar({ user, profile }) {
                     href={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive
-                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                        : "text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800"
+                      ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800"
                       }`}
                   >
                     {Icon && <Icon className="w-5 h-5" />}

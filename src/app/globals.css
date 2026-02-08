@@ -102,3 +102,20 @@ input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none !important;
 }
+
+/* Global Cursor Pointer for Interactive Elements */
+button,
+[role="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+label {
+  cursor: pointer;
+}
+
+/* Disable pointer for disabled buttons */
+button:disabled,
+input:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+}

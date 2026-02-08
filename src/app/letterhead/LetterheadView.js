@@ -97,32 +97,35 @@ export default function LetterheadView({ profile }) {
     <PermissionGate permission="letterhead">
       <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-slate-900 print:bg-white text-gray-900 dark:text-slate-200 font-sans transition-all duration-300">
         {/* Top Navigation Bar / Toolbar Area */}
+        {/* Top Navigation Bar / Toolbar Area */}
         <header className="sticky top-0 z-40 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 shadow-sm print:hidden">
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between px-2 sm:px-4">
+          <div className="flex flex-row items-center justify-between px-2 sm:px-4 py-2 gap-2">
             {/* TinyMCE will teleport its toolbar here via fixed_toolbar_container: '#editor-toolbar' */}
             <div
               id="editor-toolbar"
-              className="flex-1 min-h-[40px] md:mr-4 relative z-50"
+              className="flex-1 min-h-[40px] relative z-50 min-w-0"
             />
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-2 sm:gap-3 justify-end p-2 md:p-0 border-t md:border-t-0 border-gray-200 dark:border-slate-700 relative md:min-w-[200px]">
+            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-3 justify-end relative shrink-0">
               {/* Zoom Controls */}
               <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-lg p-1">
                 <button
                   onClick={zoomOut}
-                  className="p-1.5 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-md text-gray-600 dark:text-gray-300"
+                  className="p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-md text-gray-600 dark:text-gray-300"
                   title="Zoom Out"
                 >
                   <ChevronLeft className="w-4 h-4 rotate-90" />{" "}
                   {/* Reuse chevron for cleaner bundle if needed or use proper icons */}
                 </button>
-                <span className="text-xs font-mono w-10 sm:w-12 text-center text-gray-600 dark:text-gray-300">
-                  {Math.round(zoom * 100)}%
-                </span>
+                <div className="hidden sm:block">
+                  <span className="text-xs font-mono w-10 sm:w-12 text-center text-gray-600 dark:text-gray-300 inline-block">
+                    {Math.round(zoom * 100)}%
+                  </span>
+                </div>
                 <button
                   onClick={zoomIn}
-                  className="p-1.5 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-md text-gray-600 dark:text-gray-300"
+                  className="p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-md text-gray-600 dark:text-gray-300"
                   title="Zoom In"
                 >
                   <ChevronRight className="w-4 h-4 rotate-90" />
@@ -131,10 +134,10 @@ export default function LetterheadView({ profile }) {
 
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md text-white text-sm font-medium transition"
+                className="flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md text-white text-xs sm:text-sm font-medium transition h-8 sm:h-auto"
               >
-                <Printer className="w-4 h-4" />
-                <span className="hidden sm:inline">Print</span>
+                <Printer className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="sm:inline">Print</span>
               </button>
             </div>
           </div>
@@ -247,7 +250,6 @@ export default function LetterheadView({ profile }) {
           }
 
           /* TinyMCE specific overrides to make the toolbar blend in */
-          /* TinyMCE specific overrides to make the toolbar blend in */
           .tox-tinymce {
             border: none !important;
             height: 100% !important;
@@ -258,33 +260,27 @@ export default function LetterheadView({ profile }) {
             box-shadow: none !important;
           }
 
-          /* Custom styling for the fixed toolbar container */
-          /* Custom styling for the fixed toolbar container */
-          /* Custom styling for the fixed toolbar container */
+          /* --- TOOLBAR CONTAINER STYLES --- */
+
+          /* Base Styles (Light Mode Default) */
           #editor-toolbar .tox-tinymce {
             border: none !important;
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
-            background: #1e293b !important; /* slate-800 */
+            background: transparent !important;
           }
 
-          /* Force toolbar background to match header */
-          #editor-toolbar .tox-editor-header {
-            background: #1e293b !important; /* slate-800 */
-          }
-
-          /* Dark background for all toolbar elements */
           #editor-toolbar .tox-editor-header,
           #editor-toolbar .tox-menubar,
           #editor-toolbar .tox-toolbar-overlord,
           #editor-toolbar .tox-toolbar__primary {
-            background: #1e293b !important; /* slate-800 */
+            background: transparent !important; /* Default to transp/white */
             border: none !important;
             box-shadow: none !important;
           }
 
-          /* Toolbar groups transparent over dark background */
+          /* Toolbar groups transparent */
           #editor-toolbar .tox-toolbar__group,
           #editor-toolbar .tox-mbtn,
           #editor-toolbar .tox-tbtn,
@@ -292,165 +288,6 @@ export default function LetterheadView({ profile }) {
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
-          }
-
-          /* Fix text and icon colors for dark mode context */
-          #editor-toolbar .tox-mbtn__select-label,
-          #editor-toolbar .tox-tbtn__select-label,
-          #editor-toolbar .tox-tbtn svg,
-          #editor-toolbar .tox-mbtn {
-            color: inherit !important;
-            fill: currentColor !important;
-          }
-
-          /* Dark mode specific - ensure text is light if header is dark */
-          /* Assuming parent header is dark:bg-slate-800 which implies light text */
-          :global(.dark) #editor-toolbar {
-            color: #e2e8f0; /* slate-200 */
-            --tox-color: #e2e8f0;
-          }
-
-          /* Hover effects */
-          #editor-toolbar .tox-mbtn:hover,
-          #editor-toolbar .tox-tbtn:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
-          }
-
-          /* Dark Mode Text & Icon Colors */
-          /* Note: We use :global(.dark) or just .dark if this is global jsx */
-          :global(.dark) #editor-toolbar .tox-mbtn__select-label,
-          :global(.dark) #editor-toolbar .tox-tbtn__select-label,
-          :global(.dark) #editor-toolbar .tox-tbtn svg,
-          :global(.dark) #editor-toolbar .tox-mbtn {
-            color: #e2e8f0 !important; /* slate-200 */
-            fill: #e2e8f0 !important;
-          }
-
-          /* Hover states for dark mode */
-          :global(.dark) #editor-toolbar .tox-tbtn:hover,
-          :global(.dark) #editor-toolbar .tox-mbtn:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
-          }
-
-          /* Hide statusbar if it reappears */
-          .tox-statusbar,
-          .tox-promotion {
-            display: none !important;
-          }
-
-          /* Remove white background from TinyMCE container */
-          .tox-sidebar-wrap,
-          .tox .tox-editor-container,
-          .tox .tox-toolbar-overlord {
-            background-color: #1e293b !important; /* slate-800 */
-          }
-
-          /* Ensure menubar matches dark theme */
-          #editor-toolbar .tox-menubar {
-            background-color: #1e293b !important; /* slate-800 */
-          }
-
-          /* Ultra-aggressive dark background for all toolbar containers */
-          .tox-tinymce-inline .tox-editor-header,
-          .tox .tox-toolbar,
-          .tox .tox-toolbar__overflow,
-          .tox .tox-toolbar__primary,
-          .tox-toolbar-overlord,
-          div[role="toolbar"],
-          .tox-editor-container,
-          #editor-toolbar > div,
-          #editor-toolbar .tox,
-          #editor-toolbar .tox-editor-header {
-            background: #1e293b !important; /* slate-800 */
-            background-color: #1e293b !important; /* slate-800 */
-          }
-
-          /* Dark theme for dropdown menus */
-          .tox .tox-menu,
-          .tox .tox-collection,
-          .tox .tox-collection__group,
-          .tox .tox-dialog,
-          .tox .tox-pop,
-          .tox-menu.tox-collection,
-          .tox-collection--list {
-            background-color: #1e293b !important; /* slate-800 */
-            border-color: #334155 !important; /* slate-700 */
-            z-index: 10000 !important;
-          }
-
-          /* Additional z-index for popups and submenus */
-          .tox.tox-tinymce-aux,
-          .tox-tinymce-aux,
-          .tox .tox-pop__dialog,
-          .tox-menu,
-          div[role="menu"],
-          .tox-collection--toolbar {
-            z-index: 10000 !important;
-          }
-
-          /* Fix for selected/active menu items having white background */
-          .tox .tox-collection__item--active,
-          .tox .tox-collection__item--enabled,
-          .tox .tox-collection__item:focus,
-          .tox .tox-mbtn--active,
-          .tox .tox-tbtn--enabled,
-          .tox .tox-tbtn:focus,
-          .tox .tox-tbtn:active {
-            background-color: #334155 !important; /* slate-700 */
-            color: #e2e8f0 !important;
-          }
-
-          /* Specific fix for the Table Picker Grid */
-          .tox .tox-insert-table-picker {
-            background-color: #1e293b !important; /* slate-800 */
-          }
-          .tox .tox-insert-table-picker .tox-insert-table-picker__selected {
-            background-color: #3b82f6 !important; /* blue-500 */
-            border-color: #3b82f6 !important;
-          }
-          .tox .tox-insert-table-picker .tox-insert-table-picker__label,
-          .tox .tox-insert-table-picker__cell {
-            color: #e2e8f0 !important;
-            border-color: #334155 !important; /* slate-700 */
-          }
-
-          /* Additional fixes for white backgrounds in other pickers */
-          .tox .tox-swatches__picker-btn,
-          .tox .tox-collection__item-label {
-            color: #e2e8f0 !important; /* Force light text color */
-          }
-
-          /* Force text color on all headings and paragraph items in the dropdown */
-          .tox .tox-collection__item-label * {
-            color: #e2e8f0 !important; 
-          }
-          
-          /* Fix for the "Visual aids" selected state specifically if it uses a different class */
-          .tox .tox-collection__item[aria-checked="true"] {
-            background-color: #334155 !important;
-          }
-
-          /* Fix for the checkmark icon in menus */
-          .tox .tox-collection__item-accessory svg {
-            fill: #e2e8f0 !important;
-          }
-
-          /* Dropdown menu items */
-          .tox .tox-collection__item,
-          .tox .tox-menu__item {
-            color: #e2e8f0 !important; /* slate-200 */
-          }
-
-          /* Dropdown menu item hover */
-          .tox .tox-collection__item:hover,
-          .tox .tox-menu__item:hover {
-            background-color: #334155 !important; /* slate-700 */
-          }
-
-          /* Dropdown icons */
-          .tox .tox-collection__item-icon svg,
-          .tox .tox-menu__item-icon svg {
-            fill: #e2e8f0 !important; /* slate-200 */
           }
 
           /* Hide scrollbars in toolbar area */
@@ -470,6 +307,103 @@ export default function LetterheadView({ profile }) {
           [contenteditable]:focus {
             outline: none !important;
             box-shadow: none !important;
+          }
+
+
+          /* --- DARK MODE OVERRIDES --- */
+
+          /* Apply dark background ONLY in dark mode */
+          :global(.dark) #editor-toolbar .tox-tinymce,
+          :global(.dark) #editor-toolbar .tox-editor-header,
+          :global(.dark) #editor-toolbar .tox-menubar,
+          :global(.dark) #editor-toolbar .tox-toolbar-overlord,
+          :global(.dark) #editor-toolbar .tox-toolbar__primary,
+          :global(.dark) #editor-toolbar .tox-toolbar__overflow,
+          :global(.dark) .tox-sidebar-wrap,
+          :global(.dark) .tox-editor-container {
+            background: #1e293b !important; /* slate-800 */
+            background-color: #1e293b !important;
+          }
+
+          /* Dark Mode Text & Icon Colors */
+          :global(.dark) #editor-toolbar {
+            color: #e2e8f0; /* slate-200 */
+            --tox-color: #e2e8f0;
+          }
+
+          :global(.dark) #editor-toolbar .tox-mbtn__select-label,
+          :global(.dark) #editor-toolbar .tox-tbtn__select-label,
+          :global(.dark) #editor-toolbar .tox-tbtn svg,
+          :global(.dark) #editor-toolbar .tox-mbtn {
+            color: #e2e8f0 !important; /* slate-200 */
+            fill: #e2e8f0 !important;
+          }
+
+          /* Hover states for dark mode */
+          :global(.dark) #editor-toolbar .tox-tbtn:hover,
+          :global(.dark) #editor-toolbar .tox-mbtn:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+          }
+
+          /* Fix for selected/active menu items in Dark Mode */
+          :global(.dark) .tox .tox-collection__item--active,
+          :global(.dark) .tox .tox-collection__item--enabled,
+          :global(.dark) .tox .tox-collection__item:focus,
+          :global(.dark) .tox .tox-mbtn--active,
+          :global(.dark) .tox .tox-tbtn--enabled,
+          :global(.dark) .tox .tox-tbtn:focus,
+          :global(.dark) .tox .tox-tbtn:active {
+            background-color: #334155 !important; /* slate-700 */
+            color: #e2e8f0 !important;
+          }
+
+          /* Dark theme for dropdown menus */
+          :global(.dark) .tox .tox-menu,
+          :global(.dark) .tox .tox-collection,
+          :global(.dark) .tox .tox-collection__group,
+          :global(.dark) .tox .tox-dialog,
+          :global(.dark) .tox .tox-pop,
+          :global(.dark) .tox-menu.tox-collection,
+          :global(.dark) .tox-collection--list {
+            background-color: #1e293b !important; /* slate-800 */
+            border-color: #334155 !important; /* slate-700 */
+          }
+
+          :global(.dark) .tox .tox-collection__item,
+          :global(.dark) .tox .tox-menu__item,
+          :global(.dark) .tox .tox-collection__item-label,
+          :global(.dark) .tox .tox-insert-table-picker__cell {
+            color: #e2e8f0 !important;
+          }
+
+          /* Force all children of collection items to be light in dark mode (Fix for Heading previews) */
+          :global(.dark) .tox .tox-collection__item-label *,
+          :global(.dark) .tox .tox-collection__item-label span,
+          :global(.dark) .tox .tox-collection__item-label h1,
+          :global(.dark) .tox .tox-collection__item-label h2,
+          :global(.dark) .tox .tox-collection__item-label h3,
+          :global(.dark) .tox .tox-collection__item-label h4,
+          :global(.dark) .tox .tox-collection__item-label h5,
+          :global(.dark) .tox .tox-collection__item-label h6,
+          :global(.dark) .tox .tox-collection__item-label p {
+             color: #e2e8f0 !important;
+             background: transparent !important;
+          }
+
+          :global(.dark) .tox .tox-collection__item:hover,
+          :global(.dark) .tox .tox-menu__item:hover {
+            background-color: #334155 !important;
+          }
+           
+          /* Specific fix for the Table Picker Grid in Dark Mode */
+          :global(.dark) .tox .tox-insert-table-picker {
+             background-color: #1e293b !important; 
+          }
+
+          /* Hide statusbar unconditionally */
+          .tox-statusbar,
+          .tox-promotion {
+            display: none !important;
           }
 
           @media print {
