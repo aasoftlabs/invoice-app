@@ -25,6 +25,40 @@ export default function SlipView({ slipId }) {
   const slipRef = useRef(null);
   const emailTriggered = useRef(false); // Prevent duplicate email sends
 
+  // Auto-zoom for mobile
+  const [zoom, setZoom] = useState(1);
+  const containerRef = useRef(null); // Added for auto-zoom
+
+  useEffect(() => {
+    // Only run zoom calculation if we have content and it's rendered
+    if (loading || !slip) return;
+
+    const handleResize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const standardWidth = 794; // A4 width in pixels (~210mm)
+
+        if (containerWidth < standardWidth) {
+          const newZoom = (containerWidth - 32) / standardWidth; // 32px padding buffer
+          setZoom(newZoom);
+        } else {
+          setZoom(1);
+        }
+      }
+    };
+
+    // Small timeout to ensure DOM is ready after loading state change
+    const timer = setTimeout(() => {
+      handleResize();
+    }, 100);
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timer);
+    };
+  }, [loading, slip]);
+
   const fetchData = useCallback(async () => {
     try {
       // Fetch slip
@@ -220,25 +254,40 @@ export default function SlipView({ slipId }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-slate-900 p-4 md:p-8 print:p-0 print:bg-white">
-      <SlipActions
-        onBack={() => router.push("/payroll")}
-        onPrint={handlePrint}
-        onDownload={handleDownload}
-        downloadLoading={downloading}
-        emailLoading={sendingEmail}
-        onPay={
-          session?.user?.role === "admin"
-            ? () => setIsPayModalOpen(true)
-            : undefined
-        }
-        status={slip.status}
-        onSendEmail={
-          session?.user?.role === "admin" ? handleSendEmailAction : undefined
-        }
-      />
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-900 p-4 md:p-8 print:p-0 print:bg-white flex flex-col items-center">
+      <div className="w-full max-w-[210mm]">
+        <SlipActions
+          onBack={() => router.push("/payroll")}
+          onPrint={handlePrint}
+          onDownload={handleDownload}
+          downloadLoading={downloading}
+          emailLoading={sendingEmail}
+          onPay={
+            session?.user?.role === "admin"
+              ? () => setIsPayModalOpen(true)
+              : undefined
+          }
+          status={slip.status}
+          onSendEmail={
+            session?.user?.role === "admin" ? handleSendEmailAction : undefined
+          }
+        />
+      </div>
 
-        <SlipTemplate ref={slipRef} slip={slip} company={company} />
+      <div ref={containerRef} className="w-full overflow-hidden flex justify-center mt-4 print:mt-0 print:block print:overflow-visible">
+        <div
+          style={{
+            transform: `scale(${zoom})`,
+            transformOrigin: 'top center',
+            marginBottom: `${(zoom - 1) * 300}px`,
+            width: '210mm',
+            minWidth: '210mm'
+          }}
+          className="print:transform-none print:w-full print:min-w-0"
+        >
+          <SlipTemplate ref={slipRef} slip={slip} company={company} />
+        </div>
+      </div>
 
       <PaySalaryModal
         isOpen={isPayModalOpen}

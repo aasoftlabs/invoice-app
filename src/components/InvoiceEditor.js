@@ -145,10 +145,10 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col md:flex-row font-sans text-gray-800 dark:text-slate-200">
       {/* LEFT SIDE: EDITOR */}
-      <div className="w-full md:w-1/3 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 print:hidden h-[calc(100vh-4rem)] sticky top-0 flex flex-col">
+      <div className="w-full md:w-1/3 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 print:hidden h-auto md:h-[calc(100vh-4rem)] md:sticky md:top-0 flex flex-col">
         <FormProvider {...methods}>
           {/* Scrollable Content Area */}
-          <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-slate-700">
+          <div className="flex-1 md:overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-slate-700">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <button
@@ -183,7 +183,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
       </div>
 
       {/* RIGHT SIDE: PREVIEW */}
-      <div className="w-full md:w-2/3 bg-gray-200 dark:bg-slate-900/50 p-8 overflow-y-auto flex justify-center print:p-0 print:overflow-visible print:w-full">
+      <div className="w-full md:w-2/3 bg-gray-200 dark:bg-slate-900/50 p-4 md:p-8 md:overflow-y-auto flex justify-center print:p-0 print:overflow-visible print:w-full">
         <InvoicePreview
           profile={profile}
           invoiceData={initialData}

@@ -20,6 +20,45 @@ export default function LetterheadView({ profile }) {
     setIsMounted(true);
   }, []);
 
+  // Auto-zoom for mobile (like InvoicePreview)
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const standardWidth = 794; // A4 width in pixels (~210mm)
+        // We subtract padding (32px from md:p-8, or just 16px safety)
+        // InvoicePreview used 32px buffer.
+        // LetterheadView has p-0 on mobile, md:p-8 on desktop.
+        // Let's use a safe buffer of 32px to ensure edges aren't cut off.
+
+        if (containerWidth < standardWidth) {
+          // Calculate scale to fit
+          const newZoom = (containerWidth - 32) / standardWidth;
+          setZoom(newZoom);
+        } else {
+          // On desktop/large screens, default to 1 (or let user control?)
+          // InvoicePreview resets to 1.
+          // However, if we want to respect manual zoom on desktop, we might skip this.
+          // But for consistency with "like invoice preview", we reset.
+          // To avoid fighting manual zoom on desktop, maybe only reset if it was previously auto-scaled?
+          // For now, simple approach:
+          // If width > standard, setZoom(1) might be annoying if user zoomed in.
+          // Let's ONLY scale down if it DOESN'T FIT.
+          // If it fits, we don't force it to 1, unless we want to reset mobile state.
+          // InvoicePreview logic: } else { setScale(1); }
+          // Let's stick to InvoicePreview logic for "same like invoice preview".
+          setZoom(1);
+        }
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Visual Pagination Logic - restored for Page Guides
   useEffect(() => {
     if (!bodyRef.current) return;
@@ -102,12 +141,14 @@ export default function LetterheadView({ profile }) {
         </header>
 
         {/* Main Workspace - Centered A4 Page */}
-        <div className="flex-1 overflow-auto p-0 md:p-8 relative flex justify-center bg-gray-100 dark:bg-slate-900 print:p-0 print:bg-white print:overflow-visible">
+        <div ref={containerRef} className="flex-1 overflow-auto overflow-x-hidden p-0 md:p-8 relative flex justify-center bg-gray-100 dark:bg-slate-900 print:p-0 print:bg-white print:overflow-visible">
           <div
-            className="transition-transform duration-200 origin-top flex flex-col items-center print-content-container w-full md:w-auto"
+            className="transition-transform duration-200 origin-top flex flex-col items-center print-content-container md:w-auto"
             style={{
               transform: `scale(${zoom})`,
               marginBottom: `${(zoom - 1) * 300}px`, // Compensate spacing when zoomed in
+              width: "210mm",
+              minWidth: "210mm",
             }}
           >
             <div className="relative flex flex-col items-center w-full md:w-auto">
@@ -115,7 +156,7 @@ export default function LetterheadView({ profile }) {
 
               {/* CONTENT LAYER (Interactive) */}
               {/* We use the Table structure to support robust printing, but make it transparent on screen */}
-              <div className="relative z-10 w-full md:max-w-[210mm] md:w-[210mm] min-h-[297mm] print:w-full print:block bg-white md:shadow-xl print:shadow-none text-gray-900">
+              <div className="relative z-10 w-[210mm] min-w-[210mm] min-h-[297mm] print:w-full print:block bg-white md:shadow-xl print:shadow-none text-gray-900">
                 {/* Visual Page Break Guides (Screen Only) */}
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-20 print:hidden overflow-hidden">
                   {[...Array(pageCount)].map((_, i) => {
