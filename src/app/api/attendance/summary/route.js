@@ -6,11 +6,7 @@ import Attendance from "@/models/Attendance";
 export async function GET(req) {
   try {
     const session = await auth();
-    if (
-      !session ||
-      (session.user.role !== "admin" &&
-        !session.user.permissions?.includes("payroll"))
-    ) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -20,10 +16,15 @@ export async function GET(req) {
       ? parseInt(searchParams.get("month"))
       : null;
     const year = parseInt(searchParams.get("year"));
+    const userId = searchParams.get("userId"); // Optional: for admin to query specific users
 
     if (isNaN(year)) {
       return NextResponse.json({ error: "Year is required" }, { status: 400 });
     }
+
+    // Authorization: Admins can query any user or all users, regular users can only query themselves
+    const isAdmin = session.user.role === "admin" || session.user.permissions?.includes("payroll");
+    const targetUserId = userId && isAdmin ? userId : session.user.id;
 
     let startDate, endDate;
     if (month) {
@@ -34,9 +35,19 @@ export async function GET(req) {
       endDate = new Date(year, 11, 31, 23, 59, 59, 999);
     }
 
-    const records = await Attendance.find({
+    // If not admin and no userId specified, or if userId is specified and matches session user, filter by userId
+    const query = {
       date: { $gte: startDate, $lte: endDate },
-    });
+    };
+
+    // Non-admins can only see their own data, admins can optionally filter by userId
+    if (!isAdmin || (userId && !isAdmin)) {
+      query.userId = targetUserId;
+    } else if (userId && isAdmin) {
+      query.userId = userId;
+    }
+
+    const records = await Attendance.find(query);
 
     // Aggregate counts for all types
     const summary = {};

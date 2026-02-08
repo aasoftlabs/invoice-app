@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, FileText, FileType, FolderKanban, CalendarCheck, DollarSign, Wallet } from "lucide-react";
 import Logo from "./Logo";
 import UserMenu from "@/components/navbar/UserMenu";
 import { getUserPermissions } from "@/lib/permissions";
@@ -16,28 +16,29 @@ export default function Navbar({ user, profile }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "/invoices", label: "Invoices", permission: "invoices" },
-    { href: "/letterhead", label: "Letterhead", permission: "letterhead" },
-    { href: "/project", label: "Project", permission: "project" },
-    { href: "/attendance", label: "Attendance", permission: null },
+    { href: "/invoices", label: "Invoices", permission: "invoices", icon: FileText },
+    { href: "/letterhead", label: "Letterhead", permission: "letterhead", icon: FileType },
+    { href: "/project", label: "Project", permission: "project", icon: FolderKanban },
+    { href: "/attendance", label: "Attendance", permission: null, icon: CalendarCheck },
     {
       href: "/payroll",
       label: "Payroll",
       permission: "payroll",
-      fallback: { href: "/payroll/my-slips", label: "My Slips" },
+      icon: DollarSign,
+      fallback: { href: "/payroll/my-slips", label: "My Slips", icon: DollarSign },
     },
-    { href: "/accounts", label: "Accounts", permission: "accounts" },
+    { href: "/accounts", label: "Accounts", permission: "accounts", icon: Wallet },
   ];
 
   const filteredLinks = user
     ? navLinks
-        .map((link) => {
-          if (!link.permission) return link;
-          if (permissions.includes(link.permission)) return link;
-          if (link.fallback) return link.fallback;
-          return null;
-        })
-        .filter(Boolean)
+      .map((link) => {
+        if (!link.permission) return link;
+        if (permissions.includes(link.permission)) return link;
+        if (link.fallback) return link.fallback;
+        return null;
+      })
+      .filter(Boolean)
     : [];
 
   return (
@@ -45,7 +46,19 @@ export default function Navbar({ user, profile }) {
       {/* Background Effect */}
       <div className="absolute inset-0 bg-linear-to-b from-blue-50/50 dark:from-blue-950/5 to-transparent pointer-events-none" />
       <div className="container mx-auto px-4 sm:px-6 py-2 flex justify-between items-center relative z-10">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4">
+          {/* Mobile Menu Button - Left Side */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
+
           <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <Logo />
           </div>
@@ -59,11 +72,10 @@ export default function Navbar({ user, profile }) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-semibold transition-colors ${
-                  isActive
-                    ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 -mb-[22px] pb-[18px]"
-                    : "text-gray-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white"
-                }`}
+                className={`text-sm font-semibold transition-colors ${isActive
+                  ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 -mb-[22px] pb-[18px]"
+                  : "text-gray-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white"
+                  }`}
               >
                 {link.label}
               </Link>
@@ -73,19 +85,9 @@ export default function Navbar({ user, profile }) {
           <UserMenu user={user} />
         </div>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center gap-4">
+        {/* Mobile User Menu - Right Side */}
+        <div className="md:hidden">
           {user && <UserMenu user={user} />}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
         </div>
       </div>
 
@@ -101,17 +103,18 @@ export default function Navbar({ user, profile }) {
             <div className="p-4 space-y-2">
               {filteredLinks.map((link) => {
                 const isActive = pathname.startsWith(link.href);
+                const Icon = link.icon;
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      isActive
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive
                         ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
                         : "text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800"
-                    }`}
+                      }`}
                   >
+                    {Icon && <Icon className="w-5 h-5" />}
                     {link.label}
                   </Link>
                 );

@@ -7,6 +7,7 @@ import PayrollSettings from "@/models/PayrollSettings";
 import { calculateCompleteSalary } from "@/lib/payrollCalculations";
 import ProfileForm from "./ProfileForm";
 import SalaryDetails from "@/components/profile/SalaryDetails";
+import AttendanceSummary from "@/components/profile/AttendanceSummary";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -56,8 +57,9 @@ export default async function ProfilePage() {
           My Profile
         </h1>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
-          <div>
+          <div className="space-y-8">
             <ProfileForm user={serializedUser} />
+            <AttendanceSummary />
           </div>
 
           <div>
