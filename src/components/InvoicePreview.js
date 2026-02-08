@@ -183,7 +183,7 @@ const InvoicePreviewContent = React.memo(function InvoicePreviewContent({
   if (!profile || !data) return null;
 
   return (
-    <div ref={containerRef} className="w-full overflow-hidden flex justify-center bg-gray-50 dark:bg-slate-900 md:bg-transparent p-4 md:p-0">
+    <div ref={containerRef} className="w-full overflow-hidden flex justify-center bg-gray-50 dark:bg-slate-900 md:bg-transparent p-4 md:p-0 print:!overflow-visible print:!p-0 print:!bg-white">
       <div
         style={{
           transform: `scale(${scale})`,
@@ -191,7 +191,7 @@ const InvoicePreviewContent = React.memo(function InvoicePreviewContent({
           width: '210mm',
           minWidth: '210mm'
         }}
-        className="bg-white shadow-lg mx-auto print:shadow-none print:w-full print:m-0 print:p-0 flex flex-col min-h-[296mm] h-auto p-[40px] relative box-border print:min-h-0 print:h-auto print:transform-none"
+        className="bg-white shadow-lg mx-auto print:!shadow-none print:!w-full print:!m-0 print:!p-0 flex flex-col min-h-[296mm] h-auto p-[40px] relative box-border print:!min-h-0 print:!h-auto print:!transform-none"
       >
         {/* Print Layout Structure */}
         <div className="hidden print:block fixed top-0 left-0 w-full px-10 py-0 z-50">

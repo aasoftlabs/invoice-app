@@ -274,7 +274,7 @@ export default function SlipView({ slipId }) {
         />
       </div>
 
-      <div ref={containerRef} className="w-full overflow-hidden flex justify-center mt-4 print:mt-0 print:block print:overflow-visible">
+      <div ref={containerRef} className="w-full overflow-hidden flex justify-center mt-4 print:mt-0 print:block print:!overflow-visible">
         <div
           style={{
             transform: `scale(${zoom})`,
@@ -283,7 +283,7 @@ export default function SlipView({ slipId }) {
             width: '210mm',
             minWidth: '210mm'
           }}
-          className="print:transform-none print:w-full print:min-w-0"
+          className="print:!transform-none print:!w-full print:!min-w-0"
         >
           <SlipTemplate ref={slipRef} slip={slip} company={company} />
         </div>
