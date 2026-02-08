@@ -58,18 +58,18 @@ export default function LetterheadView({ profile }) {
     <PermissionGate permission="letterhead">
       <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-slate-900 print:bg-white text-gray-900 dark:text-slate-200 font-sans transition-all duration-300">
         {/* Top Navigation Bar / Toolbar Area */}
-        <header className="sticky top-0 z-50 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 shadow-sm print:hidden">
-          <div className="flex items-center justify-between px-4 h-20">
+        <header className="sticky top-0 z-40 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 shadow-sm print:hidden">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between px-2 sm:px-4">
             {/* TinyMCE will teleport its toolbar here via fixed_toolbar_container: '#editor-toolbar' */}
             <div
               id="editor-toolbar"
-              className="flex-1 mr-4 h-full relative"
-             />
+              className="flex-1 min-h-[40px] md:mr-4 relative z-50"
+            />
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-3 min-w-[200px] justify-end relative z-50">
+            <div className="flex items-center gap-2 sm:gap-3 justify-end p-2 md:p-0 border-t md:border-t-0 border-gray-200 dark:border-slate-700 relative md:min-w-[200px]">
               {/* Zoom Controls */}
-              <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-lg p-1 mr-2">
+              <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-lg p-1">
                 <button
                   onClick={zoomOut}
                   className="p-1.5 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-md text-gray-600 dark:text-gray-300"
@@ -78,7 +78,7 @@ export default function LetterheadView({ profile }) {
                   <ChevronLeft className="w-4 h-4 rotate-90" />{" "}
                   {/* Reuse chevron for cleaner bundle if needed or use proper icons */}
                 </button>
-                <span className="text-xs font-mono w-12 text-center text-gray-600 dark:text-gray-300">
+                <span className="text-xs font-mono w-10 sm:w-12 text-center text-gray-600 dark:text-gray-300">
                   {Math.round(zoom * 100)}%
                 </span>
                 <button
@@ -92,29 +92,30 @@ export default function LetterheadView({ profile }) {
 
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md text-white text-sm font-medium transition"
+                className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md text-white text-sm font-medium transition"
               >
-                <Printer className="w-4 h-4" /> Print
+                <Printer className="w-4 h-4" />
+                <span className="hidden sm:inline">Print</span>
               </button>
             </div>
           </div>
         </header>
 
         {/* Main Workspace - Centered A4 Page */}
-        <div className="flex-1 overflow-auto p-8 relative flex justify-center bg-gray-100 dark:bg-slate-900 print:p-0 print:bg-white print:overflow-visible">
+        <div className="flex-1 overflow-auto p-0 md:p-8 relative flex justify-center bg-gray-100 dark:bg-slate-900 print:p-0 print:bg-white print:overflow-visible">
           <div
-            className="transition-transform duration-200 origin-top flex flex-col items-center print-content-container"
+            className="transition-transform duration-200 origin-top flex flex-col items-center print-content-container w-full md:w-auto"
             style={{
               transform: `scale(${zoom})`,
               marginBottom: `${(zoom - 1) * 300}px`, // Compensate spacing when zoomed in
             }}
           >
-            <div className="relative flex flex-col items-center">
+            <div className="relative flex flex-col items-center w-full md:w-auto">
               {/* VISUAL BACKGROUND LAYER REMOVED for Continuous View */}
 
               {/* CONTENT LAYER (Interactive) */}
               {/* We use the Table structure to support robust printing, but make it transparent on screen */}
-              <div className="relative z-10 w-[210mm] min-h-[297mm] print:w-full print:block bg-white shadow-xl print:shadow-none text-gray-900">
+              <div className="relative z-10 w-full md:max-w-[210mm] md:w-[210mm] min-h-[297mm] print:w-full print:block bg-white md:shadow-xl print:shadow-none text-gray-900">
                 {/* Visual Page Break Guides (Screen Only) */}
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-20 print:hidden overflow-hidden">
                   {[...Array(pageCount)].map((_, i) => {
@@ -151,7 +152,7 @@ export default function LetterheadView({ profile }) {
                   {/* Print Headers (Hidden on screen via CSS, Visible in Print) */}
                   <thead className="print-header-group hidden print:table-header-group">
                     <tr>
-                      <td className="w-full px-12 pt-10">
+                      <td className="w-full px-6 sm:px-12 pt-6 sm:pt-10">
                         <LogoHeader profile={profile} />
                         <div className="h-4" />
                       </td>
@@ -162,7 +163,7 @@ export default function LetterheadView({ profile }) {
                   {/* Native Table Footer - Repeats on every page automatically */}
                   <tfoot className="print-footer-group hidden print:table-footer-group">
                     <tr>
-                      <td className="w-full px-12 pb-10 align-bottom">
+                      <td className="w-full px-6 sm:px-12 pb-6 sm:pb-10 align-bottom">
                         <CompanyFooter profile={profile} />
                       </td>
                     </tr>
@@ -170,7 +171,7 @@ export default function LetterheadView({ profile }) {
 
                   <tbody>
                     <tr>
-                      <td className="align-top w-full px-20">
+                      <td className="align-top w-full px-4 sm:px-8 md:px-20">
                         {/* On Screen: Spacer to push text below visual header of Page 1 */}
                         {/* Note: Subsequent pages will overlap visuals. This is a trade-off of this method. */}
                         {/* Header spacer handled by thead in print, but we need visual gap on screen */}
@@ -183,9 +184,9 @@ export default function LetterheadView({ profile }) {
                           className="relative min-h-[820px] pb-[50px]"
                         >
                           {isMounted ? <LetterheadEditorTinyMCE
-                              content={content}
-                              setContent={setContent}
-                            /> : null}
+                            content={content}
+                            setContent={setContent}
+                          /> : null}
                         </main>
                       </td>
                     </tr>
@@ -199,6 +200,11 @@ export default function LetterheadView({ profile }) {
         </div>
 
         <style jsx global>{`
+          /* TinyMCE Auxiliary Container - Must be at body level with highest z-index */
+          .tox.tox-tinymce-aux {
+            z-index: 99999 !important;
+          }
+
           /* TinyMCE specific overrides to make the toolbar blend in */
           /* TinyMCE specific overrides to make the toolbar blend in */
           .tox-tinymce {
@@ -219,14 +225,25 @@ export default function LetterheadView({ profile }) {
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
-            background: transparent !important;
+            background: #1e293b !important; /* slate-800 */
           }
 
-          /* AGGRESSIVE transparency for all toolbar elements including buttons */
+          /* Force toolbar background to match header */
+          #editor-toolbar .tox-editor-header {
+            background: #1e293b !important; /* slate-800 */
+          }
+
+          /* Dark background for all toolbar elements */
           #editor-toolbar .tox-editor-header,
           #editor-toolbar .tox-menubar,
           #editor-toolbar .tox-toolbar-overlord,
-          #editor-toolbar .tox-toolbar__primary,
+          #editor-toolbar .tox-toolbar__primary {
+            background: #1e293b !important; /* slate-800 */
+            border: none !important;
+            box-shadow: none !important;
+          }
+
+          /* Toolbar groups transparent over dark background */
           #editor-toolbar .tox-toolbar__group,
           #editor-toolbar .tox-mbtn,
           #editor-toolbar .tox-tbtn,
@@ -278,6 +295,133 @@ export default function LetterheadView({ profile }) {
           .tox-statusbar,
           .tox-promotion {
             display: none !important;
+          }
+
+          /* Remove white background from TinyMCE container */
+          .tox-sidebar-wrap,
+          .tox .tox-editor-container,
+          .tox .tox-toolbar-overlord {
+            background-color: #1e293b !important; /* slate-800 */
+          }
+
+          /* Ensure menubar matches dark theme */
+          #editor-toolbar .tox-menubar {
+            background-color: #1e293b !important; /* slate-800 */
+          }
+
+          /* Ultra-aggressive dark background for all toolbar containers */
+          .tox-tinymce-inline .tox-editor-header,
+          .tox .tox-toolbar,
+          .tox .tox-toolbar__overflow,
+          .tox .tox-toolbar__primary,
+          .tox-toolbar-overlord,
+          div[role="toolbar"],
+          .tox-editor-container,
+          #editor-toolbar > div,
+          #editor-toolbar .tox,
+          #editor-toolbar .tox-editor-header {
+            background: #1e293b !important; /* slate-800 */
+            background-color: #1e293b !important; /* slate-800 */
+          }
+
+          /* Dark theme for dropdown menus */
+          .tox .tox-menu,
+          .tox .tox-collection,
+          .tox .tox-collection__group,
+          .tox .tox-dialog,
+          .tox .tox-pop,
+          .tox-menu.tox-collection,
+          .tox-collection--list {
+            background-color: #1e293b !important; /* slate-800 */
+            border-color: #334155 !important; /* slate-700 */
+            z-index: 10000 !important;
+          }
+
+          /* Additional z-index for popups and submenus */
+          .tox.tox-tinymce-aux,
+          .tox-tinymce-aux,
+          .tox .tox-pop__dialog,
+          .tox-menu,
+          div[role="menu"],
+          .tox-collection--toolbar {
+            z-index: 10000 !important;
+          }
+
+          /* Fix for selected/active menu items having white background */
+          .tox .tox-collection__item--active,
+          .tox .tox-collection__item--enabled,
+          .tox .tox-collection__item:focus,
+          .tox .tox-mbtn--active,
+          .tox .tox-tbtn--enabled,
+          .tox .tox-tbtn:focus,
+          .tox .tox-tbtn:active {
+            background-color: #334155 !important; /* slate-700 */
+            color: #e2e8f0 !important;
+          }
+
+          /* Specific fix for the Table Picker Grid */
+          .tox .tox-insert-table-picker {
+            background-color: #1e293b !important; /* slate-800 */
+          }
+          .tox .tox-insert-table-picker .tox-insert-table-picker__selected {
+            background-color: #3b82f6 !important; /* blue-500 */
+            border-color: #3b82f6 !important;
+          }
+          .tox .tox-insert-table-picker .tox-insert-table-picker__label,
+          .tox .tox-insert-table-picker__cell {
+            color: #e2e8f0 !important;
+            border-color: #334155 !important; /* slate-700 */
+          }
+
+          /* Additional fixes for white backgrounds in other pickers */
+          .tox .tox-swatches__picker-btn,
+          .tox .tox-collection__item-label {
+            color: #e2e8f0 !important; /* Force light text color */
+          }
+
+          /* Force text color on all headings and paragraph items in the dropdown */
+          .tox .tox-collection__item-label * {
+            color: #e2e8f0 !important; 
+          }
+          
+          /* Fix for the "Visual aids" selected state specifically if it uses a different class */
+          .tox .tox-collection__item[aria-checked="true"] {
+            background-color: #334155 !important;
+          }
+
+          /* Fix for the checkmark icon in menus */
+          .tox .tox-collection__item-accessory svg {
+            fill: #e2e8f0 !important;
+          }
+
+          /* Dropdown menu items */
+          .tox .tox-collection__item,
+          .tox .tox-menu__item {
+            color: #e2e8f0 !important; /* slate-200 */
+          }
+
+          /* Dropdown menu item hover */
+          .tox .tox-collection__item:hover,
+          .tox .tox-menu__item:hover {
+            background-color: #334155 !important; /* slate-700 */
+          }
+
+          /* Dropdown icons */
+          .tox .tox-collection__item-icon svg,
+          .tox .tox-menu__item-icon svg {
+            fill: #e2e8f0 !important; /* slate-200 */
+          }
+
+          /* Hide scrollbars in toolbar area */
+          #editor-toolbar::-webkit-scrollbar,
+          .tox-toolbar::-webkit-scrollbar {
+            display: none;
+          }
+
+          #editor-toolbar,
+          .tox-toolbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
           }
 
           /* Remove the blue focus outline from the editor content */
