@@ -59,8 +59,8 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }) {
         user.role === "admin"
           ? user.permissions
           : (user.permissions || []).filter(
-              (p) => p !== "company" && p !== "users",
-            );
+            (p) => p !== "company" && p !== "users",
+          );
       setEditingUser({
         ...user,
         permissions: cleanedPermissions,
@@ -133,6 +133,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }) {
             Edit User
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
           >

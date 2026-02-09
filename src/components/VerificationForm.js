@@ -85,8 +85,8 @@ export default function VerificationForm({ invoiceId }) {
                     </div>
 
                     {serverError ? <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2">
-                            <AlertTriangle className="w-4 h-4" /> {serverError}
-                        </div> : null}
+                        <AlertTriangle className="w-4 h-4" /> {serverError}
+                    </div> : null}
 
                     <button
                         type="submit"
@@ -124,6 +124,7 @@ export default function VerificationForm({ invoiceId }) {
                     </div>
 
                     <button
+                        type="button"
                         onClick={handleRetry}
                         className="w-full py-3 bg-gray-100 text-gray-700 rounded-lg font-bold hover:bg-gray-200 transition"
                     >

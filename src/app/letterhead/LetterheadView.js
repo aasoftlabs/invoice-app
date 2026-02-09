@@ -111,6 +111,7 @@ export default function LetterheadView({ profile }) {
               {/* Zoom Controls */}
               <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-lg p-1">
                 <button
+                  type="button"
                   onClick={zoomOut}
                   className="p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-md text-gray-600 dark:text-gray-300"
                   title="Zoom Out"
@@ -124,6 +125,7 @@ export default function LetterheadView({ profile }) {
                   </span>
                 </div>
                 <button
+                  type="button"
                   onClick={zoomIn}
                   className="p-1 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-md text-gray-600 dark:text-gray-300"
                   title="Zoom In"
@@ -133,6 +135,7 @@ export default function LetterheadView({ profile }) {
               </div>
 
               <button
+                type="button"
                 onClick={handlePrint}
                 className="flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md text-white text-xs sm:text-sm font-medium transition h-8 sm:h-auto"
               >

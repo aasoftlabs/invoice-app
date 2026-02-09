@@ -79,6 +79,7 @@ export default function PaySalaryModal({ isOpen, onClose, onSuccess, slip }) {
             Record Salary Payment
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
           >

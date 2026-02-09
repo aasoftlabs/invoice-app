@@ -74,8 +74,8 @@ export default function InvoiceRow({ invoice, scrollRef }) {
           {invoice.client.name || invoice.client.company || "Walk-in Customer"}
         </div>
         {invoice.client.name && invoice.client.company ? <div className="text-xs text-gray-400 dark:text-slate-500">
-            {invoice.client.company}
-          </div> : null}
+          {invoice.client.company}
+        </div> : null}
       </td>
       <td className="px-6 py-4 text-right font-bold text-gray-800 dark:text-white">
         ₹{" "}
@@ -93,11 +93,10 @@ export default function InvoiceRow({ invoice, scrollRef }) {
       </td>
       <td className="px-6 py-4">
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-            invoice.status === "Paid"
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${invoice.status === "Paid"
               ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50"
               : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50"
-          }`}
+            }`}
         >
           {invoice.status}
         </span>
@@ -105,6 +104,7 @@ export default function InvoiceRow({ invoice, scrollRef }) {
       <td className="px-6 py-4 text-right">
         <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
+            type="button"
             onClick={handleDelete}
             className="text-gray-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1"
             title="Delete Invoice"

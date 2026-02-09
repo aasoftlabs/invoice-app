@@ -49,15 +49,15 @@ export default function PayrollDashboard() {
   const uniqueStates =
     employees.length > 0
       ? [...new Set(employees.map((e) => e.salary?.state || e.state || "N/A"))]
-          .filter(Boolean)
-          .sort()
+        .filter(Boolean)
+        .sort()
       : [];
 
   const uniqueDepartments =
     employees.length > 0
       ? [...new Set(employees.map((e) => e.department || "N/A"))]
-          .filter(Boolean)
-          .sort()
+        .filter(Boolean)
+        .sort()
       : [];
 
   // Observer for infinite scroll
@@ -157,6 +157,7 @@ export default function PayrollDashboard() {
           </div>
           <div className="flex gap-3 justify-between w-full md:w-auto">
             <button
+              type="button"
               onClick={() => setIsSendBulkModalOpen(true)}
               className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-4 py-2 rounded-lg font-medium transition-all border border-gray-300 dark:border-slate-600 cursor-pointer hover:shadow-md active:scale-95"
             >
@@ -164,6 +165,7 @@ export default function PayrollDashboard() {
               Send Emails
             </button>
             <button
+              type="button"
               onClick={() => router.push("/payroll/generate")}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all cursor-pointer hover:shadow-lg hover:shadow-blue-500/30 active:scale-95"
             >

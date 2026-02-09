@@ -30,6 +30,7 @@ export default function GlobalNoteButton() {
   return (
     <>
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className={`fixed bottom-8 right-8 z-40 text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all group flex items-center gap-2 print:hidden ${themeClasses}`}
         title="Add Note / Reminder"

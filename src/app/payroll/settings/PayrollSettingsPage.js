@@ -149,6 +149,7 @@ export default function PayrollSettingsPage() {
                     <p className="text-gray-500">Configure global payroll parameters and PT slabs</p>
                 </div>
                 <button
+                    type="button"
                     onClick={handleSubmit}
                     disabled={saving}
                     className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
@@ -167,6 +168,7 @@ export default function PayrollSettingsPage() {
                 <div className="lg:col-span-1">
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                         <button
+                            type="button"
                             onClick={() => setActiveTab("general")}
                             className={`w-full text-left px-4 py-3 text-sm font-medium border-l-4 transition-colors ${activeTab === "general"
                                 ? "border-blue-600 bg-blue-50 text-blue-700"
@@ -176,6 +178,7 @@ export default function PayrollSettingsPage() {
                             General & Statutory
                         </button>
                         <button
+                            type="button"
                             onClick={() => setActiveTab("pt")}
                             className={`w-full text-left px-4 py-3 text-sm font-medium border-l-4 transition-colors ${activeTab === "pt"
                                 ? "border-blue-600 bg-blue-50 text-blue-700"
@@ -285,6 +288,7 @@ export default function PayrollSettingsPage() {
                                             className="text-lg font-semibold text-gray-900 border-none focus:ring-0 p-0 w-full bg-transparent placeholder:text-gray-400"
                                         />
                                         <button
+                                            type="button"
                                             onClick={() => removeState(stateIndex)}
                                             className="text-red-500 hover:text-red-700 p-1"
                                         >
@@ -341,6 +345,7 @@ export default function PayrollSettingsPage() {
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                                     />
                                                     <button
+                                                        type="button"
                                                         onClick={() => removeSlab(stateIndex, slabIndex)}
                                                         className="text-red-500 hover:text-red-700"
                                                     >
@@ -350,6 +355,7 @@ export default function PayrollSettingsPage() {
                                             </div>
                                         ))}
                                         <button
+                                            type="button"
                                             onClick={() => addSlab(stateIndex)}
                                             className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 mt-2"
                                         >
@@ -360,6 +366,7 @@ export default function PayrollSettingsPage() {
                             ))}
 
                             <button
+                                type="button"
                                 onClick={addState}
                                 className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-blue-500 hover:text-blue-600 font-medium transition-colors flex items-center justify-center gap-2"
                             >

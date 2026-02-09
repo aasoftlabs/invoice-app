@@ -51,25 +51,24 @@ export default function AttendanceRow({
           value={emp.attendance?.status || "absent"}
           onChange={(e) => onStatusChange(emp._id, e.target.value)}
           disabled={isDisabled}
-          className={`text-xs font-bold uppercase rounded-lg border-none focus:ring-2 focus:ring-blue-500 px-3 py-1.5 cursor-pointer dark:bg-slate-900 ${
-            isBeforeJoining || isFuture
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50"
-              : emp.attendance?.status === "present"
-                ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
-                : emp.attendance?.status === "half_day"
-                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
-                  : emp.attendance?.status === "cl"
-                    ? "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400"
-                    : emp.attendance?.status === "sl"
-                      ? "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
-                      : emp.attendance?.status === "el"
-                        ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400"
-                        : emp.attendance?.status === "pl"
-                          ? "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-400"
-                          : emp.attendance?.status === "holiday"
-                            ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400"
-                            : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
-          }`}
+          className={`text-xs font-bold uppercase rounded-lg border-none focus:ring-2 focus:ring-blue-500 px-3 py-1.5 cursor-pointer dark:bg-slate-900 ${isBeforeJoining || isFuture
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50"
+            : emp.attendance?.status === "present"
+              ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
+              : emp.attendance?.status === "half_day"
+                ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+                : emp.attendance?.status === "cl"
+                  ? "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400"
+                  : emp.attendance?.status === "sl"
+                    ? "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
+                    : emp.attendance?.status === "el"
+                      ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400"
+                      : emp.attendance?.status === "pl"
+                        ? "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-400"
+                        : emp.attendance?.status === "holiday"
+                          ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400"
+                          : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+            }`}
         >
           <option
             value="present"
@@ -85,31 +84,31 @@ export default function AttendanceRow({
           </option>
           {((yearlySummary[emp._id]?.cl || 0) < 12 ||
             emp.attendance?.status === "cl") && (
-            <option
-              value="cl"
-              className="bg-white dark:bg-slate-900 text-orange-600 font-bold"
-            >
-              Casual Leave (CL)
-            </option>
-          )}
+              <option
+                value="cl"
+                className="bg-white dark:bg-slate-900 text-orange-600 font-bold"
+              >
+                Casual Leave (CL)
+              </option>
+            )}
           {((yearlySummary[emp._id]?.sl || 0) < 12 ||
             emp.attendance?.status === "sl") && (
-            <option
-              value="sl"
-              className="bg-white dark:bg-slate-900 text-rose-600 font-bold"
-            >
-              Sick Leave (SL)
-            </option>
-          )}
+              <option
+                value="sl"
+                className="bg-white dark:bg-slate-900 text-rose-600 font-bold"
+              >
+                Sick Leave (SL)
+              </option>
+            )}
           {((yearlySummary[emp._id]?.el || 0) < 15 ||
             emp.attendance?.status === "el") && (
-            <option
-              value="el"
-              className="bg-white dark:bg-slate-900 text-indigo-600 font-bold"
-            >
-              Earned Leave (EL)
-            </option>
-          )}
+              <option
+                value="el"
+                className="bg-white dark:bg-slate-900 text-indigo-600 font-bold"
+              >
+                Earned Leave (EL)
+              </option>
+            )}
           <option
             value="pl"
             className="bg-white dark:bg-slate-900 text-teal-600 font-bold"
@@ -140,10 +139,10 @@ export default function AttendanceRow({
         <span className="text-sm font-semibold text-gray-700 dark:text-slate-300">
           {emp.attendance?.clockIn
             ? new Date(emp.attendance.clockIn).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })
             : "--:--"}
         </span>
       </td>
@@ -151,10 +150,10 @@ export default function AttendanceRow({
         <span className="text-sm font-semibold text-gray-700 dark:text-slate-300">
           {emp.attendance?.clockOut
             ? new Date(emp.attendance.clockOut).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })
             : "--:--"}
         </span>
       </td>
@@ -199,13 +198,15 @@ export default function AttendanceRow({
         ) : (
           <div className="flex justify-end gap-2">
             {isMissedOut ? <button
-                onClick={() => onRegularize(emp._id)}
-                title="Regularize (Fix Exit Time)"
-                className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-md transition-colors"
-              >
-                <Edit3 className="w-5 h-5" />
-              </button> : null}
+              type="button"
+              onClick={() => onRegularize(emp._id)}
+              title="Regularize (Fix Exit Time)"
+              className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-md transition-colors"
+            >
+              <Edit3 className="w-5 h-5" />
+            </button> : null}
             <button
+              type="button"
               onClick={() => onViewHistory && onViewHistory(emp._id)}
               title="View History"
               className="p-1.5 hover:bg-purple-50 text-purple-600 rounded-md transition-colors"

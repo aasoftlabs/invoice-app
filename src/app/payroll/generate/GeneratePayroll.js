@@ -152,6 +152,7 @@ export default function GeneratePayroll() {
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <button
+            type="button"
             onClick={() => router.push("/payroll")}
             className="p-2 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-full transition-colors text-gray-600 dark:text-slate-300"
           >

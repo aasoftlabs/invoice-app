@@ -161,8 +161,8 @@ export default function SettingsPage() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-                        ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 shadow-sm"
-                        : "text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white"
+                      ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 shadow-sm"
+                      : "text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white"
                       }`}
                   >
                     <div className="flex items-center gap-3">
@@ -220,7 +220,7 @@ export default function SettingsPage() {
                   <button
                     disabled={isSubmitting}
                     type="submit"
-                    className="bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 shadow-md transition-all disabled:opacity-50"
+                    className="bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 shadow-md transition-all disabled:opacity-50 whitespace-nowrap"
                   >
                     {isSubmitting ? (
                       <>

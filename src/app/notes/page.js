@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  Plus,
+  Pencil,
   StickyNote,
   Lock,
   Globe,
   Trash2,
   CheckCircle,
   Clock,
+  Pen,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/contexts/ToastContext";
@@ -89,11 +90,12 @@ export default function NotesPage() {
               Keep track of your tasks and meetings
             </p>
           </div>
-          <Spotlight
+          {/* <Spotlight
             className="bg-blue-600 dark:bg-blue-700 rounded-xl shadow-lg"
             spotlightColor="rgba(255, 255, 255, 0.25)"
           >
             <button
+              type="button"
               onClick={() => {
                 setEditingNote(null);
                 setIsModalOpen(true);
@@ -102,7 +104,7 @@ export default function NotesPage() {
             >
               <Plus className="w-5 h-5" /> Note
             </button>
-          </Spotlight>
+          </Spotlight> */}
         </div>
 
         {/* Filters */}
@@ -110,12 +112,12 @@ export default function NotesPage() {
           {["all", "my", "public"].map((f) => (
             <button
               key={f}
+              type="button"
               onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${
-                filter === f
-                  ? "bg-blue-50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
-                  : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
-              }`}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold capitalize transition-all ${filter === f
+                ? "bg-blue-50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
+                : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+                }`}
             >
               {f === "all"
                 ? "All Notes"
@@ -150,11 +152,10 @@ export default function NotesPage() {
             {filteredNotes.map((note) => (
               <Spotlight
                 key={note._id}
-                className={`bg-white dark:bg-slate-800 group rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col cursor-pointer ${
-                  note.status === "Completed"
-                    ? "opacity-75 bg-gray-50 dark:bg-slate-900"
-                    : ""
-                }`}
+                className={`bg-white dark:bg-slate-800 group rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col cursor-pointer ${note.status === "Completed"
+                  ? "opacity-75 bg-gray-50 dark:bg-slate-900"
+                  : ""
+                  }`}
               >
                 <div className="p-6 grow">
                   <div className="flex justify-between items-start mb-4">
@@ -172,25 +173,27 @@ export default function NotesPage() {
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       {(session?.user?.id === note.createdBy?._id ||
                         session?.user?.role === "admin") && (
-                        <>
-                          <button
-                            onClick={() => {
-                              setEditingNote(note);
-                              setIsModalOpen(true);
-                            }}
-                            className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition"
-                          >
-                            <Plus className="w-4 h-4 rotate-45" />{" "}
-                            {/* Use Plus as edit/update placeholder */}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(note._id)}
-                            className="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </>
-                      )}
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingNote(note);
+                                setIsModalOpen(true);
+                              }}
+                              className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition"
+                            >
+                              <Pencil className="w-4 h-4" />{" "}
+                              {/* Use Plus as edit/update placeholder */}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(note._id)}
+                              className="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
                     </div>
                   </div>
 
@@ -231,12 +234,12 @@ export default function NotesPage() {
                     </span>
                   </div>
                   <button
+                    type="button"
                     onClick={() => handleToggleStatus(note)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                      note.status === "Completed"
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                        : "bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 shadow-sm"
-                    }`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${note.status === "Completed"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                      : "bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600 shadow-sm"
+                      }`}
                   >
                     <CheckCircle
                       className={`w-4 h-4 ${note.status === "Completed" ? "fill-green-700 dark:fill-green-400 text-white dark:text-green-900" : ""}`}

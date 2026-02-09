@@ -145,6 +145,7 @@ export default function PayrollTable({
                   <td className="px-6 py-4 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-2">
                       <button
+                        type="button"
                         onClick={() =>
                           router.push(`/payroll/salary/${emp._id}`)
                         }
@@ -154,6 +155,7 @@ export default function PayrollTable({
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
+                        type="button"
                         onClick={() =>
                           router.push(`/payroll/slips?userId=${emp._id}`)
                         }
@@ -221,10 +223,10 @@ export default function PayrollTable({
                   <span className="text-gray-400">DOJ:</span>{" "}
                   {emp.joiningDate
                     ? new Date(emp.joiningDate).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "2-digit",
-                      })
+                      day: "2-digit",
+                      month: "short",
+                      year: "2-digit",
+                    })
                     : "N/A"}
                 </div>
                 <div>
@@ -241,12 +243,14 @@ export default function PayrollTable({
 
               <div className="flex items-center justify-end gap-3 mt-3">
                 <button
+                  type="button"
                   onClick={() => router.push(`/payroll/salary/${emp._id}`)}
                   className="flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-800 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/40 active:scale-95 transition-all"
                 >
                   <Edit className="w-3.5 h-3.5" /> Structure
                 </button>
                 <button
+                  type="button"
                   onClick={() =>
                     router.push(`/payroll/slips?userId=${emp._id}`)
                   }

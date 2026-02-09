@@ -51,6 +51,7 @@ export default function Navbar({ user, profile }) {
         <div className="flex items-center gap-4">
           {/* Mobile Menu Button - Left Side */}
           <button
+            type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
           >

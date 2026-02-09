@@ -126,6 +126,7 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }) {
             Add New User
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
           >

@@ -72,8 +72,8 @@ export default function LoginPage() {
               {...register("email")}
             />
             {errors.email ? <p className="text-xs text-red-500 mt-1">
-                {errors.email.message}
-              </p> : null}
+              {errors.email.message}
+            </p> : null}
           </div>
           <div className="mb-6">
             <label
@@ -103,8 +103,8 @@ export default function LoginPage() {
               </button>
             </div>
             {errors.password ? <p className="text-xs text-red-500 -mt-2">
-                {errors.password.message}
-              </p> : null}
+              {errors.password.message}
+            </p> : null}
           </div>
           <div className="flex items-center justify-between mb-4">
             <Link
@@ -135,6 +135,7 @@ function LoginButton() {
 
   return (
     <button
+      type="submit"
       className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors disabled:opacity-50"
       aria-disabled={pending}
     >

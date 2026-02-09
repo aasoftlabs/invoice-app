@@ -22,7 +22,13 @@ import { useToast } from "@/contexts/ToastContext";
 
 export default function AttendanceAdminGrid({ onViewHistory }) {
   const { addToast } = useToast();
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(() => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  });
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -53,7 +59,10 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
     try {
       setLoading(true);
       setUnauthorized(false);
-      const res = await fetch(`/api/attendance/admin?date=${date}`);
+      setUnauthorized(false);
+      const res = await fetch(`/api/attendance/admin?date=${date}`, {
+        cache: "no-store",
+      });
 
       if (res.status === 401) {
         setUnauthorized(true);
@@ -67,6 +76,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
       // Also fetch yearly summary for usage column
       const yrRes = await fetch(
         `/api/attendance/summary?year=${new Date(date).getFullYear()}`,
+        { cache: "no-store" },
       );
       const yrData = await yrRes.json();
       if (yrData.success) {
@@ -270,6 +280,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
         <div className="flex flex-row items-center gap-2 sm:gap-3 pb-1 sm:pb-0">
           <div className="shrink-0 flex items-center gap-1 sm:gap-2 bg-white dark:bg-slate-800 p-1 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
             <button
+              type="button"
               onClick={() => adjustDate(-1)}
               className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
             >
@@ -285,6 +296,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
               />
             </div>
             <button
+              type="button"
               onClick={() => adjustDate(1)}
               className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
               disabled={date === new Date().toISOString().split("T")[0]}
@@ -294,6 +306,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
           </div>
 
           <button
+            type="button"
             onClick={openMarkHolidayAllModal}
             className="flex-1 sm:flex-initial shrink-0 flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 rounded-xl text-[12px] sm:text-sm font-bold transition-all border border-purple-100 dark:border-purple-800 cursor-pointer active:scale-95 whitespace-nowrap"
           >
@@ -335,6 +348,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
             <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
+                  // eslint-disable-next-line react/no-array-index-key
                   <tr key={i} className="animate-pulse">
                     <td
                       colSpan="8"
@@ -379,6 +393,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
         <div className="md:hidden divide-y divide-gray-100 dark:divide-slate-700">
           {loading ? (
             Array.from({ length: 3 }).map((_, i) => (
+              // eslint-disable-next-line react/no-array-index-key
               <div key={i} className="p-4 animate-pulse space-y-3">
                 <div className="h-4 bg-gray-100 dark:bg-slate-700 rounded w-1/3" />
                 <div className="h-10 bg-gray-50 dark:bg-slate-800 rounded" />
@@ -401,6 +416,7 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                     </div>
                   </div>
                   <button
+                    type="button"
                     onClick={() => onViewHistory && onViewHistory(emp._id)}
                     className="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg"
                   >
@@ -424,19 +440,18 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                         }
                       }}
                       disabled={updating === emp._id}
-                      className={`text-[11px] font-bold uppercase rounded-lg border-none focus:ring-2 focus:ring-blue-500 px-2 py-1.5 dark:bg-slate-900 ${
-                        emp.attendance?.status === "present"
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
-                          : emp.attendance?.status === "half_day"
-                            ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
-                            : ["cl", "sl", "el", "pl"].includes(
-                                  emp.attendance?.status,
-                                )
-                              ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400"
-                              : emp.attendance?.status === "holiday"
-                                ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400"
-                                : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
-                      }`}
+                      className={`text-[11px] font-bold uppercase rounded-lg border-none focus:ring-2 focus:ring-blue-500 px-2 py-1.5 dark:bg-slate-900 ${emp.attendance?.status === "present"
+                        ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
+                        : emp.attendance?.status === "half_day"
+                          ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"
+                          : ["cl", "sl", "el", "pl"].includes(
+                            emp.attendance?.status,
+                          )
+                            ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400"
+                            : emp.attendance?.status === "holiday"
+                              ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400"
+                              : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400"
+                        }`}
                     >
                       <option
                         value="present"
@@ -452,31 +467,31 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                       </option>
                       {((yearlySummary[emp._id]?.cl || 0) < 12 ||
                         emp.attendance?.status === "cl") && (
-                        <option
-                          value="cl"
-                          className="bg-white dark:bg-slate-900 text-orange-600 font-bold"
-                        >
-                          Casual Leave (CL)
-                        </option>
-                      )}
+                          <option
+                            value="cl"
+                            className="bg-white dark:bg-slate-900 text-orange-600 font-bold"
+                          >
+                            Casual Leave (CL)
+                          </option>
+                        )}
                       {((yearlySummary[emp._id]?.sl || 0) < 12 ||
                         emp.attendance?.status === "sl") && (
-                        <option
-                          value="sl"
-                          className="bg-white dark:bg-slate-900 text-rose-600 font-bold"
-                        >
-                          Sick Leave (SL)
-                        </option>
-                      )}
+                          <option
+                            value="sl"
+                            className="bg-white dark:bg-slate-900 text-rose-600 font-bold"
+                          >
+                            Sick Leave (SL)
+                          </option>
+                        )}
                       {((yearlySummary[emp._id]?.el || 0) < 15 ||
                         emp.attendance?.status === "el") && (
-                        <option
-                          value="el"
-                          className="bg-white dark:bg-slate-900 text-indigo-600 font-bold"
-                        >
-                          Earned Leave (EL)
-                        </option>
-                      )}
+                          <option
+                            value="el"
+                            className="bg-white dark:bg-slate-900 text-indigo-600 font-bold"
+                          >
+                            Earned Leave (EL)
+                          </option>
+                        )}
                       <option
                         value="pl"
                         className="bg-white dark:bg-slate-900 text-teal-600 font-bold"
@@ -513,12 +528,12 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                         <div className="text-sm font-bold text-gray-700 dark:text-slate-300">
                           {emp.attendance?.clockIn
                             ? new Date(
-                                emp.attendance.clockIn,
-                              ).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              })
+                              emp.attendance.clockIn,
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })
                             : "--:--"}
                         </div>
                       </div>
@@ -529,12 +544,12 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                         <div className="text-sm font-bold text-gray-700 dark:text-slate-300">
                           {emp.attendance?.clockOut
                             ? new Date(
-                                emp.attendance.clockOut,
-                              ).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              })
+                              emp.attendance.clockOut,
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })
                             : "--:--"}
                         </div>
                       </div>
@@ -558,8 +573,9 @@ export default function AttendanceAdminGrid({ onViewHistory }) {
                     </div>
                   </div>
 
-                  {emp.attendance?.clockIn && !emp.attendance?.clockOut && (
+                  {!!emp.attendance?.clockIn && !emp.attendance?.clockOut && (
                     <button
+                      type="button"
                       onClick={() => openRegularizeModal(emp._id)}
                       className="w-full flex items-center justify-center gap-2 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-lg border border-blue-100 dark:border-blue-800"
                     >

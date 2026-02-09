@@ -191,19 +191,21 @@ export default function AccountsPage() {
               {/* Tab Switcher */}
               <div className="bg-white dark:bg-slate-800 p-1 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 flex">
                 <button
+                  type="button"
                   onClick={() => setActiveTab('transactions')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === 'transactions'
-                      ? "bg-blue-600 text-white shadow"
-                      : "text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700"
+                    ? "bg-blue-600 text-white shadow"
+                    : "text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700"
                     }`}
                 >
                   <List className="w-4 h-4" /> Transactions
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveTab('balance-sheet')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === 'balance-sheet'
-                      ? "bg-blue-600 text-white shadow"
-                      : "text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700"
+                    ? "bg-blue-600 text-white shadow"
+                    : "text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700"
                     }`}
                 >
                   <BarChart className="w-4 h-4" /> Balance Sheet
@@ -215,6 +217,7 @@ export default function AccountsPage() {
                 spotlightColor="rgba(255, 255, 255, 0.25)"
               >
                 <button
+                  type="button"
                   onClick={() => {
                     setEditingTransaction(null);
                     setIsModalOpen(true);
@@ -383,6 +386,7 @@ export default function AccountsPage() {
                                   <Edit2 className="w-4 h-4" />
                                 </button>
                                 <button
+                                  type="button"
                                   onClick={() => handleDelete(t._id)}
                                   className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                                 >
@@ -445,12 +449,14 @@ export default function AccountsPage() {
 
                             <div className="flex gap-3">
                               <button
+                                type="button"
                                 onClick={() => handleEdit(t)}
                                 className="text-blue-600 dark:text-blue-400"
                               >
                                 <Edit2 className="w-4 h-4" />
                               </button>
                               <button
+                                type="button"
                                 onClick={() => handleDelete(t._id)}
                                 className="text-red-600 dark:text-red-400"
                               >

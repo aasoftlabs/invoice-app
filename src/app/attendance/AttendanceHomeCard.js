@@ -17,14 +17,38 @@ export default function AttendanceHomeCard({ user }) {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/attendance/mark");
+      const res = await fetch("/api/attendance/mark", { cache: "no-store" });
       const data = await res.json();
 
-      const today = new Date().toISOString().split("T")[0];
-      const todayRecord = data.find((r) => r.date.startsWith(today));
-
-      setRecord(todayRecord || null);
       setRecords(data);
+
+      // Find today's record - use IST timezone throughout
+      let foundRecord = null;
+
+      if (data && data.length > 0) {
+        // Get today's date in IST as YYYY-MM-DD
+        const now = new Date();
+        const istDateStr = now.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+        console.log("Searching for IST date:", istDateStr);
+        console.log("Records:", data.map(r => ({ date: r.date, clockIn: r.clockIn })));
+
+        // Find a record where the date matches today's IST date
+        foundRecord = data.find(record => {
+          if (!record || !record.date) return false;
+
+          // Get the record's date in IST format YYYY-MM-DD
+          const recordDate = new Date(record.date);
+          const recordISTStr = recordDate.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+          console.log("Comparing:", recordISTStr, "===", istDateStr, "?", recordISTStr === istDateStr);
+          return recordISTStr === istDateStr;
+        });
+
+        console.log("Found record:", foundRecord);
+      }
+
+      setRecord(foundRecord);
 
       // Fetch user specific DOJ
       const userRes = await fetch("/api/users/profile");
@@ -34,7 +58,7 @@ export default function AttendanceHomeCard({ user }) {
       }
 
       // If clocked out today, show calendar by default
-      if (todayRecord?.clockOut) {
+      if (foundRecord && foundRecord.clockOut) {
         setView("calendar");
       } else {
         setView("punch");
@@ -59,8 +83,9 @@ export default function AttendanceHomeCard({ user }) {
 
       setRecord(data.attendance);
 
+      // Force update by using a key or updating state
       // Refresh all records to update calendar
-      const recordsRes = await fetch("/api/attendance/mark");
+      const recordsRes = await fetch("/api/attendance/mark", { cache: "no-store" });
       const recordsData = await recordsRes.json();
       setRecords(recordsData);
 
@@ -71,6 +96,22 @@ export default function AttendanceHomeCard({ user }) {
       alert(error.message);
     } finally {
       setPunching(false);
+    }
+  };
+
+  const handleDelete = async (dateStr) => {
+    try {
+      const res = await fetch(`/api/attendance/delete?date=${dateStr}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      alert("Attendance record deleted successfully");
+      // Refresh the data
+      fetchData();
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -98,6 +139,7 @@ export default function AttendanceHomeCard({ user }) {
           )}
         </h3>
         <button
+          type="button"
           onClick={() => setView(view === "punch" ? "calendar" : "punch")}
           className="text-xs font-medium text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
         >
@@ -109,7 +151,7 @@ export default function AttendanceHomeCard({ user }) {
         {view === "punch" ? (
           <div>
             {joiningDate &&
-            new Date().toISOString().split("T")[0] <
+              new Date().toISOString().split("T")[0] <
               new Date(joiningDate).toISOString().split("T")[0] ? (
               <div className="text-center py-12">
                 <Info className="w-12 h-12 text-amber-500 mx-auto mb-4" />
@@ -124,6 +166,7 @@ export default function AttendanceHomeCard({ user }) {
               </div>
             ) : (
               <AttendancePunchCard
+                key={record ? record.updatedAt : "new"}
                 record={record}
                 onPunch={handlePunch}
                 loading={punching}
@@ -132,7 +175,7 @@ export default function AttendanceHomeCard({ user }) {
             )}
           </div>
         ) : (
-          <AttendanceCalendar records={records} minimal />
+          <AttendanceCalendar records={records} minimal onDelete={handleDelete} />
         )}
       </div>
     </Spotlight>

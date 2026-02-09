@@ -106,6 +106,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition"
           >
@@ -193,7 +194,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
               </div>
             </div>
 
-            <div className="w-full md:w-1/3 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-2xl border border-amber-100 dark:border-amber-800 flex flex-col justify-center">
+            {/* <div className="w-full md:w-1/3 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-2xl border border-amber-100 dark:border-amber-800 flex flex-col justify-center">
               <label className="block text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-widest mb-3 text-center">
                 Status
               </label>
@@ -207,7 +208,7 @@ export default function NoteModal({ isOpen, onClose, onSuccess, initialData }) {
                 <option value="Pending">Pending</option>
                 <option value="Completed">Completed</option>
               </select>
-            </div>
+            </div> */}
           </div>
 
           {/* Action Buttons */}

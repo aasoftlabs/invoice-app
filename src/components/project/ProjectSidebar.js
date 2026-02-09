@@ -62,6 +62,7 @@ export default function ProjectSidebar() {
 
         {/* Toggle Button */}
         <button
+          type="button"
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={`p-2 bg-white dark:bg-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex shrink-0 items-center justify-center ${effectivelyCollapsed ? "mx-auto" : ""}`}
           title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
@@ -83,11 +84,10 @@ export default function ProjectSidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center group relative ${effectivelyCollapsed ? "justify-center" : "gap-3"} px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                isActive
+              className={`flex items-center group relative ${effectivelyCollapsed ? "justify-center" : "gap-3"} px-3 py-2.5 rounded-lg transition-all duration-200 ${isActive
                   ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold"
                   : "text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400"
-              }`}
+                }`}
               title={effectivelyCollapsed ? item.name : undefined}
             >
               <Icon className="w-5 h-5 shrink-0" />

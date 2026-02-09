@@ -255,6 +255,7 @@ export default function MySlips({ userId }) {
 
               <div className="flex gap-2">
                 <button
+                  type="button"
                   onClick={() => router.push(`/payroll/slip/${slip._id}`)}
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
@@ -263,6 +264,7 @@ export default function MySlips({ userId }) {
                 </button>
                 {session?.user?.role === "admin" && (
                   <button
+                    type="button"
                     onClick={() => handleRecreate(slip)}
                     disabled={recreateLoading === slip._id}
                     className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -275,6 +277,7 @@ export default function MySlips({ userId }) {
                 )}
                 {session?.user?.role === "admin" && (
                   <button
+                    type="button"
                     onClick={() => handleDelete(slip._id)}
                     disabled={recreateLoading === slip._id}
                     className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-slate-600 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

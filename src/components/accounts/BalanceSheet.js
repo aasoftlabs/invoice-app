@@ -238,6 +238,7 @@ export default function BalanceSheet() {
             {/* Add Item Button */}
             <div className="fixed bottom-8 right-8">
                 <button
+                    type="button"
                     onClick={() => setIsAdding(!isAdding)}
                     className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-105"
                 >
@@ -344,6 +345,7 @@ function Section({ title, items, total, icon, onDelete }) {
                                 <span className="font-mono text-gray-700 dark:text-slate-300">₹ {item.amount.toLocaleString('en-IN')}</span>
                                 {!item.isSystem && (
                                     <button
+                                        type="button"
                                         onClick={() => onDelete(item._id, item.name)}
                                         className="text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                                         title="Delete Item"

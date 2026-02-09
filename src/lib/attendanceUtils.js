@@ -1,5 +1,6 @@
 import Attendance from "@/models/Attendance";
 import User from "@/models/User";
+import { getISTDate } from "@/lib/dateUtils";
 
 /**
  * Marks or updates attendance for a user on a specific date.
@@ -12,24 +13,19 @@ export async function markAttendance(userId, date, source = "self") {
   try {
 
     const activityTime = new Date(date);
-    const activityDate = new Date(
-      activityTime.getFullYear(),
-      activityTime.getMonth(),
-      activityTime.getDate(),
-    );
+    // Use IST date for the record key "date"
+    const activityDate = getISTDate(activityTime);
 
     // Fetch user to check joining date
     const user = await User.findById(userId).select("joiningDate");
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getISTDate(new Date());
 
     if (activityDate > today) {
       throw new Error("Cannot mark attendance for future dates");
     }
 
     if (user?.joiningDate) {
-      const joiningDate = new Date(user.joiningDate);
-      joiningDate.setHours(0, 0, 0, 0);
+      const joiningDate = getISTDate(new Date(user.joiningDate));
       if (activityDate < joiningDate) {
         throw new Error(
           "Cannot mark attendance before joining date (" +

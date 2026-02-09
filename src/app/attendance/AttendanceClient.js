@@ -136,6 +136,28 @@ export default function AttendanceClient({ user }) {
     setYearlyStats(null);
   };
 
+  const handleDelete = async (dateStr) => {
+    try {
+      // If admin is viewing someone else's history, pass their userId
+      let url = `/api/attendance/delete?date=${dateStr}`;
+      if (viewingUser) {
+        url += `&userId=${viewingUser}`;
+      }
+
+      const res = await fetch(url, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      alert("Attendance record deleted successfully");
+      // Refresh the data
+      fetchRecords(viewingUser);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -154,26 +176,26 @@ export default function AttendanceClient({ user }) {
         {isAdmin ? (
           <div className="flex p-1 bg-gray-100 dark:bg-slate-800 rounded-xl w-full md:w-fit overflow-x-auto no-scrollbar">
             <button
+              type="button"
               onClick={() => {
                 setActiveTab("admin");
                 setViewingUser(null);
               }}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${
-                activeTab === "admin"
-                  ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700 dark:hover:text-slate-300"
-              }`}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${activeTab === "admin"
+                ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
+                : "text-gray-500 hover:text-gray-700 dark:hover:text-slate-300"
+                }`}
             >
               <Users className="w-4 h-4" />
               Dashboard
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab("me")}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${
-                activeTab === "me"
-                  ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700 dark:hover:text-slate-300"
-              }`}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${activeTab === "me"
+                ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
+                : "text-gray-500 hover:text-gray-700 dark:hover:text-slate-300"
+                }`}
             >
               <History className="w-4 h-4" />
               My Attendance
@@ -202,6 +224,7 @@ export default function AttendanceClient({ user }) {
                   )}
                 </h3>
                 <button
+                  type="button"
                   onClick={() =>
                     setMyAttendanceView(
                       myAttendanceView === "punch" ? "calendar" : "punch",
@@ -238,6 +261,7 @@ export default function AttendanceClient({ user }) {
       ) : viewingUser ? (
         <div className="space-y-6">
           <button
+            type="button"
             onClick={handleBackToGrid}
             className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
           >
@@ -261,7 +285,7 @@ export default function AttendanceClient({ user }) {
               />
             </div>
             <div className="lg:col-span-2">
-              <AttendanceHistoryTable records={records} loading={loading} />
+              <AttendanceHistoryTable records={records} loading={loading} onDelete={handleDelete} />
             </div>
           </div>
         </div>

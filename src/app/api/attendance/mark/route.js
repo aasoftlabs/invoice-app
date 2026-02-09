@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoose";
 import Attendance from "@/models/Attendance";
 import { markAttendance } from "@/lib/attendanceUtils";
+import { getISTDate } from "@/lib/dateUtils";
 
 export async function POST(req) {
   try {
@@ -52,9 +53,9 @@ export async function GET(req) {
     const userId = session.user.id;
 
     // Fetch user's attendance for the current month
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const now = getISTDate(new Date());
+    const startOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
+    const endOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999));
 
     const records = await Attendance.find({
       userId,

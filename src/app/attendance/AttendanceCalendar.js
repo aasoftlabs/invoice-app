@@ -7,10 +7,11 @@ import {
   Info,
   ChevronLeft,
   ChevronRight,
+  Trash2,
 } from "lucide-react";
 import { useState } from "react";
 
-export default function AttendanceCalendar({ records, minimal = false }) {
+export default function AttendanceCalendar({ records, minimal = false, onDelete }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
@@ -78,12 +79,14 @@ export default function AttendanceCalendar({ records, minimal = false }) {
         </h3>
         <div className="flex gap-1">
           <button
+            type="button"
             onClick={prevMonth}
             className="p-1 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-md transition-colors text-gray-500"
           >
             <ChevronLeft className={`${minimal ? "w-3 h-3" : "w-4 h-4"}`} />
           </button>
           <button
+            type="button"
             onClick={nextMonth}
             className="p-1 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-md transition-colors text-gray-500"
           >
@@ -96,7 +99,7 @@ export default function AttendanceCalendar({ records, minimal = false }) {
         className={`grid grid-cols-7 gap-1 text-center text-[9px] font-bold text-gray-400 ${minimal ? "mb-0.5" : "mb-1"} uppercase tracking-wider`}
       >
         {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-          <div key={i}>{d}</div>
+          <div key={i}>{d}</div> // eslint-disable-line react/no-array-index-key
         ))}
       </div>
 
@@ -105,25 +108,39 @@ export default function AttendanceCalendar({ records, minimal = false }) {
       >
         {days.map((d, i) => (
           <div
-            key={i}
-            className={`aspect-square flex flex-col items-center justify-center rounded-md border ${minimal ? "text-[10px]" : "text-xs"} transition-all ${
-              d === null
-                ? "border-transparent"
-                : d.record
-                  ? getStatusColor(d.record.status)
-                  : "bg-gray-50 dark:bg-slate-900/50 text-gray-400 border-gray-100 dark:border-slate-800"
-            }`}
+            key={i} // eslint-disable-line react/no-array-index-key
+            className={`group relative aspect-square flex flex-col items-center justify-center rounded-md border ${minimal ? "text-[10px]" : "text-xs"} transition-all ${d === null
+              ? "border-transparent"
+              : d.record
+                ? getStatusColor(d.record.status)
+                : "bg-gray-50 dark:bg-slate-900/50 text-gray-400 border-gray-100 dark:border-slate-800"
+              }`}
           >
             {d ? <>
-                <span className="font-medium">{d.day}</span>
-                {d.record ? <div className={`${minimal ? "mt-0" : "mt-0.5"}`}>
-                    {d.record.status === "present" && (
-                      <div
-                        className={`${minimal ? "w-0.5 h-0.5" : "w-1 h-1"} rounded-full bg-current`}
-                      />
-                    )}
-                  </div> : null}
-              </> : null}
+              <span className="font-medium">{d.day}</span>
+              {d.record ? <div className={`${minimal ? "mt-0" : "mt-0.5"}`}>
+                {d.record.status === "present" && (
+                  <div
+                    className={`${minimal ? "w-0.5 h-0.5" : "w-1 h-1"} rounded-full bg-current`}
+                  />
+                )}
+              </div> : null}
+              {d.record && onDelete && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const dateStr = new Date(year, month, d.day).toISOString().split("T")[0];
+                    if (window.confirm("Delete this attendance record?")) {
+                      onDelete(dateStr);
+                    }
+                  }}
+                  className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 p-0.5 bg-red-500 hover:bg-red-600 text-white rounded-bl rounded-tr transition-opacity"
+                  title="Delete"
+                >
+                  <Trash2 className="w-2.5 h-2.5" />
+                </button>
+              )}
+            </> : null}
           </div>
         ))}
       </div>

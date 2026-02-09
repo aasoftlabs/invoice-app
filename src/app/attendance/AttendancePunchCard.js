@@ -53,10 +53,10 @@ export default function AttendancePunchCard({
           <div className="text-sm font-medium text-gray-500 dark:text-slate-400">
             {mounted
               ? now.toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })
               : "-- --- ----"}
           </div>
         </div>
@@ -68,11 +68,11 @@ export default function AttendancePunchCard({
         >
           {mounted
             ? now.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true,
-              })
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: true,
+            })
             : "--:--:-- --"}
         </div>
         <div className="text-[9px] sm:text-[10px] text-gray-500 mb-4 lowercase italic tracking-wider">
@@ -109,15 +109,15 @@ export default function AttendancePunchCard({
         </div>
 
         <button
+          type="button"
           onClick={onPunch}
           disabled={loading}
-          className={`w-full ${minimal ? "py-2.5 sm:py-3 text-sm sm:text-base" : "py-3.5 sm:py-4 text-base sm:text-lg"} rounded-xl font-bold flex items-center justify-center gap-2 transition-all transform active:scale-95 cursor-pointer ${
-            isFinished
+          className={`w-full ${minimal ? "py-2.5 sm:py-3 text-sm sm:text-base" : "py-3.5 sm:py-4 text-base sm:text-lg"} rounded-xl font-bold flex items-center justify-center gap-2 transition-all transform active:scale-95 cursor-pointer ${isFinished
               ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800 cursor-default"
               : isClockedIn
                 ? "bg-amber-600 hover:bg-amber-700 text-white shadow-lg shadow-amber-200 dark:shadow-none"
                 : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-none"
-          }`}
+            }`}
         >
           {loading ? (
             <Loader2 className="w-5 h-5 animate-spin" />

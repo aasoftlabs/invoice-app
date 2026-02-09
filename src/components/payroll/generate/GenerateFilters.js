@@ -42,6 +42,7 @@ export default function GenerateFilters({
           </div>
 
           <button
+            type="button"
             onClick={clearFilters}
             className="text-[10px] sm:text-xs flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition-all cursor-pointer active:scale-95 border border-red-100 dark:border-red-800/50"
           >

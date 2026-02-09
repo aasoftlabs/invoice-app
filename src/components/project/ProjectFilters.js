@@ -52,6 +52,7 @@ export default function ProjectFilters({
           </div>
           {/* Clear Button */}
           <button
+            type="button"
             onClick={clearFilters}
             className="text-xs flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors cursor-pointer active:scale-95 ml-2"
             title="Reset to default filters"

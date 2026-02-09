@@ -282,6 +282,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <button
+            type="button"
             onClick={() => router.back()}
             className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
           >
@@ -298,6 +299,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
         </div>
         <div className="flex items-center gap-2 w-full md:w-auto">
           <button
+            type="button"
             onClick={handleReset}
             disabled={saving}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 px-3 md:px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 cursor-pointer active:scale-95"
@@ -306,6 +308,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
             Reset
           </button>
           <button
+            type="button"
             onClick={handleDelete}
             disabled={saving}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 md:px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 cursor-pointer active:scale-95"
@@ -314,6 +317,7 @@ export default function SalaryStructureForm({ userId, sessionUserId }) {
             Delete
           </button>
           <button
+            type="button"
             onClick={handleSubmit}
             disabled={saving}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 cursor-pointer shadow-sm hover:shadow-blue-500/20 active:scale-95"

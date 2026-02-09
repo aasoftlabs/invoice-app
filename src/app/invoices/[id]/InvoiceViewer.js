@@ -17,6 +17,7 @@ export default function InvoiceViewer({ invoice, profile }) {
         {/* Toolbar (Hidden on Print) */}
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:hidden">
           <button
+            type="button"
             onClick={() => router.back()}
             className="flex items-center gap-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white font-semibold transition-all hover:-translate-x-1"
           >
@@ -30,6 +31,7 @@ export default function InvoiceViewer({ invoice, profile }) {
               <Pencil className="w-4 h-4" /> Edit Invoice
             </Link>
             <button
+              type="button"
               onClick={handlePrint}
               className="flex-1 md:flex-none justify-center bg-slate-800 dark:bg-slate-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-slate-900 dark:hover:bg-slate-600 transition-all font-bold shadow-lg hover:shadow-slate-500/20 active:scale-95 text-sm md:text-base"
             >

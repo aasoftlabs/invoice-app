@@ -16,6 +16,7 @@ export default function SlipActions({
       className="max-w-[210mm] mx-auto mb-6 flex justify-between items-center print:hidden px-2 md:px-0"
     >
       <button
+        type="button"
         onClick={onBack}
         className="flex items-center gap-1.5 md:gap-2 text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
       >
@@ -25,6 +26,7 @@ export default function SlipActions({
       <div className="flex gap-2 md:gap-3">
         {status !== "paid" && onPay ? (
           <button
+            type="button"
             onClick={onPay}
             className="flex items-center gap-2 px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm font-medium cursor-pointer active:scale-95"
             title="Pay & Record"
@@ -36,6 +38,7 @@ export default function SlipActions({
 
         {onSendEmail ? (
           <button
+            type="button"
             onClick={onSendEmail}
             disabled={emailLoading}
             className="flex items-center gap-2 px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm font-medium disabled:opacity-50 cursor-pointer active:scale-95"
@@ -51,6 +54,7 @@ export default function SlipActions({
         ) : null}
 
         <button
+          type="button"
           onClick={onPrint}
           className="flex items-center gap-2 px-3 md:px-4 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 transition-all shadow-sm cursor-pointer active:scale-95"
           title="Print"
@@ -59,6 +63,7 @@ export default function SlipActions({
           <span className="hidden md:inline">Print</span>
         </button>
         <button
+          type="button"
           onClick={onDownload}
           disabled={downloadLoading}
           className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm disabled:opacity-50 cursor-pointer active:scale-95"

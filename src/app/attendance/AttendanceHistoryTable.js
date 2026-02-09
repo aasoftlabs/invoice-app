@@ -7,9 +7,10 @@ import {
   Info,
   History,
   Calendar,
+  Trash2,
 } from "lucide-react";
 
-export default function AttendanceHistoryTable({ records, loading }) {
+export default function AttendanceHistoryTable({ records, loading, onDelete }) {
   const getStatusBadge = (rec) => {
     switch (rec.status) {
       case "present":
@@ -114,6 +115,7 @@ export default function AttendanceHistoryTable({ records, loading }) {
               <th className="px-6 py-3 text-center">Working Hours</th>
               <th className="px-6 py-3">Status</th>
               <th className="px-6 py-3">Source</th>
+              <th className="px-6 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
@@ -174,6 +176,23 @@ export default function AttendanceHistoryTable({ records, loading }) {
                     <span className="text-xs text-gray-500 capitalize px-2 py-0.5 border border-gray-200 dark:border-slate-600 rounded">
                       {rec.source}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {onDelete && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const dateStr = new Date(rec.date).toISOString().split('T')[0];
+                          if (window.confirm('Delete this attendance record?')) {
+                            onDelete(dateStr);
+                          }
+                        }}
+                        className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-md transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
@@ -239,10 +258,25 @@ export default function AttendanceHistoryTable({ records, loading }) {
                 </div>
               </div>
 
-              <div className="flex justify-start">
+              <div className="flex justify-between items-center">
                 <span className="text-[10px] text-gray-500 font-medium px-2 py-0.5 border border-gray-100 dark:border-slate-700 rounded bg-gray-50/50 dark:bg-slate-800/50">
                   Source: {rec.source}
                 </span>
+                {onDelete && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const dateStr = new Date(rec.date).toISOString().split('T')[0];
+                      if (window.confirm('Delete this attendance record?')) {
+                        onDelete(dateStr);
+                      }
+                    }}
+                    className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
+                    title="Delete"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
           ))

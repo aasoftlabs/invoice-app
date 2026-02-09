@@ -119,6 +119,7 @@ export default function SalaryEarnings({
               />
             </div>
             <button
+              type="button"
               onClick={() => removeDynamicField("otherAllowances", index)}
               className="w-full md:w-auto flex justify-center items-center text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 p-2 rounded-lg transition-colors cursor-pointer"
             >

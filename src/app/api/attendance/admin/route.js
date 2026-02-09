@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoose";
 import Attendance from "@/models/Attendance";
 import User from "@/models/User";
+import { getISTDate } from "@/lib/dateUtils";
 
 export async function GET(req) {
   try {
@@ -23,8 +24,7 @@ export async function GET(req) {
       return NextResponse.json({ error: "Date is required" }, { status: 400 });
     }
 
-    const targetDate = new Date(dateQuery);
-    targetDate.setHours(0, 0, 0, 0);
+    const targetDate = getISTDate(new Date(dateQuery));
 
     // Fetch all employees enabled for payroll
     const employees = await User.find({ enablePayroll: { $ne: false } }).select(
@@ -81,11 +81,9 @@ export async function POST(req) {
       );
     }
 
-    const targetDate = new Date(date);
-    targetDate.setHours(0, 0, 0, 0);
+    const targetDate = getISTDate(new Date(date));
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getISTDate(new Date());
 
     if (targetDate > today) {
       return NextResponse.json(
