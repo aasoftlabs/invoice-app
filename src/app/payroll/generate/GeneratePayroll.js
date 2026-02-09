@@ -118,9 +118,29 @@ export default function GeneratePayroll() {
     setProcessing(false);
   };
 
-  const filteredEmployees = employees.filter((e) =>
-    e.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredEmployees = employees.filter((e) => {
+    const matchesSearch = e.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Filter by Date of Joining (DOJ)
+    // Employee must have joined on or before the last day of the selected month
+    let matchesDOJ = true;
+    if (e.joiningDate) {
+      const joinDate = new Date(e.joiningDate);
+      // Reset time portion of joinDate to avoid timezone issues affecting the day
+      joinDate.setHours(0, 0, 0, 0);
+
+      // Calculate last day of selected month
+      // selectedMonth is 1-indexed. JS Date month is 0-indexed.
+      // new Date(y, m, 0) gets the last day of the previous month (m-1).
+      // So new Date(y, selectedMonth, 0) gets the last day of selectedMonth.
+      const periodEndDate = new Date(selectedYear, selectedMonth, 0);
+      periodEndDate.setHours(23, 59, 59, 999);
+
+      matchesDOJ = joinDate <= periodEndDate;
+    }
+
+    return matchesSearch && matchesDOJ;
+  });
 
   const getSlipStatus = (userId) => {
     return slips.find((s) => s.userId._id === userId);
