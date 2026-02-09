@@ -10,7 +10,7 @@ import User from "@/models/User";
  */
 export async function markAttendance(userId, date, source = "self") {
   try {
-    console.log("MARKING ATTENDANCE:", { userId, date, source });
+
     const activityTime = new Date(date);
     const activityDate = new Date(
       activityTime.getFullYear(),
@@ -33,13 +33,12 @@ export async function markAttendance(userId, date, source = "self") {
       if (activityDate < joiningDate) {
         throw new Error(
           "Cannot mark attendance before joining date (" +
-            joiningDate.toLocaleDateString() +
-            ")",
+          joiningDate.toLocaleDateString() +
+          ")",
         );
       }
     }
 
-    console.log("ACTIVITY DATE:", activityDate);
 
     // Check if attendance already exists for this day
     let attendance = await Attendance.findOne({
@@ -47,11 +46,11 @@ export async function markAttendance(userId, date, source = "self") {
       date: activityDate,
     });
 
-    console.log("EXISTING ATTENDANCE:", attendance ? "Found" : "Not Found");
+
 
     if (!attendance) {
       // First activity of the day: Clock In
-      console.log("CREATING NEW ATTENDANCE RECORD");
+
       attendance = await Attendance.create({
         userId,
         date: activityDate,
@@ -61,7 +60,7 @@ export async function markAttendance(userId, date, source = "self") {
       });
     } else {
       // Update Clock Out if this activity is later than current clockIn
-      console.log("UPDATING EXISTING ATTENDANCE RECORD");
+
       if (!attendance.clockIn || activityTime < attendance.clockIn) {
         attendance.clockIn = activityTime;
       }
@@ -78,7 +77,7 @@ export async function markAttendance(userId, date, source = "self") {
 
       await attendance.save();
     }
-    console.log("ATTENDANCE SUCCESSFUL");
+
     return attendance;
   } catch (error) {
     console.error("ERROR IN markAttendance UTILITY:", {

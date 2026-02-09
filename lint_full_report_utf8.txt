@@ -4,11 +4,12 @@
 
 
 D:\CODE\invoice-app\src\app\accounts\page.js
-  188:15  warning  Missing an explicit type attribute for button  react/button-has-type
-  344:29  warning  Missing an explicit type attribute for button  react/button-has-type
-  350:29  warning  Missing an explicit type attribute for button  react/button-has-type
-  412:27  warning  Missing an explicit type attribute for button  react/button-has-type
-  418:27  warning  Missing an explicit type attribute for button  react/button-has-type
+  193:17  warning  Missing an explicit type attribute for button  react/button-has-type
+  202:17  warning  Missing an explicit type attribute for button  react/button-has-type
+  217:17  warning  Missing an explicit type attribute for button  react/button-has-type
+  385:33  warning  Missing an explicit type attribute for button  react/button-has-type
+  447:31  warning  Missing an explicit type attribute for button  react/button-has-type
+  453:31  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\app\attendance\AttendanceAdminGrid.js
   272:13  warning  Missing an explicit type attribute for button                                                 react/button-has-type
@@ -47,10 +48,10 @@ D:\CODE\invoice-app\src\app\invoices\[id]\InvoiceViewer.js
   32:13  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\app\letterhead\LetterheadView.js
-   73:17  warning  Missing an explicit type attribute for button  react/button-has-type
-   84:17  warning  Missing an explicit type attribute for button  react/button-has-type
-   93:15  warning  Missing an explicit type attribute for button  react/button-has-type
-  138:30  warning  Do not use Array index in keys                 react/no-array-index-key
+  113:17  warning  Missing an explicit type attribute for button  react/button-has-type
+  126:17  warning  Missing an explicit type attribute for button  react/button-has-type
+  135:15  warning  Missing an explicit type attribute for button  react/button-has-type
+  183:30  warning  Do not use Array index in keys                 react/no-array-index-key
 
 D:\CODE\invoice-app\src\app\login\page.js
   137:5  warning  Missing an explicit type attribute for button  react/button-has-type
@@ -67,7 +68,7 @@ D:\CODE\invoice-app\src\app\payroll\PayrollDashboard.js
   166:13  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\app\payroll\generate\GeneratePayroll.js
-  134:11  warning  Missing an explicit type attribute for button  react/button-has-type
+  154:11  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\app\payroll\my-slips\MySlips.js
   257:17  warning  Missing an explicit type attribute for button  react/button-has-type
@@ -92,7 +93,7 @@ D:\CODE\invoice-app\src\app\payroll\settings\PayrollSettingsPage.js
   362:29  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\app\payroll\slip\[slipId]\SlipView.js
-  212:9  warning  Missing an explicit type attribute for button  react/button-has-type
+  246:9  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\app\project\log\page.js
   193:11  warning  Missing an explicit type attribute for button  react/button-has-type
@@ -103,22 +104,7 @@ D:\CODE\invoice-app\src\app\project\log\page.js
   460:31  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\app\project\page.js
-   50:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
-
-Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
-* Update external systems with the latest state from React.
-* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
-
-Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
-
-  48 |         session.user.role?.toLowerCase() === "admin" ? "" : session.user.id;
-  49 |
-> 50 |       setFilters((prev) => {
-     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
-  51 |         if (prev.userId !== targetId) {
-  52 |           return { ...prev, userId: targetId };
-  53 |         }  react-hooks/set-state-in-effect
-  124:11  warning  Missing an explicit type attribute for button                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react/button-has-type
+  122:11  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\app\project\projects\page.js
   365:34  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
@@ -146,15 +132,16 @@ D:\CODE\invoice-app\src\components\DashboardStats.js
 
 D:\CODE\invoice-app\src\components\InvoicePreview.js
    18:30  warning  Unused eslint-disable directive (no problems were reported from 'react/jsx-no-leaked-render')
-  265:32  warning  Do not use Array index in keys                                                                 react/no-array-index-key
+  306:34  warning  Do not use Array index in keys                                                                 react/no-array-index-key
 
 D:\CODE\invoice-app\src\components\InvoiceRow.js
   107:11  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\components\Navbar.js
-  78:12  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
-  79:11  warning  Missing an explicit type attribute for button                                                 react/button-has-type
-  94:10  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+   53:11  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+   97:12  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  103:10  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  124:22  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
 
 D:\CODE\invoice-app\src\components\ThemeToggle.js
   26:5  warning  Missing an explicit type attribute for button  react/button-has-type
@@ -162,39 +149,26 @@ D:\CODE\invoice-app\src\components\ThemeToggle.js
 D:\CODE\invoice-app\src\components\VerificationForm.js
   126:21  warning  Missing an explicit type attribute for button  react/button-has-type
 
-D:\CODE\invoice-app\src\components\accounts\AccountFilters.js
-  29:34  error    Error: Calling setState synchronously within an effect can trigger cascading renders
-
-Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
-* Update external systems with the latest state from React.
-* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
-
-Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
-
-  27 |   useEffect(() => {
-  28 |     if (filters.search !== undefined && filters.search !== searchTerm) {
-> 29 |       if (filters.search === "") setSearchTerm("");
-     |                                  ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
-  30 |     }
-  31 |   }, [filters.search]);
-  32 |  react-hooks/set-state-in-effect
-  31:6   warning  React Hook useEffect has a missing dependency: 'searchTerm'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         react-hooks/exhaustive-deps
-  43:11  warning  Missing an explicit type attribute for button                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         react/button-has-type
+D:\CODE\invoice-app\src\components\accounts\BalanceSheet.js
+  240:17  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  249:14  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  338:35  warning  Do not use Array index in keys                                                                react/no-array-index-key
+  341:34  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  346:37  warning  Missing an explicit type attribute for button                                                 react/button-has-type
 
 D:\CODE\invoice-app\src\components\attendance\AttendanceRow.js
   201:28  warning  Missing an explicit type attribute for button  react/button-has-type
   208:13  warning  Missing an explicit type attribute for button  react/button-has-type
 
-D:\CODE\invoice-app\src\components\invoices\InvoiceDashboard.js
-  95:6  warning  React Hook useEffect has a missing dependency: 'initialInvoices'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-
 D:\CODE\invoice-app\src\components\invoices\InvoiceFilters.js
   24:11  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\components\navbar\UserMenu.js
-   23:7   warning  Missing an explicit type attribute for button               react/button-has-type
-  110:11  warning  Missing an explicit type attribute for button               react/button-has-type
-  126:3   warning  useState call is not destructured into value + setter pair  react/hook-use-state
+   25:9   warning  Missing an explicit type attribute for button                                                 react/button-has-type
+   98:13  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  110:10  warning  Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+  166:15  warning  Missing an explicit type attribute for button                                                 react/button-has-type
+  184:3   warning  useState call is not destructured into value + setter pair                                    react/hook-use-state
 
 D:\CODE\invoice-app\src\components\notes\ActiveNotes.js
   19:27  warning  Do not use Array index in keys  react/no-array-index-key
@@ -203,8 +177,8 @@ D:\CODE\invoice-app\src\components\notes\GlobalNoteButton.js
   32:7  warning  Missing an explicit type attribute for button  react/button-has-type
 
 D:\CODE\invoice-app\src\components\notes\NoteModal.js
-   19:9   warning  The 'getDefaultEndTime' function makes the dependencies of useEffect Hook (at line 52) change on every render. To fix this, wrap the definition of 'getDefaultEndTime' in its own useCallback() Hook  react-hooks/exhaustive-deps
-  108:11  warning  Missing an explicit type attribute for button                                                                                                                                                         react/button-has-type
+   52:6   warning  React Hook useEffect has a missing dependency: 'toLocalISOString'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  108:11  warning  Missing an explicit type attribute for button                                                                        react/button-has-type
 
 D:\CODE\invoice-app\src\components\payroll\PayrollFilters.js
   32:11  warning  Missing an explicit type attribute for button  react/button-has-type
@@ -275,6 +249,6 @@ D:\CODE\invoice-app\src\contexts\ModalContext.js
   137:19  warning  Missing an explicit type attribute for button  react/button-has-type
   144:17  warning  Missing an explicit type attribute for button  react/button-has-type
 
-Γ£û 140 problems (2 errors, 138 warnings)
-  0 errors and 9 warnings potentially fixable with the `--fix` option.
+Γ£û 144 problems (0 errors, 144 warnings)
+  0 errors and 13 warnings potentially fixable with the `--fix` option.
 

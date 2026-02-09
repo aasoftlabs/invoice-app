@@ -27,9 +27,7 @@ export async function POST(req) {
       const timeSinceLastRequest = Date.now() - lastReset;
       const waitTime = 60000; // 1 minute in milliseconds
 
-      console.log(
-        `[Rate Limit] User: ${user.email}, Last: ${user.lastResetRequest}, Type: ${typeof user.lastResetRequest}, Diff: ${timeSinceLastRequest}`,
-      );
+
 
       if (timeSinceLastRequest < waitTime) {
         const remainingTime = Math.ceil(
@@ -44,7 +42,7 @@ export async function POST(req) {
         );
       }
     } else {
-      console.log(`[Rate Limit] First request for ${user.email}`);
+
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
