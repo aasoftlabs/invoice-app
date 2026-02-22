@@ -143,8 +143,8 @@ export default function SettingsPage() {
     TABS.find((t) => t.id === activeTab)?.icon || LayoutDashboard;
 
   return (
-    <div className="min-h-screen flex justify-center py-10 font-sans">
-      <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row gap-6">
+    <div className="min-h-screen font-sans">
+      <div className="max-w-7xl mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-6 w-full">
         {/* Left Sidebar */}
         <div className="w-full md:w-64 shrink-0">
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden sticky top-10">

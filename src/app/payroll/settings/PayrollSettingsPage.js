@@ -142,7 +142,7 @@ export default function PayrollSettingsPage() {
     }
 
     return (
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto p-4 md:p-8">
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Payroll Settings</h1>
