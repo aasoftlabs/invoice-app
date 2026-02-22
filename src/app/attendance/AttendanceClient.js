@@ -14,6 +14,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import AttendancePunchCard from "./AttendancePunchCard";
 import AttendanceCalendar from "./AttendanceCalendar";
 import AttendanceHistoryTable from "./AttendanceHistoryTable";
@@ -25,16 +26,17 @@ export default function AttendanceClient({ user }) {
     session?.user?.role === "admin" ||
     session?.user?.permissions?.includes("payroll");
 
-  const [activeTab, setActiveTab] = useState(isAdmin ? "admin" : "me");
+  const searchParams = useSearchParams();
+  const urlTab = searchParams.get("tab");
+  const activeTab = (isAdmin && urlTab === "admin") ? "admin" : "me";
+
   const [viewingUser, setViewingUser] = useState(null); // ID of user being viewed by admin
   const [myAttendanceView, setMyAttendanceView] = useState("punch"); // 'punch' or 'calendar'
 
-  // Switch to "me" tab if admin access is revoked while on admin tab
+  // Reset viewing user when switching tabs
   useEffect(() => {
-    if (!isAdmin && activeTab === "admin") {
-      setActiveTab("me");
-    }
-  }, [isAdmin, activeTab]);
+    setViewingUser(null);
+  }, [activeTab]);
 
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -172,36 +174,6 @@ export default function AttendanceClient({ user }) {
           </p>
         </div>
 
-        {/* Tabs */}
-        {isAdmin ? (
-          <div className="flex p-1 bg-gray-100 dark:bg-slate-800 rounded-xl w-full md:w-fit overflow-x-auto no-scrollbar">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab("admin");
-                setViewingUser(null);
-              }}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${activeTab === "admin"
-                ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
-                : "text-gray-500 hover:text-gray-700 dark:hover:text-slate-300"
-                }`}
-            >
-              <Users className="w-4 h-4" />
-              Dashboard
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("me")}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${activeTab === "me"
-                ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
-                : "text-gray-500 hover:text-gray-700 dark:hover:text-slate-300"
-                }`}
-            >
-              <History className="w-4 h-4" />
-              My Attendance
-            </button>
-          </div>
-        ) : null}
       </div>
 
       {activeTab === "me" ? (

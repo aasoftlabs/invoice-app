@@ -1,7 +1,4 @@
-import connectDB from "@/lib/mongoose";
 import { SessionProvider } from "next-auth/react";
-import ProjectSidebar from "@/components/project/ProjectSidebar";
-import ProjectMobileNav from "@/components/project/ProjectMobileNav";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
@@ -14,11 +11,7 @@ export default async function ProjectLayout({ children }) {
 
   return (
     <SessionProvider session={session}>
-      <div className="flex flex-1 overflow-hidden min-h-[calc(100vh-64px)] pb-16 md:pb-0">
-        <ProjectSidebar />
-        <main className="flex-1 overflow-auto">{children}</main>
-        <ProjectMobileNav />
-      </div>
+      <main className="flex-1 overflow-auto">{children}</main>
     </SessionProvider>
   );
 }

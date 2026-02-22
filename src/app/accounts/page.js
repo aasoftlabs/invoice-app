@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useModal } from "@/contexts/ModalContext";
 import { useToast } from "@/contexts/ToastContext";
+import { useSearchParams } from "next/navigation";
 import {
   Plus,
   Wallet,
@@ -14,15 +15,13 @@ import {
   TrendingUp,
   TrendingDown,
   FileText,
-  Loader2,
-  BarChart,
-  List
+  Loader2
 } from "lucide-react";
 import Spotlight from "@/components/ui/Spotlight";
 import AddTransactionModal from "@/components/accounts/AddTransactionModal";
 import AccountFilters from "@/components/accounts/AccountFilters";
 import BalanceSheet from "@/components/accounts/BalanceSheet";
-import { useRouter } from "next/navigation";
+import ProfitLoss from "@/components/accounts/ProfitLoss";
 import { useTransactions } from "@/hooks/useTransactions";
 import PermissionGate from "@/components/ui/PermissionGate";
 
@@ -30,9 +29,10 @@ export default function AccountsPage() {
   const { data: session } = useSession();
   const { confirm, alert } = useModal();
   const { addToast } = useToast();
-  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState("transactions"); // transactions | balance-sheet
+  // Tab driven by ?tab= query param (set by navbar dropdown links)
+  const activeTab = searchParams.get("tab") || "transactions";
 
   // Use custom hook
   const {
@@ -187,48 +187,23 @@ export default function AccountsPage() {
               </p>
             </div>
 
-            <div className="flex gap-3">
-              {/* Tab Switcher */}
-              <div className="bg-white dark:bg-slate-800 p-1 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 flex">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('transactions')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === 'transactions'
-                    ? "bg-blue-600 text-white shadow"
-                    : "text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700"
-                    }`}
-                >
-                  <List className="w-4 h-4" /> Transactions
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('balance-sheet')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${activeTab === 'balance-sheet'
-                    ? "bg-blue-600 text-white shadow"
-                    : "text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700"
-                    }`}
-                >
-                  <BarChart className="w-4 h-4" /> Balance Sheet
-                </button>
-              </div>
-
-              <Spotlight
-                className="bg-blue-600 dark:bg-blue-700 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all font-semibold cursor-pointer"
-                spotlightColor="rgba(255, 255, 255, 0.25)"
+            {/* Add Transaction button — always visible */}
+            <Spotlight
+              className="bg-blue-600 dark:bg-blue-700 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all font-semibold cursor-pointer"
+              spotlightColor="rgba(255, 255, 255, 0.25)"
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingTransaction(null);
+                  setIsModalOpen(true);
+                }}
+                className="flex items-center gap-2 px-5 py-3 text-white w-full h-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors rounded-xl"
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditingTransaction(null);
-                    setIsModalOpen(true);
-                  }}
-                  className="flex items-center gap-2 px-5 py-3 text-white w-full h-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors rounded-xl"
-                >
-                  <Plus className="w-5 h-5" />{" "}
-                  <span className="hidden md:inline">Transaction</span>
-                </button>
-              </Spotlight>
-            </div>
+                <Plus className="w-5 h-5" />{" "}
+                <span className="hidden md:inline">Transaction</span>
+              </button>
+            </Spotlight>
           </div>
 
           {activeTab === 'transactions' ? (
@@ -478,8 +453,10 @@ export default function AccountsPage() {
                 </div>
               ) : null}
             </>
-          ) : (
+          ) : activeTab === 'balance-sheet' ? (
             <BalanceSheet />
+          ) : (
+            <ProfitLoss />
           )}
 
         </div>
@@ -491,6 +468,6 @@ export default function AccountsPage() {
           editingTransaction={editingTransaction}
         />
       </div>
-    </PermissionGate>
+    </PermissionGate >
   );
 }

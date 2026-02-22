@@ -126,6 +126,9 @@ export default function BalanceSheet() {
     const totalEquity = calculateTotal(data.equity);
     const totalLiabilitiesAndEquity = totalLiabilities + totalEquity;
 
+    const difference = totalAssets - totalLiabilitiesAndEquity;
+    const isBalanced = Math.abs(difference) < 1; // allow ₹1 rounding
+
     return (
         <div className="space-y-8">
 
@@ -167,9 +170,16 @@ export default function BalanceSheet() {
 
                 {/* Assets Column */}
                 <div className="space-y-6">
-                    <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                        Assets
-                    </h2>
+                    <div className="flex items-baseline justify-between">
+                        <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                            Assets
+                        </h2>
+                        {data.asOf && (
+                            <span className="text-xs text-gray-400 dark:text-slate-500 font-medium">
+                                As of {new Date(data.asOf).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })}
+                            </span>
+                        )}
+                    </div>
 
                     {/* Current Assets */}
                     <Section
@@ -235,7 +245,21 @@ export default function BalanceSheet() {
                 </div>
             </div>
 
-            {/* Add Item Button */}
+            {/* Balance Check Banner */}
+            <div className={`flex items-center justify-between p-4 rounded-xl border font-semibold text-sm ${isBalanced
+                    ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400"
+                    : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400"
+                }`}>
+                <span className="flex items-center gap-2">
+                    {isBalanced
+                        ? "✓ Balanced — Assets equal Liabilities + Equity"
+                        : `⚠ Out of Balance — difference: ₹ ${Math.abs(difference).toLocaleString('en-IN')}`
+                    }
+                </span>
+                <span className="text-xs font-normal opacity-70">
+                    Assets {isBalanced ? "=" : "≠"} Liabilities + Equity
+                </span>
+            </div>
             <div className="fixed bottom-8 right-8">
                 <button
                     type="button"

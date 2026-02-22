@@ -19,7 +19,7 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans p-4 md:p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans p-4 md:p-8">
       <PayrollSettingsPage />
     </div>
   );

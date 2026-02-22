@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { CATEGORY_IDS } from "@/lib/accountingCategories";
 
 const TransactionSchema = new mongoose.Schema({
     date: {
@@ -11,9 +12,17 @@ const TransactionSchema = new mongoose.Schema({
         enum: ["Credit", "Debit"], // Credit = Income, Debit = Expense
         required: true,
     },
+    // accountingCategory: structured ID from accountingCategories.js
+    // Drives auto-generation of Balance Sheet & P&L.
+    // Nullable for backward compatibility with old transactions.
+    accountingCategory: {
+        type: String,
+        enum: [...CATEGORY_IDS, null],
+        default: null,
+    },
     category: {
         type: String,
-        required: true, // e.g., "Invoice Payment", "Salary", "Office Expense"
+        required: true, // human-friendly label, e.g. "Invoice Payment"
     },
     amount: {
         type: Number,
@@ -37,11 +46,9 @@ const TransactionSchema = new mongoose.Schema({
         },
         id: {
             type: mongoose.Schema.Types.ObjectId,
-            // Dynamic ref based on type is complex in mongoose, so we keep it generic or handle in app logic
-            // verification usually done manually
         },
         documentNo: {
-            type: String // Optional text reference (e.g. Invoice No) for display
+            type: String
         }
     },
 

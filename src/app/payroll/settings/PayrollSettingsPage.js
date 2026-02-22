@@ -145,8 +145,8 @@ export default function PayrollSettingsPage() {
         <div className="max-w-5xl mx-auto">
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Payroll Settings</h1>
-                    <p className="text-gray-500">Configure global payroll parameters and PT slabs</p>
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Payroll Settings</h1>
+                    <p className="text-gray-500 dark:text-gray-400">Configure global payroll parameters and PT slabs</p>
                 </div>
                 <button
                     type="button"
@@ -166,13 +166,13 @@ export default function PayrollSettingsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                         <button
                             type="button"
                             onClick={() => setActiveTab("general")}
                             className={`w-full text-left px-4 py-3 text-sm font-medium border-l-4 transition-colors ${activeTab === "general"
-                                ? "border-blue-600 bg-blue-50 text-blue-700"
-                                : "border-transparent text-gray-600 hover:bg-gray-50"
+                                ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400"
+                                : "border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                                 }`}
                         >
                             General & Statutory
@@ -181,8 +181,8 @@ export default function PayrollSettingsPage() {
                             type="button"
                             onClick={() => setActiveTab("pt")}
                             className={`w-full text-left px-4 py-3 text-sm font-medium border-l-4 transition-colors ${activeTab === "pt"
-                                ? "border-blue-600 bg-blue-50 text-blue-700"
-                                : "border-transparent text-gray-600 hover:bg-gray-50"
+                                ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400"
+                                : "border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                                 }`}
                         >
                             Professional Tax (PT)
@@ -193,9 +193,9 @@ export default function PayrollSettingsPage() {
                 {/* Content */}
                 <div className="lg:col-span-3 space-y-6">
                     {activeTab === "general" && (
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
+                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
+                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 pb-2 border-b dark:border-gray-700">
                                     Provident Fund (PF)
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,7 +215,7 @@ export default function PayrollSettingsPage() {
                             </div>
 
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
+                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 pb-2 border-b dark:border-gray-700">
                                     ESI
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -241,22 +241,22 @@ export default function PayrollSettingsPage() {
                             </div>
 
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
+                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 pb-2 border-b dark:border-gray-700">
                                     TDS Defaults
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                             Default Tax Regime
                                         </label>
                                         <select
                                             name="defaultTaxRegime"
                                             value={settings.defaultTaxRegime}
                                             onChange={handleChange}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                                         >
-                                            <option value="new" className="text-gray-900">New Regime</option>
-                                            <option value="old" className="text-gray-900">Old Regime</option>
+                                            <option value="new" className="text-gray-900 dark:text-white">New Regime</option>
+                                            <option value="old" className="text-gray-900 dark:text-white">Old Regime</option>
                                         </select>
                                     </div>
                                     <InputField
@@ -275,7 +275,7 @@ export default function PayrollSettingsPage() {
                             {settings.ptStates.map((ptState, stateIndex) => (
                                 <div
                                     key={stateIndex}
-                                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+                                    className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
                                 >
                                     <div className="flex justify-between items-center mb-4">
                                         <input
@@ -285,7 +285,7 @@ export default function PayrollSettingsPage() {
                                                 handlePtChange(stateIndex, "state", e.target.value)
                                             }
                                             placeholder="State Name"
-                                            className="text-lg font-semibold text-gray-900 border-none focus:ring-0 p-0 w-full bg-transparent placeholder:text-gray-400"
+                                            className="text-lg font-semibold text-gray-900 dark:text-white border-none focus:ring-0 p-0 w-full bg-transparent placeholder:text-gray-400 dark:placeholder:text-gray-500"
                                         />
                                         <button
                                             type="button"
@@ -297,7 +297,7 @@ export default function PayrollSettingsPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <div className="grid grid-cols-3 gap-4 text-xs font-medium text-gray-500 uppercase">
+                                        <div className="grid grid-cols-3 gap-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                                             <div>Min Salary</div>
                                             <div>Max Salary</div>
                                             <div>PT Amount</div>
@@ -315,7 +315,7 @@ export default function PayrollSettingsPage() {
                                                             e.target.value
                                                         )
                                                     }
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg text-sm text-gray-900 dark:text-white"
                                                 />
                                                 <input
                                                     type="number"
@@ -328,7 +328,7 @@ export default function PayrollSettingsPage() {
                                                             e.target.value
                                                         )
                                                     }
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg text-sm text-gray-900 dark:text-white"
                                                 />
                                                 <div className="flex gap-2">
                                                     <input
@@ -342,7 +342,7 @@ export default function PayrollSettingsPage() {
                                                                 e.target.value
                                                             )
                                                         }
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg text-sm text-gray-900 dark:text-white"
                                                     />
                                                     <button
                                                         type="button"
@@ -357,7 +357,7 @@ export default function PayrollSettingsPage() {
                                         <button
                                             type="button"
                                             onClick={() => addSlab(stateIndex)}
-                                            className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 mt-2"
+                                            className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium flex items-center gap-1 mt-2"
                                         >
                                             <Plus className="w-4 h-4" /> Add Slab
                                         </button>
@@ -368,7 +368,7 @@ export default function PayrollSettingsPage() {
                             <button
                                 type="button"
                                 onClick={addState}
-                                className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-blue-500 hover:text-blue-600 font-medium transition-colors flex items-center justify-center gap-2"
+                                className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 dark:text-gray-400 hover:border-blue-500 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 font-medium transition-colors flex items-center justify-center gap-2"
                             >
                                 <Plus className="w-5 h-5" /> Add State Configuration
                             </button>
@@ -383,7 +383,7 @@ export default function PayrollSettingsPage() {
 function InputField({ label, name, value, onChange }) {
     return (
         <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {label}
             </label>
             <input
@@ -391,7 +391,7 @@ function InputField({ label, name, value, onChange }) {
                 name={name}
                 value={value}
                 onChange={onChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
             />
         </div>
     );

@@ -102,6 +102,7 @@ export async function POST(req) {
     const {
       date,
       type,
+      accountingCategory,
       category,
       amount,
       description,
@@ -113,6 +114,7 @@ export async function POST(req) {
     const transaction = new Transaction({
       date: date || new Date(),
       type,
+      accountingCategory: accountingCategory || null,
       category,
       amount: parseFloat(amount),
       description,
@@ -240,7 +242,7 @@ export async function PUT(req) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { id, date, type, category, amount, description, paymentMode } = body;
+    const { id, date, type, accountingCategory, category, amount, description, paymentMode } = body;
 
     const transaction = await Transaction.findById(id);
     if (!transaction)
@@ -256,6 +258,7 @@ export async function PUT(req) {
     // Update fields
     transaction.date = date;
     transaction.type = type;
+    transaction.accountingCategory = accountingCategory || null;
     transaction.category = category;
     transaction.amount = newAmount;
     transaction.description = description;

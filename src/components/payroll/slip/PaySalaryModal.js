@@ -15,7 +15,7 @@ export default function PaySalaryModal({ isOpen, onClose, onSuccess, slip }) {
   const { alert } = useModal();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split("T")[0],
+    date: new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }),
     paymentMode: "Bank Transfer",
     description: `Salary Payment for ${slip?.month}/${slip?.year}`,
   });
@@ -28,7 +28,8 @@ export default function PaySalaryModal({ isOpen, onClose, onSuccess, slip }) {
       const payload = {
         date: formData.date,
         type: "Debit",
-        category: "Salary",
+        accountingCategory: "salary",
+        category: "Salary / Payroll",
         amount: slip.netPay,
         description: formData.description,
         paymentMode: formData.paymentMode,
