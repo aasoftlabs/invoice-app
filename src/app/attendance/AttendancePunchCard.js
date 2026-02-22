@@ -27,9 +27,11 @@ export default function AttendancePunchCard({
 
   const formatTime = (date) => {
     if (!date) return "--:--";
-    return new Date(date).toLocaleTimeString([], {
+    return new Date(date).toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: true,
     });
   };
 
@@ -53,6 +55,7 @@ export default function AttendancePunchCard({
           <div className="text-sm font-medium text-gray-500 dark:text-slate-400">
             {mounted
               ? now.toLocaleDateString("en-GB", {
+                timeZone: "Asia/Kolkata",
                 day: "numeric",
                 month: "short",
                 year: "numeric",
@@ -67,7 +70,8 @@ export default function AttendancePunchCard({
           className={`${minimal ? "text-2xl sm:text-3xl" : "text-3xl sm:text-4xl"} font-mono font-bold text-gray-900 dark:text-white mb-1 transition-all`}
         >
           {mounted
-            ? now.toLocaleTimeString([], {
+            ? now.toLocaleTimeString("en-IN", {
+              timeZone: "Asia/Kolkata",
               hour: "2-digit",
               minute: "2-digit",
               second: "2-digit",
@@ -113,10 +117,10 @@ export default function AttendancePunchCard({
           onClick={onPunch}
           disabled={loading}
           className={`w-full ${minimal ? "py-2.5 sm:py-3 text-sm sm:text-base" : "py-3.5 sm:py-4 text-base sm:text-lg"} rounded-xl font-bold flex items-center justify-center gap-2 transition-all transform active:scale-95 cursor-pointer ${isFinished
-              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800 cursor-default"
-              : isClockedIn
-                ? "bg-amber-600 hover:bg-amber-700 text-white shadow-lg shadow-amber-200 dark:shadow-none"
-                : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-none"
+            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800 cursor-default"
+            : isClockedIn
+              ? "bg-amber-600 hover:bg-amber-700 text-white shadow-lg shadow-amber-200 dark:shadow-none"
+              : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-none"
             }`}
         >
           {loading ? (

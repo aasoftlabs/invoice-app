@@ -29,10 +29,15 @@ export default function AttendanceCalendar({ records, minimal = false, onDelete 
     days.push(null);
   }
 
-  // Actual days
+  // Actual days — build YYYY-MM-DD directly (never toISOString which shifts to UTC)
+  const pad = (n) => String(n).padStart(2, "0");
   for (let i = 1; i <= totalDays; i++) {
-    const dateStr = new Date(year, month, i).toISOString().split("T")[0];
-    const record = records.find((r) => r.date.startsWith(dateStr));
+    const dateStr = `${year}-${pad(month + 1)}-${pad(i)}`;
+    const record = records.find((r) => {
+      // Compare using IST date string of stored UTC midnight
+      const recIST = new Date(r.date).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      return recIST === dateStr;
+    });
     days.push({ day: i, record });
   }
 
@@ -129,7 +134,8 @@ export default function AttendanceCalendar({ records, minimal = false, onDelete 
                 <button
                   type="button"
                   onClick={() => {
-                    const dateStr = new Date(year, month, d.day).toISOString().split("T")[0];
+                    const p = (n) => String(n).padStart(2, "0");
+                    const dateStr = `${year}-${p(month + 1)}-${p(d.day)}`;
                     if (window.confirm("Delete this attendance record?")) {
                       onDelete(dateStr);
                     }

@@ -80,14 +80,17 @@ export default function AttendanceHistoryTable({ records, loading, onDelete }) {
 
   const formatTime = (date) => {
     if (!date) return "-";
-    return new Date(date).toLocaleTimeString([], {
+    return new Date(date).toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: true,
     });
   };
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-GB", {
+      timeZone: "Asia/Kolkata",
       day: "2-digit",
       month: "short",
       weekday: "short",

@@ -63,6 +63,7 @@ export default function NavbarWrapper() {
       ...session?.user,
       name: userData.name,
       email: userData.email,
+      designation: userData.designation,
       role: userData.role,
       permissions: userData.permissions,
     }

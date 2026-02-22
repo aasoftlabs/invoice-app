@@ -31,7 +31,7 @@ export default function UserMenu({ user }) {
               {user?.name || "User"}
             </div>
             <div className="text-xs text-gray-500 dark:text-slate-400 capitalize">
-              {user?.role || "Admin"}
+              {user?.designation || user?.role}
             </div>
           </div>
           <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-slate-700 overflow-hidden border border-gray-300 dark:border-slate-600">

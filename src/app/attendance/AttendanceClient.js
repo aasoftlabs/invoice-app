@@ -59,10 +59,10 @@ export default function AttendanceClient({ user }) {
         setRecords(data);
 
         if (activeTab === "me") {
-          // Find today's record
-          const today = new Date().toISOString().split("T")[0];
+          // Find today's record using IST date
+          const todayIST = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
           const todayRec = data.find(
-            (r) => new Date(r.date).toISOString().split("T")[0] === today,
+            (r) => new Date(r.date).toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }) === todayIST,
           );
           setTodayRecord(todayRec);
         }
