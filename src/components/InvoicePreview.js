@@ -454,7 +454,7 @@ const InvoicePreviewContent = React.memo(function InvoicePreviewContent({
 
                     <div className="w-2/5 text-right">
                       {data.type === "Digital" ? (
-                        <div className="flex flex-col items-end">
+                        <div className="flex flex-col items-end mt-6">
                           <div className="mb-2 p-2 bg-white border border-gray-200 rounded-lg">
                             <QRCodeSVG
                               value={`${origin}/verify/${data?._id || initialData?._id || "preview"}`}

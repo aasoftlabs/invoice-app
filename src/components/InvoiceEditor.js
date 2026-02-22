@@ -145,7 +145,7 @@ export default function InvoiceEditor({ initialData, isEditing = false }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col md:flex-row font-sans text-gray-800 dark:text-slate-200">
       {/* LEFT SIDE: EDITOR */}
-      <div className="w-full md:w-1/3 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 print:hidden h-auto md:h-[calc(100vh-4rem)] md:sticky md:top-0 flex flex-col">
+      <div className="w-full md:w-1/3 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 print:hidden h-auto md:h-[calc(100vh)] md:sticky md:top-0 flex flex-col">
         <FormProvider {...methods}>
           {/* Scrollable Content Area */}
           <div className="flex-1 md:overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-slate-700">

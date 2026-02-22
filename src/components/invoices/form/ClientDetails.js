@@ -7,7 +7,7 @@ export default function ClientDetails() {
   } = useFormContext();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 dark:border-slate-700 pt-6 mt-6">
+    <div className="flex flex-col gap-1 border-t border-gray-100 dark:border-slate-700 pt-6 mt-6">
       <h3 className="text-sm font-bold text-gray-700 dark:text-slate-300 mb-4 uppercase tracking-wider">
         Client Details
       </h3>
